@@ -1,4 +1,13 @@
 <?php
+/*
+    This file expects json data to be posted to it.
+
+    The json is decoded, if 'task' exists in post_data
+    it is used to determine what function to call.
+
+    The result of the function is returned to the calling file.
+*/
+
 require_once 'database.php';
 require_once 'helpers.php';
 
@@ -19,7 +28,9 @@ switch($task) {
 
 echo $result;
 
-
+/*
+    Return an array of products from database
+*/
 function get_products() {
     $pdo = db_connect();
     
