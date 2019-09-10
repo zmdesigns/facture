@@ -53,9 +53,9 @@ function get_products() {
 
 /*
     Create a new product in database
-    REQUIRES array at 'data' index in post
-    data[name] - name of product to create
-    data[description] - description of product
+    
+    name - name of product to create
+    description - description of product
 */
 function new_product($name, $description) {
     $pdo = db_connect();
