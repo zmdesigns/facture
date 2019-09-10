@@ -1,11 +1,12 @@
 <?php
 /*
-    This file expects json data to be posted to it.
+    This file expects json post data. Once decoded it checks 'task' index for what to do.
+    The related function is then called and the result is echoed for the page that posted the task.
+    If the function requires additional information, it will look for it in an array at the 'data' index.
 
-    The json is decoded, if 'task' exists in post_data
-    it is used to determine what function to call.
-
-    The result of the function is returned to the calling file.
+    Valid 'task' values:
+        'list_all' - returns json array of all products with relevant date/descriptions
+        'new' - creates a product in database, returns success or error info
 */
 
 require_once 'database.php';
@@ -23,6 +24,11 @@ if (!empty($post_data['task'])) {
 switch($task) {
     case 'list_all':
         $result = json_encode(get_products());
+        break;
+    case 'new':
+        $name = sanitize_input($post_data['prod_name']);
+        $description = sanitize_input($post_data['description']);
+        $result = new_product($name, $description);
         break;
 }
 
@@ -43,6 +49,29 @@ function get_products() {
         'date'          => $row['date_added']];
     }
     return $products;
+}
+
+/*
+    Create a new product in database
+    REQUIRES array at 'data' index in post
+    data[name] - name of product to create
+    data[description] - description of product
+*/
+function new_product($name, $description) {
+    $pdo = db_connect();
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    try {
+        $query = $pdo->exec('INSERT INTO Products(name,description) VALUES ("'.$name.'","'.$description.'")');
+    } catch (PDOException $e) { 
+        return $e->getMessage();
+    }
+    if ($pdo->errorCode() == '00') {
+        return 'success!';
+    }
+    else {
+        return $pdo->errorCode();
+    }
 }
 
 ?>

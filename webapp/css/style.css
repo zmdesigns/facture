@@ -1,10 +1,21 @@
 table {
-    
     border-collapse: collapse;
 }
 
-.db_table tr, td, th {
+h4 {
+    margin-bottom: 0;
+}
+
+.db-table tr, td, th {
     text-align: left;
     border: 1px solid black;
     padding: 10px;
+}
+
+#new-product-form {
+    margin: 10px;
+}
+
+.input-group {
+    padding: 4px;
 }
