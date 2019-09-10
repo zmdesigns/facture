@@ -49,12 +49,12 @@
         });
     });
 
-    $('#new_btn').click(function() {
+    $('#new-btn').click(function() {
         data = fetch('include/product.php', {
             method: 'POST',
             body: JSON.stringify({'task': 'new',
-                                  'prod_name': 'newprod1',
-                                  'description': 'vague'
+                                  'prod_name': $('#name-field').val(),
+                                  'description': $('#description-field').val()
                                  })
         }).then(response => response.json()) // parses JSON response into native Javascript objects
         .then(function(data) {
