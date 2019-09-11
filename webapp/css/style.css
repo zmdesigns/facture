@@ -3,7 +3,21 @@ table {
 }
 
 h4 {
-    margin-bottom: 0;
+    margin: 6px;
+}
+
+.db-table {
+    min-width: 60em;
+}
+
+/* edit button column in table */
+.tbtn-col {
+    width: 10%;
+}
+
+/* name column in table */
+.tname-col {
+    width: 30%;
 }
 
 .db-table tr, td, th {
@@ -12,10 +26,34 @@ h4 {
     padding: 10px;
 }
 
-#new-product-form {
-    margin: 10px;
-}
-
 .input-group {
     padding: 4px;
+}
+
+/* css grid */
+.g-header {
+    grid-area: header;
+    justify-self: center;
+    align-self: center;
+}
+.g-table {
+    grid-area: data;
+    justify-self: center;
+    align-self: center;
+}
+.g-footer {
+    grid-area: footer;
+    justify-self: center;
+    align-self: center;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    grid-template-areas: 
+        "header header"
+        "data data"
+        "footer footer";
+    column-gap: 14px;
 }

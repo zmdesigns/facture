@@ -1,36 +1,32 @@
 <?php include 'include/header.php'; ?>
 
-<h1>Products</h1>
-<table class='db-table'>
-    <thead>
-        <tr>
-            <th>id</th>
-            <th>name</th>
-            <th>description</th>
-        </tr>
-    </thead>
-    <tbody>
-    </tbody>
-</table>
-<div class="input-group">
-    <button id='edit-btn' type='button'>Edit Product</button>
+<div class='container'>
+    <div class='g-header'>
+        <h1>Products</h1>
+    </div>
+    <div class='g-table'>
+        <button id='new-row-btn' type='button'>New Product</button>
+        <table class='db-table'>
+            <col class="tname-col">
+	        <col class="tdescrip-col">
+	        <col class="tbtn-col">
+            <thead>
+                <tr>
+                    <th>name</th>
+                    <th>description</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        
+    </div>
+    <div class='g-footer'>
+        <?php include 'include/footer.php'; ?>
+    </div>
 </div>
-<form id="new-product-form">
-    <h4>New Product</h4>
-    <div class="input-group">
-        <div class="input-name">Name</div>
-        <input id="name-field" type="text">
-    </div>
-    <div class="input-group">
-        <div class="input-name">Description</div>
-        <textarea id="description-field"></textarea>
-    </div>
-    <div class="input-group">
-        <button id='new-btn' type='button'>New Product</button>
-    </div>
-</form>
 
-<?php include 'include/footer.php'; ?>
 
 <script src='https://code.jquery.com/jquery-3.4.1.min.js'></script>
 
@@ -41,46 +37,103 @@
             body: JSON.stringify({'task': 'list_all'})
         }).then(response => response.json()) // parses JSON response into native Javascript objects
         .then(function(data) {
+            var row = 1; //starts at 1 because header row is 0
             data.forEach(function(el) {
-                $('.db-table tbody').append('<tr><td>'+el['id']+
-                                  '</td><td>'+el['name']+
+                $('.db-table tbody').append('<tr><td>'+el['name']+
                                   '</td><td>'+el['description']+
-                                  '</td></tr>');
+                                  '</td><td><button id="'+row+'" class="edit-btn" type="button">Edit</button></td></tr>');
+                row += 1;
             });
         }).catch(function(error) {
             console.log('There has been a problem with your fetch operation: ', error.message);
         });
     });
 
-    $('#new-btn').click(function() {
-        data = fetch('include/product.php', {
-            method: 'POST',
-            body: JSON.stringify({'task': 'new',
-                                  'prod_name': $('#name-field').val(),
-                                  'description': $('#description-field').val()
-                                 })
-        }).then(response => response.json()) // parses JSON response into native Javascript objects
-        .then(function(data) {
-            console.log(data);
-        }).catch(function(error) {
-            console.log('There has been a problem with your fetch operation: ', error.message);
-        });
+    $('#new-row-btn').click(function() {
+        var row_count = $('.db-table tr').length; //not+1 for the new row because it is zero indexed. used to identify input fields
+        $('.db-table tbody').append('<tr><td><input id="name-input-'+row_count+'" type="text"></td>'+
+                                     '<td><input id="description-input-'+row_count+'" type="text"></td>'+
+                                     '<td><button id="'+row_count+'" class="new-btn">Create</button></td></tr>');
     });
 
-    $('#edit-btn').click(function() {
+    $(document).on('click', '.edit-btn', function() { 
+        //get data about the row
+        var row = $(this).attr('id');
+        var name_col = $('.db-table tr:eq('+row+') td:eq(0)');
+        var description_col = $('.db-table tr:eq('+row+') td:eq(1)');
+        var name = name_col.text();
+        var description = description_col.text();
+
+        //replace text with input fields
+        name_col.html('<input id="name-input-'+row+'" type="text">');
+        description_col.html('<input id="description-input-'+row+'" type="text">');
+        //save old name in order to identify db entry if name is edited
+        name_col.append('<p id="old-name-'+row+'" hidden>'+name+'</p>');
+
+        //fill input fields with text data
+        $('#name-input-'+row).val(name);
+        $('#description-input-'+row).val(description);
+
+        //adjust button so changes can be saved once pressed
+        $(this).text('Save');
+        $(this).addClass('save-edit-btn');
+        $(this).removeClass('edit-btn');
+    });
+
+    $(document).on('click', '.save-edit-btn', function() {
+        //get data about the row
+        var row = $(this).attr('id');
+        var old_name = $('#old-name-'+row).text();
+        var name = $('#name-input-'+row).val();
+        var description = $('#description-input-'+row).val();
+        var name_col = $('.db-table tr:eq('+row+') td:eq(0)');
+        var description_col = $('.db-table tr:eq('+row+') td:eq(1)');
+
+        //make changes to db
+        edit_product(old_name, name, description);
+
+        //replace inputs with text
+        name_col.html($('#name-input-'+row).val());
+        description_col.html($('#description-input-'+row).val());
+
+        //adjust button back to edit state
+        $(this).text('Edit');
+        $(this).removeClass('save-edit-btn');
+        $(this).addClass('edit-btn');
+    });
+
+    $('.save-new-btn').click(function() {
+        //todo: implement same functionality as save-edit-btn 
+    });
+
+
+    function edit_product(old_name, new_name, description) {
         data = fetch('include/product.php', {
             method: 'POST',
             body: JSON.stringify({'task': 'edit',
-                                  'name': $('#name-field').val(),
-                                  'new_name': $('#name-field').val(),
-                                  'description': $('#description-field').val()
+                                  'name': old_name,
+                                  'new_name': new_name,
+                                  'description': description
                                  })
-        }).then(response => response.json()) // parses JSON response into native Javascript objects
-        .then(function(data) {
-            console.log(data);
+        }).then(function(data) {
+            console.log(data); //todo: if page returns an error, let the user know
         }).catch(function(error) {
             console.log('There has been a problem with your fetch operation: ', error.message);
         });
-    });
+    }
+
+    function new_product(name, description) {
+        data = fetch('include/product.php', {
+            method: 'POST',
+            body: JSON.stringify({'task': 'new',
+                                  'prod_name': name,
+                                  'description': description
+                                 })
+        }).then(function(data) {
+            console.log(data); //todo: if page returns an error, let the user know
+        }).catch(function(error) {
+            console.log('There has been a problem with your fetch operation: ', error.message);
+        });
+    }
 
 </script>
