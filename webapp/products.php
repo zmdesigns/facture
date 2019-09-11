@@ -12,6 +12,9 @@
     <tbody>
     </tbody>
 </table>
+<div class="input-group">
+    <button id='edit-btn' type='button'>Edit Product</button>
+</div>
 <form id="new-product-form">
     <h4>New Product</h4>
     <div class="input-group">
@@ -54,6 +57,22 @@
             method: 'POST',
             body: JSON.stringify({'task': 'new',
                                   'prod_name': $('#name-field').val(),
+                                  'description': $('#description-field').val()
+                                 })
+        }).then(response => response.json()) // parses JSON response into native Javascript objects
+        .then(function(data) {
+            console.log(data);
+        }).catch(function(error) {
+            console.log('There has been a problem with your fetch operation: ', error.message);
+        });
+    });
+
+    $('#edit-btn').click(function() {
+        data = fetch('include/product.php', {
+            method: 'POST',
+            body: JSON.stringify({'task': 'edit',
+                                  'name': $('#name-field').val(),
+                                  'new_name': $('#name-field').val(),
                                   'description': $('#description-field').val()
                                  })
         }).then(response => response.json()) // parses JSON response into native Javascript objects

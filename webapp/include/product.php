@@ -7,6 +7,7 @@
     Valid 'task' values:
         'list_all' - returns json array of all products with relevant date/descriptions
         'new' - creates a product in database, returns success or error info
+        'edit' - edits an existing product in the database, returns success or error info
 */
 
 require_once 'database.php';
@@ -29,6 +30,12 @@ switch($task) {
         $name = sanitize_input($post_data['prod_name']);
         $description = sanitize_input($post_data['description']);
         $result = new_product($name, $description);
+        break;
+    case 'edit':
+        $name = sanitize_input($post_data['name']);
+        $new_name = sanitize_input($post_data['new_name']);
+        $description = sanitize_input($post_data['description']);
+        $result = edit_product($name, $new_name, $description);
         break;
 }
 
@@ -63,6 +70,23 @@ function new_product($name, $description) {
 
     try {
         $query = $pdo->exec('INSERT INTO Products(name,description) VALUES ("'.$name.'","'.$description.'")');
+    } catch (PDOException $e) { 
+        return $e->getMessage();
+    }
+    if ($pdo->errorCode() == '00') {
+        return 'success!';
+    }
+    else {
+        return $pdo->errorCode();
+    }
+}
+
+function edit_product($name, $new_name, $description) {
+    $pdo = db_connect();
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    try {
+        $query = $pdo->exec('UPDATE Products SET name="'.$new_name.'", description="'.$description.'" WHERE name="'.$name.'"');
     } catch (PDOException $e) { 
         return $e->getMessage();
     }
