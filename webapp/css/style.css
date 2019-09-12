@@ -12,7 +12,12 @@ h4 {
 
 /* edit button column in table */
 .tbtn-col {
-    width: 10%;
+    width: 8%;
+}
+
+/* delete button column in table */
+.trem-col {
+    width: 4%;
 }
 
 /* name column in table */
@@ -24,6 +29,10 @@ h4 {
     text-align: left;
     border: 1px solid black;
     padding: 10px;
+}
+
+.tbtn-col button {
+    text-align: center;
 }
 
 .input-group {

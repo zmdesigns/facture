@@ -6,14 +6,17 @@
     </div>
     <div class='g-table'>
         <button id='new-row-btn' type='button'>New Product</button>
+        <button id='rm-row-btn' type='button'>Delete Product</button>
         <table class='db-table'>
             <col class="tname-col">
 	        <col class="tdescrip-col">
-	        <col class="tbtn-col">
+            <col class="tbtn-col">
+            <col class="trem-col">
             <thead>
                 <tr>
                     <th>name</th>
                     <th>description</th>
+                    <th></th>
                     <th></th>
                 </tr>
             </thead>
@@ -41,7 +44,8 @@
             data.forEach(function(el) {
                 $('.db-table tbody').append('<tr><td>'+el['name']+
                                   '</td><td>'+el['description']+
-                                  '</td><td><button id="'+row+'" class="edit-btn edit" type="button">Edit</button></td></tr>');
+                                  '</td><td><button id="'+row+'" class="edit-btn edit" type="button">Edit</button>'+
+                                  '</td><td><input type="checkbox" class="rm-box" value="'+row+'"></td></tr>');
                 row += 1;
             });
         }).catch(function(error) {
@@ -119,6 +123,32 @@
         $(this).removeClass('save-btn');
         $(this).text('Edit');
     });
+
+    $(document).on('change', '.rm-box', function() {
+        var row_obj = $('.db-table tr:eq('+this.value+')');
+        if (this.checked) {
+            row_obj.css('background-color','green');
+        }
+        else {
+            row_obj.css('background-color','initial');
+        }
+    });
+
+    $('#rm-row-btn').click(function() {
+        $('.rm-box:checked').each(function(i,el) {
+            var row = el.value;
+            delete_product(row);
+        });
+    });
+
+    function delete_product(row) {
+        var name = $('.db-table tr:eq('+row+') td:eq(0)').text();
+        var args = {'task': 'delete',
+                    'name': name
+                   };
+
+        return api_call(args);
+    }
 
 
     function edit_product(old_name, new_name, description) {
