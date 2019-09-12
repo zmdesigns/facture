@@ -1,5 +1,13 @@
 <?php include "include/header.php"; ?>
 
-<h1>Employees</h1>
+<div class='container'>
+    <div class='g-header'>
+        <?php include 'include/nav.php'; ?>
 
-<?php include "include/footer.php"; ?>
+        <h1>Employees</h1>
+    </div>
+    <div class='g-table'></div>
+    <div class='g-footer'>
+        <?php include "include/footer.php"; ?>
+    </div>
+</div>

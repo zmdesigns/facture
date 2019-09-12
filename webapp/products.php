@@ -2,6 +2,7 @@
 
 <div class='container'>
     <div class='g-header'>
+        <?php include 'include/nav.php'; ?>
         <h1>Products</h1>
     </div>
     <div class='g-table'>

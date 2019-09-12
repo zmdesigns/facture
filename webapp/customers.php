@@ -4,7 +4,7 @@
     <div class='g-header'>
         <?php include 'include/nav.php'; ?>
 
-        <h1>Dashboard</h1>
+        <h1>Customers</h1>
     </div>
     <div class='g-table'></div>
     <div class='g-footer'>

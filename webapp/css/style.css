@@ -44,6 +44,7 @@ h4 {
     grid-area: header;
     justify-self: center;
     align-self: center;
+    text-align: center;
 }
 .g-table {
     grid-area: data;
@@ -65,4 +66,42 @@ h4 {
         "data data"
         "footer footer";
     column-gap: 14px;
+}
+
+/* nav */
+nav {
+    background-color: #fff;
+    border: 1px solid #dedede;
+    border-radius: 4px;
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.055);
+    color: #888;
+    display: block;
+    width: 90%;
+    margin: 8px 22px 8px 22px;
+    padding: 0 22px 0 22px;
+    overflow: hidden;
+}
+
+nav ul {
+    margin: 0;
+    padding: 0;
+}
+ 
+nav ul li {
+    display: inline-block;
+    list-style-type: none;
+
+    -webkit-transition: all 0.2s;
+    -moz-transition: all 0.2s;
+    -ms-transition: all 0.2s;
+    -o-transition: all 0.2s;
+    transition: all 0.2s;
+}
+ 
+nav > ul > li > a {
+    color: #aaa;
+    display: block;
+    line-height: 56px;
+    padding: 0 24px;
+    text-decoration: none;
 }
