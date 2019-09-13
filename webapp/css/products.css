@@ -1,0 +1,23 @@
+/* edit button column in table */
+.tbtn-col {
+    width: 8%;
+}
+
+/* delete button column in table */
+.trem-col {
+    width: 4%;
+}
+
+/* name column in table */
+.tname-col {
+    width: 30%;
+}
+
+.tbtn-col button {
+    text-align: center;
+}
+
+.input-group {
+    padding: 4px;
+}
+

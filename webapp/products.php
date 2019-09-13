@@ -1,5 +1,7 @@
 <?php include 'include/header.php'; ?>
-
+<link rel="stylesheet" href="css/products.css">
+</head>
+<body>
 <div class='container'>
     <div class='g-header'>
         <?php include 'include/nav.php'; ?>
@@ -15,8 +17,8 @@
             <col class="trem-col">
             <thead>
                 <tr>
-                    <th>name</th>
-                    <th>description</th>
+                    <th>Product name</th>
+                    <th>Description</th>
                     <th></th>
                     <th></th>
                 </tr>

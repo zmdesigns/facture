@@ -6,37 +6,15 @@ h4 {
     margin: 6px;
 }
 
+/* table */
 .db-table {
     min-width: 60em;
-}
-
-/* edit button column in table */
-.tbtn-col {
-    width: 8%;
-}
-
-/* delete button column in table */
-.trem-col {
-    width: 4%;
-}
-
-/* name column in table */
-.tname-col {
-    width: 30%;
 }
 
 .db-table tr, td, th {
     text-align: left;
     border: 1px solid black;
     padding: 10px;
-}
-
-.tbtn-col button {
-    text-align: center;
-}
-
-.input-group {
-    padding: 4px;
 }
 
 /* css grid */
@@ -46,13 +24,15 @@ h4 {
     align-self: center;
     text-align: center;
 }
-.g-table {
-    grid-area: data;
+
+.g-footer {
+    grid-area: footer;
     justify-self: center;
     align-self: center;
 }
-.g-footer {
-    grid-area: footer;
+
+.g-table {
+    grid-area: data;
     justify-self: center;
     align-self: center;
 }
