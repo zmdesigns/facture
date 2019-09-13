@@ -8,7 +8,7 @@
         'list_all' - returns json array of all products with relevant date/descriptions
         'new' - creates a product in database, returns success or error info
         'edit' - edits an existing product in the database, returns success or error info
-        'delete' - deletes database entry for product
+        'delete' - deletes product from database
 */
 
 require_once 'database.php';
