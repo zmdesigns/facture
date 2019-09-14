@@ -38,22 +38,7 @@
 
 <script type='text/javascript'>
 	$(document).ready(function() {
-        data = fetch('include/product.php', {
-            method: 'POST',
-            body: JSON.stringify({'task': 'list_all'})
-        }).then(response => response.json()) // parses JSON response into native Javascript objects
-        .then(function(data) {
-            var row = 1; //starts at 1 because header row is 0
-            data.forEach(function(el) {
-                $('.db-table tbody').append('<tr><td>'+el['name']+
-                                  '</td><td>'+el['description']+
-                                  '</td><td><button id="'+row+'" class="edit-btn edit" type="button">Edit</button>'+
-                                  '</td><td><input type="checkbox" class="rm-box" value="'+row+'"></td></tr>');
-                row += 1;
-            });
-        }).catch(function(error) {
-            console.log('There has been a problem with your fetch operation: ', error.message);
-        });
+        reload_table_data();
     });
 
     $('#new-row-btn').click(function() {
@@ -166,9 +151,9 @@
 
     function new_product(name, description) {
         var args = {'task': 'new',
-                         'prod_name': name,
-                         'description': description
-                        };
+                    'prod_name': name,
+                    'description': description
+                    };
         
         return api_call(args);
     }
@@ -184,6 +169,28 @@
             return false;
         });
         return true;
+    }
+
+    function reload_table_data() {
+        //clear table body rows if any
+        $('.db-table tbody').html('');
+
+        data = fetch('include/product.php', {
+            method: 'POST',
+            body: JSON.stringify({'task': 'list_all'})
+        }).then(response => response.json()) // parses JSON response into native Javascript objects
+        .then(function(data) {
+            var row = 1; //starts at 1 because header row is 0
+            data.forEach(function(el) {
+                $('.db-table tbody').append('<tr><td>'+el['name']+
+                                  '</td><td>'+el['description']+
+                                  '</td><td><button id="'+row+'" class="edit-btn edit" type="button">Edit</button>'+
+                                  '</td><td><input type="checkbox" class="rm-box" value="'+row+'"></td></tr>');
+                row += 1;
+            });
+        }).catch(function(error) {
+            console.log('There has been a problem with your fetch operation: ', error.message);
+        });
     }
 
 </script>

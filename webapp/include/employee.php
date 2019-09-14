@@ -19,8 +19,15 @@ $result = null;
 
 $post_data = json_decode( file_get_contents( 'php://input' ), true );
 
-if (!empty($post_data['task'])) {
-	$task = sanitize_input($post_data['task']);
+$args = [];
+foreach ($post_data as $key => $value) {
+    $skey = sanitize_input($key);
+    $svalue = sanitize_input($value);
+    $args[$skey] = $svalue;
+}
+
+if (!empty($args['task'])) {
+	$task = $args['task'];
 }
 
 switch($task) {
@@ -28,13 +35,13 @@ switch($task) {
         $result = json_encode(get_employees());
         break;
     case 'new':
-        
+        $result = new_employee($args['name'], $args['login'], $args['notes']);
         break;
     case 'edit':
-        
+        $result = edit_employee($args['old_name'], $args['new_name'], $args['login'], $args['notes']);
         break;
     case 'delete':
-        
+        $result = delete_employee($args['name']);
         break;
 }
 
@@ -72,6 +79,40 @@ function new_employee($name, $login, $notes) {
     try {
         $query = $pdo->exec('INSERT INTO Employees(name,login,notes) VALUES ("'.$name.'","'.$login.'","'.$notes.'")');
     } catch (PDOException $e) { 
+        return $e->getMessage();
+    }
+    if ($pdo->errorCode() == '00') {
+        return 'success!';
+    }
+    else {
+        return $pdo->errorCode();
+    }
+}
+
+function edit_employee($name, $new_name, $login, $notes) {
+    $pdo = db_connect();
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    try {
+        $query = $pdo->exec('UPDATE Employees SET name="'.$new_name.'", login="'.$login.'", notes="'.$notes.'" WHERE name="'.$name.'"');
+    } catch (PDOException $e) { 
+        return $e->getMessage();
+    }
+    if ($pdo->errorCode() == '00') {
+        return 'success!';
+    }
+    else {
+        return $pdo->errorCode();
+    }
+}
+
+function delete_employee($name) {
+    $pdo = db_connect();
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    try {
+        $query = $pdo->exec('DELETE FROM Employees WHERE name="'.$name.'"');
+    } catch(PDOException $e) {
         return $e->getMessage();
     }
     if ($pdo->errorCode() == '00') {
