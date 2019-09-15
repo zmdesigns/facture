@@ -73,7 +73,7 @@
             'notes': $('#new-notes-text').val()
         };
 
-        api_call(args)
+        api_call(args);
         //reset text boxes
         $('#new-name-text').text('');
         $('#new-login-text').text('');
