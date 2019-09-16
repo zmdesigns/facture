@@ -1,13 +1,4 @@
 <?php
-/* NOTE TO SELF:
-    logs are entered into database as one action per row instead of start/stop columns in single row. 
-
-    updating the log should be as quick as possible. 
-    start/stop time in the same row would require lookup everytime as part of entry, idealy the workstation would get confirmation of entry into db,
-    so the less work (ie waiting) the better
-    The lookup work should be on the report generation side where time is less critical
-*/
-
 /*
 This file expects json post data. Once decoded it checks 'task' index for what to do.
 The related function is then called and the result is echoed for the page that posted the task.
@@ -74,6 +65,24 @@ function new_log($employee_id, $workstation_id, $job_id, $action) {
     $pdo = db_connect();
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+    //get the most recent entry for job+workstation
+    try {
+        $sel_query = 'SELECT action FROM Logs WHERE job_id="'.$job_id.'" AND workstation_id="'.$workstation_id.'" ORDER BY id DESC LIMIT 1';
+        $result = $pdo->query($sel_query);
+    } catch (PDOException $e) {
+        return $e->getMessage();
+    }
+    
+    //last_action = last entered action for workstation+job match, null if it doesn't exist
+    $row = $result->fetch(PDO::FETCH_ASSOC);
+    $last_action = $row['action'] ?? null;
+
+    //if action to be entered is the same as the last action, this is not a valid entry - abort
+    if ($last_action == $action) {
+        return 'fail: duplicate action';
+    }
+
+    //insert log entry into db
     try {
         $query = $pdo->exec('INSERT INTO Logs(employee_id,workstation_id,job_id,action) VALUES ("'.$employee_id.'","'.$workstation_id.'","'.$job_id.'","'.$action.'")');
     } catch (PDOException $e) { 
