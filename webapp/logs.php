@@ -9,7 +9,21 @@
     </div>
 
     <div class='g-table'>
-        <button type="button" id="new-log-btn">New log</button>
+        <div class="edit-links">
+            <a class="modal-link" href="#openNewLogModal">New Log Entry</a>
+            <div id="openNewLogModal" class="modal-dialog">
+                <div>
+                    <a href="#close" title="Close" class="close">X</a>
+                    <h2 class="modal-header">New Log Entry</h2>
+                    <div class="input-group"><label for="new-log-emp">Employee Id</label><input type="text" id="new-log-emp"  size="2"></div>
+                    <div class="input-group"><label for="new-log-wrkstn">Workstation Id</label><input type="text" id="new-log-wrkstn" size="2"></div>
+                    <div class="input-group"><label for="new-log-job">Job Id</label><input type="text" id="new-log-job" size="2"></div>
+                    <div class="input-group"><label for="new-log-action">Action</label><input type="text" id="new-log-action" size="2"></div>
+                    
+                    <button type="button" id="new-log-btn">Submit</button>
+                </div>
+            </div>
+        </div>
         <table class='db-table'>
             <col class="id-col">
 	        <col class="date-col">
@@ -49,10 +63,10 @@
     $('#new-log-btn').click(function() {
         var args = {
             'task': 'new',
-            'employee_id': '1',
-            'workstation_id': '1',
-            'job_id': '1',
-            'action': '1'
+            'employee_id': $('#new-log-emp').val(),
+            'workstation_id': $('#new-log-wrkstn').val(),
+            'job_id': $('#new-log-job').val(),
+            'action': $('#new-log-action').val()
         };
 
         api_call(args);

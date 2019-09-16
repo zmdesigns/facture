@@ -8,7 +8,7 @@
         <h1>Employees</h1>
     </div>
     <div class='g-table'>
-        <div class="emp-edit">
+        <div class="edit-links">
             <a class="modal-link" href="#openNewEmpModal">New Employee</a>
             <div id="openNewEmpModal" class="modal-dialog">
                 <div>

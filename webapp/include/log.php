@@ -82,6 +82,11 @@ function new_log($employee_id, $workstation_id, $job_id, $action) {
         return 'fail: duplicate action';
     }
 
+    //if no entry for job+workstation yet and action for new entry is STOP, this is not a valid entry - abort
+    if ($last_action == null && $action == 2) {
+        return 'fail: trying to stop a job that has not been started at workstation';
+    }
+
     //insert log entry into db
     try {
         $query = $pdo->exec('INSERT INTO Logs(employee_id,workstation_id,job_id,action) VALUES ("'.$employee_id.'","'.$workstation_id.'","'.$job_id.'","'.$action.'")');
