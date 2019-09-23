@@ -1,12 +1,11 @@
-/*
-  POST a request to write a log entry into database
-*/
-
-
+#include "arduino_secrets.h"
 #include <SPI.h>
 #include <WiFi101.h>
 #include <Arduino_JSON.h>
-#include "arduino_secrets.h" 
+
+#undef max
+#undef min
+
 #include "workstation.h"
 
 char ssid[] = SECRET_SSID;        
@@ -14,12 +13,7 @@ char pass[] = SECRET_PASS;
 int keyIndex = 0;   //only for WEP
 
 int status = WL_IDLE_STATUS;
-//web server where app is running
-char server[] = "jtrkr.zackmdesigns.com";
-//json formatted string that contains data to be entered into database
-const char* json_data = "{\"task\":\"new\",\"employee_id\":\"8\",\"workstation_id\":\"8\",\"job_id\":\"8\",\"action\":\"1\"}";
-//content length in header requires the size
-size_t json_len = strlen(json_data);
+
 WiFiClient client;
 
 void setup() {
@@ -50,22 +44,14 @@ void setup() {
 
   Serial.println("\nStarting connection to server...");
 
-    Workstation wrkstn = new Workstation(1, "jtrkr.zackmdesigns.com");
-    wrkstn->clock_in(66,66);
-/*
-  if (client.connect(server, 80)) {
-    Serial.println("connected to server");
-    // POST Request
-    client.println("POST /include/log.php HTTP/1.1");
-    client.println("Host: jtrkr.zackmdesigns.com");
-    client.println("Content-Type: application/json");
-    client.print("Content-Length: ");
-    client.println(json_len);
-    client.println("Connection: close");
-    client.println();
-    client.println(json_data);
-  }
-  */
+    Workstation* wrkstn = new Workstation(1, "jtrkr.zackmdesigns.com");
+    if (wrkstn->clock_in(66,66)) {
+      Serial.println("\nWorkstation clocked successfully.");
+    }
+    else {
+      Serial.println("\nWorkstation failed to clock.");
+    }
+
 }
 
 void loop() {
