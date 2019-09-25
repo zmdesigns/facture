@@ -2,7 +2,7 @@
 #include <SPI.h>
 #include <WiFi101.h>
 #include <Arduino_JSON.h>
-
+/* Arduino defines max and min which collides with std. let's ignore arduino's def */
 #undef max
 #undef min
 
@@ -11,9 +11,9 @@
 char ssid[] = SECRET_SSID;        
 char pass[] = SECRET_PASS;    
 int keyIndex = 0;   //only for WEP
-
+bool stopped = false; //for loop to know if client has been stopped
 int status = WL_IDLE_STATUS;
-
+Workstation* wrkstn; 
 WiFiClient client;
 
 void setup() {
@@ -30,28 +30,21 @@ void setup() {
         while (true);
     }
 
-  // attempt to connect to WiFi network
-  while (status != WL_CONNECTED) {
-    Serial.print("Attempting to connect to SSID: ");
-    Serial.println(ssid);
-    status = WiFi.begin(ssid, pass);
+    // attempt to connect to WiFi network
+    while (status != WL_CONNECTED) {
+        Serial.print("Attempting to connect to SSID: ");
+        Serial.println(ssid);
+        status = WiFi.begin(ssid, pass);
 
-    // wait 10 seconds for connection
-    delay(10000);
-  }
-  Serial.println("Connected to wifi");
-  printWiFiStatus();
-
-  Serial.println("\nStarting connection to server...");
-
-    Workstation* wrkstn = new Workstation(1, "jtrkr.zackmdesigns.com");
-    if (wrkstn->clock_in(66,66)) {
-      Serial.println("\nWorkstation clocked successfully.");
+        // wait 10 seconds for connection
+        delay(10000);
     }
-    else {
-      Serial.println("\nWorkstation failed to clock.");
-    }
+    Serial.println("Connected to wifi");
+    printWiFiStatus();
 
+    Serial.println("\nStarting connection to server...");
+
+    wrkstn = new Workstation(1, "jtrkr.zackmdesigns.com");
 }
 
 void loop() {
@@ -62,14 +55,47 @@ void loop() {
         Serial.write(c);
     }
 
-  // if the server's disconnected, stop the client
-  if (!client.connected()) {
-    Serial.println();
-    Serial.println("disconnecting from server.");
-    client.stop();
+    //if there is input from the serial read it
+    handle_serial_input(recv_serial_input());
 
-    while (true);
-  }
+    // if the server's disconnected, stop the client
+    if (!client.connected() && !stopped) {
+        Serial.println();
+        Serial.println("disconnecting from server.");
+        client.stop();
+        stopped = true;
+    }
+}
+
+char recv_serial_input() {
+    if (Serial.available() > 0) {
+        // read the incoming byte:
+        char rcvd_char = Serial.read();
+
+        return rcvd_char;
+    }
+    return '0';
+}
+
+void handle_serial_input(char rcvd_char) {
+    if (rcvd_char != '0'  && rcvd_char != '\n') {
+        Serial.print("I received: '");
+        Serial.print(rcvd_char);
+        Serial.println("'");
+
+        if (rcvd_char == '1') {
+            Serial.println("Clocking in..");
+            wrkstn->clock_action(66,66,1);
+        }
+        else if(rcvd_char == '2') {
+            Serial.println('Clocking out..');
+            wrkstn->clock_action(66,66,2);
+        }
+        else if (rcvd_char == '3') {
+            Serial.println('Checking last clock action..');
+            wrkstn->last_clock_action(66,66);
+        }
+    }
 }
 
 

@@ -3,10 +3,9 @@
 class Workstation {
 public:
     Workstation(int workstation_id, std::string server_address);
-    bool clock_in(int employee_id, int job_id);
-    bool clock_out();
+    bool clock_action(int employee_id, int job_id, int action);
+    int last_clock_action(int employee_id, int job_id);
 private:
-    std::string json_string(int action);
     int p_id = 0;
     //the currently logged in employee, null otherwise
     int p_employee_id = 0;
