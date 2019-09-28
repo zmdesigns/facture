@@ -13,65 +13,53 @@ char pass[] = SECRET_PASS;
 int keyIndex = 0;   //only for WEP
 bool stopped = false; //for loop to know if client has been stopped
 int status = WL_IDLE_STATUS;
-Workstation* wrkstn; 
-WiFiClient client;
+Workstation* wrkstn;
+JTServer* server;
 
 void setup() {
     //Initialize serial and wait for port to open
     Serial.begin(9600);
     while (!Serial) {
-        ; // wait for serial port to connect. Needed for native USB port only
+        ; //wait for serial port to connect. Needed for native USB port only
     }
 
     // check for the presence of the shield
     if (WiFi.status() == WL_NO_SHIELD) {
         Serial.println("WiFi shield not present");
-        // don't continue
+        //don't continue
         while (true);
     }
 
-    // attempt to connect to WiFi network
+    //attempt to connect to WiFi network
     while (status != WL_CONNECTED) {
         Serial.print("Attempting to connect to SSID: ");
         Serial.println(ssid);
         status = WiFi.begin(ssid, pass);
 
-        // wait 10 seconds for connection
+        //wait 10 seconds for connection
         delay(10000);
     }
     Serial.println("Connected to wifi");
     printWiFiStatus();
 
-    Serial.println("\nStarting connection to server...");
+    Serial.println("\n 1: Clock in \n 2: Clock out \n 3: Check last clock action");
 
     wrkstn = new Workstation(1, "jtrkr.zackmdesigns.com");
+    
 }
 
 void loop() {
-    // if there are incoming bytes available
-    // from the server, read them and print them
-    while (client.available()) {
-        char c = client.read();
-        Serial.write(c);
-    }
-
     //if there is input from the serial read it
     handle_serial_input(recv_serial_input());
 
-    // if the server's disconnected, stop the client
-    if (!client.connected() && !stopped) {
-        Serial.println();
-        Serial.println("disconnecting from server.");
-        client.stop();
-        stopped = true;
-    }
+    //handle response from server
+    wrkstn->recv_data();
 }
 
 char recv_serial_input() {
     if (Serial.available() > 0) {
-        // read the incoming byte:
-        char rcvd_char = Serial.read();
 
+        char rcvd_char = Serial.read();
         return rcvd_char;
     }
     return '0';
@@ -88,11 +76,11 @@ void handle_serial_input(char rcvd_char) {
             wrkstn->clock_action(66,66,1);
         }
         else if(rcvd_char == '2') {
-            Serial.println('Clocking out..');
+            Serial.println("Clocking out..");
             wrkstn->clock_action(66,66,2);
         }
         else if (rcvd_char == '3') {
-            Serial.println('Checking last clock action..');
+            Serial.println("Checking last clock action..");
             wrkstn->last_clock_action(66,66);
         }
     }

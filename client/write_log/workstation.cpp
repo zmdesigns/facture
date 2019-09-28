@@ -1,11 +1,7 @@
-
 #include "workstation.h";
-#include "server.h";
 
-Workstation::Workstation(int workstation_id, std::string server_address) {
-    
-    p_id = workstation_id;
-    p_server_address = server_address;
+Workstation::Workstation(int workstation_id, std::string server_address) : p_id(workstation_id) {
+    server = new JTServer(server_address);
 }
 
 bool Workstation::clock_action(int employee_id, int job_id, int action) {
@@ -25,10 +21,10 @@ bool Workstation::clock_action(int employee_id, int job_id, int action) {
     p_employee_id = employee_id;
 
     /* create the json string */
-    std::string json_str = JTServer::json_req_string(p_employee_id,p_id,p_job_id,action);
+    std::string json_str = server->json_req_string("new", p_employee_id,p_id,p_job_id,action);
 
     /* Connect to server and send POST request */
-    if (JTServer::make_request(p_server_address,"log.php",json_str)) {
+    if (server->make_request("log.php",json_str)) {
         return true;
     }
     else {
@@ -39,6 +35,13 @@ bool Workstation::clock_action(int employee_id, int job_id, int action) {
 //searches database for last clock action from employee/job
 //use 0 for either variable for wildcard of that var in search
 int Workstation::last_clock_action(int employee_id, int job_id) {
-    std::string json_str = JTServer::json_req_string(p_employee_id,p_id,p_job_id,3);
-    JTServer::make_request(p_server_address,"log.php",json_str);
+    std::string json_str = server->json_req_string("last_log", employee_id,p_id,job_id,3);
+    server->make_request("log.php",json_str);
+}
+
+
+void Workstation::recv_data() {
+    std::string data = server->recv_data();
+
+    Serial.write(data.c_str());
 }
