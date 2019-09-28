@@ -16,15 +16,20 @@ NexButton bNum6 = NexButton(1, 7, "bNum6");
 NexButton bNum7 = NexButton(1, 8, "bNum7");
 NexButton bNum8 = NexButton(1, 9, "bNum8");
 NexButton bNum9 = NexButton(1, 10, "bNum9");
+NexButton bClear = NexButton(1, 12, "bClear");
 NexText tNumpad = NexText(1, 13, "tNumpad");
 
 
 std::string numpad_value = "";
-void update_numpad_text(char c) {
-    if (numpad_value.length() < 6) {
-        numpad_value += c;
-        tNumpad.setText(numpad_value.c_str());
+void update_numpad_text(char c,bool clear_text=false) {
+    if (clear_text) {
+        numpad_value = "";
     }
+    else if (numpad_value.length() < 6) {
+        numpad_value += c;
+    }
+
+    tNumpad.setText(numpad_value.c_str());
 }
 
 //component callbacks
@@ -39,6 +44,7 @@ void bNum6PopCallback(void *ptr) { update_numpad_text('6'); }
 void bNum7PopCallback(void *ptr) { update_numpad_text('7'); }
 void bNum8PopCallback(void *ptr) { update_numpad_text('8'); }
 void bNum9PopCallback(void *ptr) { update_numpad_text('9'); }
+void bClearPopCallback(void *ptr) { update_numpad_text('0',true); }
 
 
 void attach_callbacks() {
@@ -55,6 +61,7 @@ void attach_callbacks() {
     bNum7.attachPop(bNum7PopCallback, &bNum7);
     bNum8.attachPop(bNum8PopCallback, &bNum8);
     bNum9.attachPop(bNum9PopCallback, &bNum9);
+    bClear.attachPop(bClearPopCallback, &bClear);
 
 }
 
@@ -69,4 +76,5 @@ NexTouch *nex_listen_list[] = {&bClockIn,
                                &bNum7,
                                &bNum8,
                                &bNum9,
+                               &bClear,
                                NULL };
