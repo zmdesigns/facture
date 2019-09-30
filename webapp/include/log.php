@@ -1,52 +1,7 @@
 <?php
-/*
-This file expects json post data. Once decoded it checks 'task' index for what to do.
-The related function is then called and the result is echoed for the page that posted the task.
-If the function requires additional information, it will look for it in an array at the 'data' index.
-
-Valid 'task' values:
-    'list_all' - returns json array of all log entries...
-    'new' - creates a log entry in database, returns success or error info
-*/
-
-/* ACTIONS
-    1 = START
-    2 = STOP
-    3 = LAST ACTION
-*/
 
 require_once 'database.php';
 require_once 'helpers.php';
-
-$task = null;
-$result = null;
-
-$post_data = json_decode( file_get_contents( 'php://input' ), true );
-
-$args = [];
-foreach ($post_data as $key => $value) {
-    $skey = sanitize_input($key);
-    $svalue = sanitize_input($value);
-    $args[$skey] = $svalue;
-}
-
-if (!empty($args['task'])) {
-    $task = $args['task'];
-}
-
-switch($task) {
-    case 'list_all':
-        $result = json_encode(get_logs());
-        break;
-    case 'new':
-        $result = new_log($args['employee_id'], $args['workstation_id'], $args['job_id'], $args['action']);
-        break;
-    case 'last_log':
-        $result = json_encode(last_log($args['employee_id'], $args['workstation_id'], $args['job_id']));
-        break;
-}
-
-echo $result;
 
 function get_logs() {
     $pdo = db_connect();
@@ -67,7 +22,16 @@ function get_logs() {
 
 //return log details for last entry that matches employee, workstation, job or any combination of
 //argument is passed as null if it is not to be considered
-function last_log($employee_id, $workstation_id, $job_id) {
+function last_log($args) {
+    //Verify all arguments passed and not null
+    if (!isset($args['employee_id'],$args['workstation_id'],$args['job_id'])) {
+        return 'error: incorrect or null arguments passed to new_product function.';
+    }
+
+    $employee_id = $args['employee_id'];
+    $workstation_id = $args['workstation_id'];
+    $job_id = $args['job_id'];
+
     $pdo = db_connect();
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -109,7 +73,17 @@ function last_log($employee_id, $workstation_id, $job_id) {
 
 }
 
-function new_log($employee_id, $workstation_id, $job_id, $action) {
+function new_log($args) {
+    //Verify all arguments passed and not null
+    if (!isset($args['employee_id'],$args['workstation_id'],$args['job_id'],$args['action'])) {
+        return 'error: incorrect or null arguments passed to new_product function.';
+    }
+
+    $employee_id = $args['employee_id'];
+    $workstation_id = $args['workstation'];
+    $job_id = $args['job_id'];
+    $action = $args['action'];
+
     $pdo = db_connect();
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 

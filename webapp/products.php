@@ -131,7 +131,7 @@
 
     function delete_product(row) {
         var name = $('.db-table tr:eq('+row+') td:eq(0)').text();
-        var args = {'task': 'delete',
+        var args = {'task': 23,
                     'name': name
                    };
 
@@ -140,7 +140,7 @@
 
 
     function edit_product(old_name, new_name, description) {
-        var args = {'task': 'edit',
+        var args = {'task': 22,
                     'name': old_name,
                     'new_name': new_name,
                     'description': description
@@ -150,8 +150,8 @@
     }
 
     function new_product(name, description) {
-        var args = {'task': 'new',
-                    'prod_name': name,
+        var args = {'task': 21,
+                    'name': name,
                     'description': description
                     };
         
@@ -159,7 +159,7 @@
     }
 
     function api_call(args) {
-        data = fetch('include/product.php', {
+        data = fetch('include/api.php', {
             method: 'POST',
             body: JSON.stringify(args)
         }).then(function(data) {
@@ -175,9 +175,9 @@
         //clear table body rows if any
         $('.db-table tbody').html('');
 
-        data = fetch('include/product.php', {
+        data = fetch('include/api.php', {
             method: 'POST',
-            body: JSON.stringify({'task': 'list_all'})
+            body: JSON.stringify({'task': 20})
         }).then(response => response.json()) // parses JSON response into native Javascript objects
         .then(function(data) {
             var row = 1; //starts at 1 because header row is 0

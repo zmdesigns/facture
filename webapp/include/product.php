@@ -1,50 +1,7 @@
 <?php
-/*
-    This file expects json post data. Once decoded it checks 'task' index for what to do.
-    The related function is then called and the result is echoed for the page that posted the task.
-    If the function requires additional information, it will look for it in an array at the 'data' index.
-
-    Valid 'task' values:
-        'list_all' - returns json array of all products with relevant date/descriptions
-        'new' - creates a product in database, returns success or error info
-        'edit' - edits an existing product in the database, returns success or error info
-        'delete' - deletes product from database
-*/
 
 require_once 'database.php';
 require_once 'helpers.php';
-
-$task = null;
-$result = null;
-
-$post_data = json_decode( file_get_contents( 'php://input' ), true );
-
-if (!empty($post_data['task'])) {
-	$task = sanitize_input($post_data['task']);
-}
-
-switch($task) {
-    case 'list_all':
-        $result = json_encode(get_products());
-        break;
-    case 'new':
-        $name = sanitize_input($post_data['prod_name']);
-        $description = sanitize_input($post_data['description']);
-        $result = new_product($name, $description);
-        break;
-    case 'edit':
-        $name = sanitize_input($post_data['name']);
-        $new_name = sanitize_input($post_data['new_name']);
-        $description = sanitize_input($post_data['description']);
-        $result = edit_product($name, $new_name, $description);
-        break;
-    case 'delete':
-        $name = sanitize_input($post_data['name']);
-        $result = delete_product($name);
-        break;
-}
-
-echo $result;
 
 /*
     Return an array of products from database
@@ -69,7 +26,14 @@ function get_products() {
     name - name of product to create
     description - description of product
 */
-function new_product($name, $description) {
+function new_product($args) {
+    //Verify all arguments passed and not null
+    if (!isset($args['name'],$args['description'])) {
+        return 'error: incorrect or null arguments passed to new_product function.';
+    }
+    $name = $args['name'];
+    $description = $args['description'];
+
     $pdo = db_connect();
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -86,7 +50,15 @@ function new_product($name, $description) {
     }
 }
 
-function edit_product($name, $new_name, $description) {
+function edit_product($args) {
+    //Verify all arguments passed and not null
+    if (!isset($args['name'],$args['new_name'],$args['description'])) {
+        return 'error: incorrect or null arguments passed to edit_product function.';
+    }
+    $name = $args['name'];
+    $new_name = $args['new_name'];
+    $description = $args['description'];
+
     $pdo = db_connect();
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -103,7 +75,13 @@ function edit_product($name, $new_name, $description) {
     }
 }
 
-function delete_product($name) {
+function delete_product($args) {
+    //Verify all arguments passed and not null
+    if (!isset($args['name'])) {
+        return 'error: incorrect or null arguments passed to new_employee function.';
+    }
+    $name = $args['name'];
+
     $pdo = db_connect();
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 

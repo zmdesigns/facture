@@ -62,7 +62,7 @@
 
     $('#new-log-btn').click(function() {
         var args = {
-            'task': 'new',
+            'task': 11,
             'employee_id': $('#new-log-emp').val(),
             'workstation_id': $('#new-log-wrkstn').val(),
             'job_id': $('#new-log-job').val(),
@@ -77,9 +77,9 @@
         $('.db-table tbody').html('');
 
         //load new content from database and fill table rows
-        data = fetch('include/log.php', {
+        data = fetch('include/api.php', {
             method: 'POST',
-            body: JSON.stringify({'task': 'list_all'})
+            body: JSON.stringify({'task': 10})
         }).then(response => response.json()) // parses JSON response into native Javascript objects
         .then(function(data) {
             data.forEach(function(el) {
@@ -96,7 +96,7 @@
     }
 
     function api_call(args) {
-        data = fetch('include/log.php', {
+        data = fetch('include/api.php', {
             method: 'POST',
             body: JSON.stringify(args)
         }).then(function(data) {

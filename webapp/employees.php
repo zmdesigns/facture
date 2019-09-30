@@ -67,7 +67,7 @@
 
     $('#new-emp-btn').click(function() {
         var args = {
-            'task': 'new',
+            'task': 2,
             'name': $('#new-name-text').val(),
             'login': $('#new-login-text').val(),
             'notes': $('#new-notes-text').val()
@@ -85,9 +85,9 @@
 
     $('#edit-emp-btn').click(function() {
         var args = {
-            'task': 'edit',
+            'task': 3,
             'new_name': $('#edit-name-text').val(),
-            'old_name': $('#openEditEmpModal .modal-header').text(),
+            'name': $('#openEditEmpModal .modal-header').text(),
             'login': $('#edit-login-text').val(),
             'notes': $('#edit-notes-text').val()
         };
@@ -103,7 +103,7 @@
     });
 
     $('#del-emp-btn').click(function() {
-        var args = {'task': 'delete',
+        var args = {'task': 4,
                     'name': $('#openEditEmpModal .modal-header').text()
                    };
 
@@ -123,7 +123,7 @@
     });
 
     function api_call(args) {
-        data = fetch('include/employee.php', {
+        data = fetch('include/api.php', {
             method: 'POST',
             body: JSON.stringify(args)
         }).then(function(data) {
@@ -138,9 +138,9 @@
         $('.db-table tbody').html('');
 
         //load new content from database and fill table rows
-        data = fetch('include/employee.php', {
+        data = fetch('include/api.php', {
             method: 'POST',
-            body: JSON.stringify({'task': 'list_all'})
+            body: JSON.stringify({'task': 1})
         }).then(response => response.json()) // parses JSON response into native Javascript objects
         .then(function(data) {
             data.forEach(function(el) {
