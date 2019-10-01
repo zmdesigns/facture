@@ -25,6 +25,11 @@
             22   Edit            name,new_name,description       string
             23   Delete          name                            string
 
+        Jobs
+            30   List all        N/A                             JSON         Returns all columns as associative array
+            31   New             customer_id,product_id,         string
+                                 qty,notes
+
 */
 
 require_once 'database.php';
@@ -33,6 +38,7 @@ require_once 'helpers.php';
 require_once 'employee.php';
 require_once 'log.php';
 require_once 'product.php';
+require_once 'job.php';
 
 
 $task = null;
@@ -87,6 +93,13 @@ switch($task) {
         break;
     case 23:
         $result = delete_product($args);
+        break;
+    /* Job Tasks */
+    case 30:
+        $result = json_encode(get_jobs());
+        break;
+    case 31:
+        $result = new_job($args);
         break;
 }
 

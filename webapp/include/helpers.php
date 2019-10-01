@@ -9,4 +9,9 @@ function sanitize_input($input)
 	return $input;
 }
 
+function format_date($timestamp_str) {
+    $d = date('m-d-Y', strtotime($timestamp_str));
+    return $d;
+}
+
 ?>
