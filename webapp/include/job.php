@@ -66,4 +66,56 @@ function new_job($args) {
     }
 }
 
+function edit_job($args) {
+    //Verify all arguments passed and not null
+    if (!isset($args['id'],$args['customer_id'],$args['product_id'],$args['qty'],$args['notes'])) {
+        return 'error: incorrect or null arguments passed to edit_job function.';
+    }
+
+    $id = $args['id'];
+    $customer_id = $args['customer_id'];
+    $product_id = $args['product_id'];
+    $qty = $args['qty'];
+    $notes = $args['notes'];
+
+    $pdo = db_connect();
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    try {
+        $query = $pdo->exec('UPDATE Jobs SET customer_id="'.$cust_id.'", product_id="'.$product_id.'", qty="'.$qty.'", notes="'.$notes.'" WHERE id="'.$id.'"');
+    } catch (PDOException $e) { 
+        return $e->getMessage();
+    }
+    if ($pdo->errorCode() == '00') {
+        return 'success!';
+    }
+    else {
+        return $pdo->errorCode();
+    }
+}
+
+function delete_job($args) {
+    //Verify all arguments passed and not null
+    if (!isset($args['id'])) {
+        return 'error: incorrect or null arguments passed to delete_job function.';
+    }
+
+    $id = $args['id'];
+
+    $pdo = db_connect();
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    try {
+        $query = $pdo->exec('DELETE FROM Jobs WHERE id="'.$id.'"');
+    } catch(PDOException $e) {
+        return $e->getMessage();
+    }
+    if ($pdo->errorCode() == '00') {
+        return 'success!';
+    }
+    else {
+        return $pdo->errorCode();
+    }
+}
+
 ?>

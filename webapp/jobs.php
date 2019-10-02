@@ -1,4 +1,5 @@
 <?php include "include/header.php"; ?>
+<link rel="stylesheet" href="css/jobs.css">
 </head>
 <body>
 <div class='container'>
@@ -22,8 +23,22 @@
                     <button type="button" id="new-job-btn">Submit</button>
                 </div>
             </div>
+            <div id="openEditEmpModal" class="modal-dialog">
+                <div>
+                    <a href="#close" title="Close" class="close">X</a>
+                    <h2 class="modal-header"></h2>
+                    <div class="input-group"><label for="edit-cust_id-text">Customer Id</label><input type="text" id="edit-cust_id-text"  size="2"></div>
+                    <div class="input-group"><label for="edit-prod_id-text">Product Id</label><input type="text" id="edit-prod_id-text" size="2"></div>
+                    <div class="input-group"><label for="edit-qty-text">Qty</label><input type="text" id="edit-qty-text" size="2"></div>
+                    <div class="input-group"><label for="edit-notes-text">Notes</label><textarea id="edit-notes-text" rows="3" columns="7"></textarea></div>
+                    
+                    <button type="button" id="edit-job-btn">Submit</button>
+                    <button type="button" id="del-job-btn">Delete Job</button>
+                </div>
+            </div>
         </div>
         <table class='db-table'>
+            <col class="tid-col">
             <col class="tadd-col">
             <col class="tstart-col">
             <col class="tfinish-col">
@@ -33,6 +48,7 @@
             <col class="tnotes-col">
             <thead>
                 <tr>
+                    <th>Job Id</th>
                     <th>Date Added</th>
                     <th>Date Started</th>
                     <th>Date Finished</th>
@@ -79,6 +95,49 @@
         reload_table_data();
     });
 
+    $(document).on('click', '.db-table tr', function() {
+        window.location = '#openEditEmpModal';
+        //set header to current name of employee
+        $('#openEditEmpModal .modal-header').text($(this).find('td:eq(0)').text());
+        //fill input with data for employee that was clicked on
+        $('#edit-cust_id-text').val($(this).find('td:eq(4)').text());
+        $('#edit-prod_id-text').val($(this).find('td:eq(5)').text());
+        $('#edit-qty-text').val($(this).find('td:eq(6)').text());
+        $('#edit-notes-text').val($(this).find('td:eq(7)').text());
+    });
+
+    $('#edit-job-btn').click(function() {
+        var args = {
+            'task': 32,
+            'id': $('#openEditEmpModal .modal-header').text(),
+            'customer_id': $('#edit-cust_id-text').val(),
+            'product_id': $('#edit-prod_id-text').val(),
+            'qty': $('#edit-qty-text').val(),
+            'notes': $('#edit-notes-text').val()
+        };
+
+        api_call(args);
+        //reset text boxes
+        $('#openEditEmpModal .modal-header').text('');
+        $('#edit-cust_id-text').text('');
+        $('#edit-prod_id-text').text('');
+        $('#edit-qty-text').text('');
+        $('#edit-notes-text').text('');
+        //close modal
+        window.location = '#close';
+        reload_table_data();
+    });
+
+    $('#del-job-btn').click(function() {
+        var args = {'task': 33,
+                    'id': $('#openEditEmpModal .modal-header').text()
+                   };
+
+        api_call(args);
+        window.location = '#close';
+        reload_table_data();
+    });
+
     function reload_table_data() {
         //clear table body rows if any
         $('.db-table tbody').html('');
@@ -90,7 +149,8 @@
         }).then(response => response.json()) // parses JSON response into native Javascript objects
         .then(function(data) {
             data.forEach(function(el) {
-                $('.db-table tbody').append('<tr><td>'+el['date_added']+
+                $('.db-table tbody').append('<tr><td>'+el['id']+
+                                            '</td><td>'+el['date_added']+
                                             '</td><td>'+el['date_started']+
                                             '</td><td>'+el['date_finished']+
                                             '</td><td>'+el['customer_id']+

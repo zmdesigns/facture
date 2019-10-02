@@ -29,6 +29,9 @@
             30   List all        N/A                             JSON         Returns all columns as associative array
             31   New             customer_id,product_id,         string
                                  qty,notes
+            32   Edit            customer_id,product_id,         string
+                                 qty,notes
+            33   Delete          job_id                          string
 
 */
 
@@ -100,6 +103,12 @@ switch($task) {
         break;
     case 31:
         $result = new_job($args);
+        break;
+    case 32:
+        $result = edit_job($args);
+        break;
+    case 33:
+        $result = delete_job($args);
         break;
 }
 
