@@ -15,6 +15,7 @@
                 <div>
                     <a href="#close" title="Close" class="close">X</a>
                     <h2 class="modal-header">New Job</h2>
+                    <div class="input-group"><label for="new-job_id-text">Job Id</label><input type="text" id="new-job_id-text"  size="2"></div>
                     <div class="input-group"><label for="new-cust_id-text">Customer Id</label><input type="text" id="new-cust_id-text"  size="2"></div>
                     <div class="input-group"><label for="new-prod_id-text">Product Id</label><input type="text" id="new-prod_id-text" size="2"></div>
                     <div class="input-group"><label for="new-qty-text">Qty</label><input type="text" id="new-qty-text" size="2"></div>
@@ -27,6 +28,7 @@
                 <div>
                     <a href="#close" title="Close" class="close">X</a>
                     <h2 class="modal-header"></h2>
+                    <div class="input-group"><label for="edit-job_id-text">Job Id</label><input type="text" id="edit-job_id-text"  size="2"></div>
                     <div class="input-group"><label for="edit-cust_id-text">Customer Id</label><input type="text" id="edit-cust_id-text"  size="2"></div>
                     <div class="input-group"><label for="edit-prod_id-text">Product Id</label><input type="text" id="edit-prod_id-text" size="2"></div>
                     <div class="input-group"><label for="edit-qty-text">Qty</label><input type="text" id="edit-qty-text" size="2"></div>
@@ -39,6 +41,7 @@
         </div>
         <table class='db-table'>
             <col class="tid-col">
+            <col class="tjobid-col">
             <col class="tadd-col">
             <col class="tstart-col">
             <col class="tfinish-col">
@@ -48,8 +51,9 @@
             <col class="tnotes-col">
             <thead>
                 <tr>
+                    <th>Id</th>
                     <th>Job Id</th>
-                    <th>Date Added</th>
+                    <th>Date Entered</th>
                     <th>Date Started</th>
                     <th>Date Finished</th>
                     <th>Customer</th>
@@ -78,6 +82,7 @@
     $('#new-job-btn').click(function() {
         var args = {
             'task': 31,
+            'job_id': $('#new-job_id-text').val(),
             'customer_id': $('#new-cust_id-text').val(),
             'product_id': $('#new-prod_id-text').val(),
             'qty': $('#new-qty-text').val(),
@@ -86,6 +91,7 @@
 
         api_call(args);
         //reset text boxes
+        $('#new-job_id-text').text('');
         $('#new-cust_id-text').text('');
         $('#new-prod_id-text').text('');
         $('#new-qty-text').text('');
@@ -100,16 +106,18 @@
         //set header to current name of employee
         $('#openEditEmpModal .modal-header').text($(this).find('td:eq(0)').text());
         //fill input with data for employee that was clicked on
-        $('#edit-cust_id-text').val($(this).find('td:eq(4)').text());
-        $('#edit-prod_id-text').val($(this).find('td:eq(5)').text());
-        $('#edit-qty-text').val($(this).find('td:eq(6)').text());
-        $('#edit-notes-text').val($(this).find('td:eq(7)').text());
+        $('#edit-job_id-text').val($(this).find('td:eq(1)').text());
+        $('#edit-cust_id-text').val($(this).find('td:eq(5)').text());
+        $('#edit-prod_id-text').val($(this).find('td:eq(6)').text());
+        $('#edit-qty-text').val($(this).find('td:eq(7)').text());
+        $('#edit-notes-text').val($(this).find('td:eq(8)').text());
     });
 
     $('#edit-job-btn').click(function() {
         var args = {
             'task': 32,
             'id': $('#openEditEmpModal .modal-header').text(),
+            'job_id': $('#edit-job_id-text').val(),
             'customer_id': $('#edit-cust_id-text').val(),
             'product_id': $('#edit-prod_id-text').val(),
             'qty': $('#edit-qty-text').val(),
@@ -119,6 +127,7 @@
         api_call(args);
         //reset text boxes
         $('#openEditEmpModal .modal-header').text('');
+        $('#edit-job_id-text').text('');
         $('#edit-cust_id-text').text('');
         $('#edit-prod_id-text').text('');
         $('#edit-qty-text').text('');
@@ -150,6 +159,7 @@
         .then(function(data) {
             data.forEach(function(el) {
                 $('.db-table tbody').append('<tr><td>'+el['id']+
+                                            '</td><td>'+el['job_id']+
                                             '</td><td>'+el['date_added']+
                                             '</td><td>'+el['date_started']+
                                             '</td><td>'+el['date_finished']+

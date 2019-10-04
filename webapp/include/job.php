@@ -13,6 +13,7 @@ function get_jobs() {
     $sql = 'SELECT * FROM Jobs ORDER BY id';
     foreach ($pdo->query($sql) as $row) {
 
+        //format column dates/null representation
         if ($row['date_started'] == null)  {
             $row['date_started']  = '-';
         }
@@ -25,7 +26,9 @@ function get_jobs() {
         else {
             $row['date_finished'] = format_date($row['date_finished']);
         }
+
         $row['date_added'] = format_date($row['date_added']);
+
         $jobs[] = $row;
     }
     return $jobs;
@@ -34,6 +37,7 @@ function get_jobs() {
 /*
     Add a new job to database
     
+    job_id      - id of job 
     customer_id - id of customer
     product_id  - id of product
     qty         - qty of product
@@ -41,10 +45,11 @@ function get_jobs() {
 */
 function new_job($args) {
     //Verify all arguments passed and not null
-    if (!isset($args['customer_id'],$args['product_id'],$args['qty'],$args['notes'])) {
+    if (!isset($args['job_id'],$args['customer_id'],$args['product_id'],$args['qty'],$args['notes'])) {
         return 'error: incorrect or null arguments passed to new_job function.';
     }
 
+    $job_id = $args['job_id'];
     $customer_id = $args['customer_id'];
     $product_id = $args['product_id'];
     $qty = $args['qty'];
@@ -54,7 +59,7 @@ function new_job($args) {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     try {
-        $query = $pdo->exec('INSERT INTO Jobs(customer_id,product_id,qty,notes) VALUES ("'.$customer_id.'","'.$product_id.'","'.$qty.'","'.$notes.'")');
+        $query = $pdo->exec('INSERT INTO Jobs(job_id,customer_id,product_id,qty,notes) VALUES ("'.$job_id.'", "'.$customer_id.'","'.$product_id.'","'.$qty.'","'.$notes.'")');
     } catch (PDOException $e) { 
         return $e->getMessage();
     }
@@ -68,11 +73,12 @@ function new_job($args) {
 
 function edit_job($args) {
     //Verify all arguments passed and not null
-    if (!isset($args['id'],$args['customer_id'],$args['product_id'],$args['qty'],$args['notes'])) {
+    if (!isset($args['id'],$args['job_id'],$args['customer_id'],$args['product_id'],$args['qty'],$args['notes'])) {
         return 'error: incorrect or null arguments passed to edit_job function.';
     }
 
     $id = $args['id'];
+    $job_id = $args['job_id'];
     $customer_id = $args['customer_id'];
     $product_id = $args['product_id'];
     $qty = $args['qty'];
@@ -82,7 +88,7 @@ function edit_job($args) {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     try {
-        $query = $pdo->exec('UPDATE Jobs SET customer_id="'.$cust_id.'", product_id="'.$product_id.'", qty="'.$qty.'", notes="'.$notes.'" WHERE id="'.$id.'"');
+        $query = $pdo->exec('UPDATE Jobs SET job_id="'.$job_id.'", customer_id="'.$customer_id.'", product_id="'.$product_id.'", qty="'.$qty.'", notes="'.$notes.'" WHERE id="'.$id.'"');
     } catch (PDOException $e) { 
         return $e->getMessage();
     }
