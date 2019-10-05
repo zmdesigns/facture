@@ -8,19 +8,41 @@
         <h1>Products</h1>
     </div>
     <div class='g-table'>
-        <button id='new-row-btn' type='button'>New Product</button>
-        <button id='rm-row-btn' type='button'>Delete Product</button>
+        <div class="edit-links">
+            <a class="modal-link" href="#openNewProductModal">New Product</a>
+            <div id="openNewProductModal" class="modal-dialog">
+                <div>
+                    <a href="#close" title="Close" class="close">X</a>
+                    <h2 class="modal-header">New Product</h2>
+                    <div class="input-group"><label for="new-product_id-text">Product Id</label><input type="text" id="new-product_id-text"  size="2"></div>
+                    <div class="input-group"><label for="new-name-text">Product Name</label><input type="text" id="new-name-text" size="5"></div>
+                    <div class="input-group"><label for="new-description-text">Description</label><textarea id="new-description-text" rows="3" columns="7"></textarea></div>
+                    
+                    <button type="button" id="new-product-btn">Submit</button>
+                </div>
+            </div>
+            <div id="openEditProductModal" class="modal-dialog">
+                <div>
+                    <a href="#close" title="Close" class="close">X</a>
+                    <h2 class="modal-header"></h2>
+                    <div class="input-group"><label for="edit-product_id-text">Product Id</label><input type="text" id="edit-product_id-text"  size="2"></div>
+                    <div class="input-group"><label for="edit-name-text">Product Name</label><input type="text" id="edit-name-text" size="5"></div>
+                    <div class="input-group"><label for="edit-description-text">Description</label><textarea id="edit-description-text" rows="3" columns="7"></textarea></div>
+                    
+                    <button type="button" id="edit-product-btn">Submit</button>
+                    <button type="button" id="del-product-btn">Delete Product</button>
+                </div>
+            </div>
+        </div>
         <table class='db-table'>
+            <col class="tprod_id-col">
             <col class="tname-col">
 	        <col class="tdescrip-col">
-            <col class="tbtn-col">
-            <col class="trem-col">
             <thead>
                 <tr>
-                    <th>Product name</th>
+                    <th>Product Id</th>
+                    <th>Product Name</th>
                     <th>Description</th>
-                    <th></th>
-                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -41,122 +63,63 @@
         reload_table_data();
     });
 
-    $('#new-row-btn').click(function() {
-        var row_count = $('.db-table tr').length; //not+1 for the new row because it is zero indexed. used to identify input fields
-        $('.db-table tbody').append('<tr><td><input id="name-input-'+row_count+'" type="text"></td>'+
-                                     '<td><input id="description-input-'+row_count+'" type="text"></td>'+
-                                     '<td><button id="'+row_count+'" class="save-btn new">Create</button></td></tr>');
+    $('#new-product-btn').click(function() {
+        var args = {
+            'task': 21,
+            'product_id': $('#new-product_id-text').val(),
+            'name': $('#new-name-text').val(),
+            'description': $('#new-description-text').val()
+        };
+
+        api_call(args);
+        //reset text boxes
+        $('#new-product_id-text').text('');
+        $('#new-name-text').text('');
+        $('#new-description-text').text('');
+        //close modal
+        window.location = '#close';
+        reload_table_data();
     });
 
-    $(document).on('click', '.edit-btn', function() { 
-        //get data about the row
-        var row = $(this).attr('id');
-        var name_col = $('.db-table tr:eq('+row+') td:eq(0)');
-        var description_col = $('.db-table tr:eq('+row+') td:eq(1)');
-        var name = name_col.text();
-        var description = description_col.text();
-        
-        //replace text with input fields
-        name_col.html('<input id="name-input-'+row+'" type="text">');
-        description_col.html('<input id="description-input-'+row+'" type="text">');
-        //save old name in order to identify db entry if name is edited
-        name_col.append('<p id="old-name-'+row+'" hidden>'+name+'</p>');
-
-        //fill input fields with text data
-        $('#name-input-'+row).val(name);
-        $('#description-input-'+row).val(description);
-
-        //adjust button so changes can be saved once pressed
-        $(this).text('Save');
-        $(this).addClass('save-btn');
-        $(this).removeClass('edit-btn');
+    $(document).on('click', '.db-table tr', function() {
+        window.location = '#openEditProductModal';
+        //set header to product_id
+        $('#openEditProductModal .modal-header').text($(this).find('td:eq(0)').text());
+        //fill input with data for employee that was clicked on
+        $('#edit-product_id-text').val($(this).find('td:eq(0)').text());
+        $('#edit-name-text').val($(this).find('td:eq(1)').text());
+        $('#edit-description-text').val($(this).find('td:eq(2)').text());
     });
 
-    //for buttons that intend to make changes to database
-    //ie-new product button, save button after clicking edit
-    $(document).on('click', '.save-btn', function() {
-        //get data about the row
-        var row = $(this).attr('id');
-        var name = $('#name-input-'+row).val();
-        var description = $('#description-input-'+row).val();
-        var name_col = $('.db-table tr:eq('+row+') td:eq(0)');
-        var description_col = $('.db-table tr:eq('+row+') td:eq(1)');
+    $('#edit-product-btn').click(function() {
+        var args = {
+            'task': 22,
+            'product_id': $('#openEditProductModal .modal-header').text(),
+            'new_product_id': $('#edit-product_id-text').val(),
+            'name': $('#edit-name-text').val(),
+            'description': $('#edit-description-text').val()
+        };
 
-        //do some special work if it is edit vs new button
-        if ($(this).hasClass('edit')) {
-            var old_name = $('#old-name-'+row).text();
-
-            if (!edit_product(old_name, name, description)) {
-                return false;
-            }
-        }
-        else if ($(this).hasClass('new')) {
-            if (new_product(name, description)) {      
-                $(this).removeClass('new');
-            }
-            else {
-                return false;
-            }
-        }
-        else {
-            console.log('unrecognized button class');
-            return false;
-        }
-
-        //replace inputs with text
-        name_col.html($('#name-input-'+row).val());
-        description_col.html($('#description-input-'+row).val());
-        //adjust button to pre-edit state
-        $(this).addClass('edit-btn');
-        $(this).removeClass('save-btn');
-        $(this).text('Edit');
+        api_call(args);
+        //reset text boxes
+        $('#openEditProductModal .modal-header').text('');
+        $('#edit-product_id-text').text('');
+        $('#edit-name-text').text('');
+        $('#edit-description-text').text('');
+        //close modal
+        window.location = '#close';
+        reload_table_data();
     });
 
-    $(document).on('change', '.rm-box', function() {
-        var row_obj = $('.db-table tr:eq('+this.value+')');
-        if (this.checked) {
-            row_obj.css('background-color','green');
-        }
-        else {
-            row_obj.css('background-color','initial');
-        }
-    });
-
-    $('#rm-row-btn').click(function() {
-        $('.rm-box:checked').each(function(i,el) {
-            var row = el.value;
-            delete_product(row);
-        });
-    });
-
-    function delete_product(row) {
-        var name = $('.db-table tr:eq('+row+') td:eq(0)').text();
+    $('#del-product-btn').click(function() {
         var args = {'task': 23,
-                    'name': name
+                    'product_id': $('#openEditProductModal .modal-header').text()
                    };
 
-        return api_call(args);
-    }
-
-
-    function edit_product(old_name, new_name, description) {
-        var args = {'task': 22,
-                    'name': old_name,
-                    'new_name': new_name,
-                    'description': description
-                    };
-
-        return api_call(args);
-    }
-
-    function new_product(name, description) {
-        var args = {'task': 21,
-                    'name': name,
-                    'description': description
-                    };
-        
-        return api_call(args);
-    }
+        api_call(args);
+        window.location = '#close';
+        reload_table_data();
+    });
 
     function api_call(args) {
         data = fetch('include/api.php', {
@@ -182,10 +145,9 @@
         .then(function(data) {
             var row = 1; //starts at 1 because header row is 0
             data.forEach(function(el) {
-                $('.db-table tbody').append('<tr><td>'+el['name']+
-                                  '</td><td>'+el['description']+
-                                  '</td><td><button id="'+row+'" class="edit-btn edit" type="button">Edit</button>'+
-                                  '</td><td><input type="checkbox" class="rm-box" value="'+row+'"></td></tr>');
+                $('.db-table tbody').append('<tr><td>'+el['product_id']+
+                                  '</td><td>'+el['name']+
+                                  '</td><td>'+el['description']+'</td></tr>');
                 row += 1;
             });
         }).catch(function(error) {

@@ -21,9 +21,10 @@
         
         Products
             20   List all        N/A                             JSON        Returns all columns as associative array
-            21   New             name,description                string
-            22   Edit            name,new_name,description       string
-            23   Delete          name                            string
+            21   New             product_id,name,description     string
+            22   Edit            product_id,new_product_id,      string
+                                 name,description
+            23   Delete          product_id                      string
 
         Jobs
             30   List all        N/A                             JSON         Returns all columns as associative array

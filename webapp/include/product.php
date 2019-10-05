@@ -12,10 +12,7 @@ function get_products() {
     $products = [];
     $sql = 'SELECT * FROM Products ORDER BY id';
     foreach ($pdo->query($sql) as $row) {
-        $products[] = ['id' => $row['id'],
-        'name'          => $row['name'],
-        'description'   => $row['description'],
-        'date'          => $row['date_added']];
+        $products[] = $row;
     }
     return $products;
 }
@@ -28,9 +25,10 @@ function get_products() {
 */
 function new_product($args) {
     //Verify all arguments passed and not null
-    if (!isset($args['name'],$args['description'])) {
+    if (!isset($args['product_id'],$args['name'],$args['description'])) {
         return 'error: incorrect or null arguments passed to new_product function.';
     }
+    $product_id = $args['product_id'];
     $name = $args['name'];
     $description = $args['description'];
 
@@ -38,7 +36,7 @@ function new_product($args) {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     try {
-        $query = $pdo->exec('INSERT INTO Products(name,description) VALUES ("'.$name.'","'.$description.'")');
+        $query = $pdo->exec('INSERT INTO Products(product_id,name,description) VALUES ("'.$product_id.'","'.$name.'","'.$description.'")');
     } catch (PDOException $e) { 
         return $e->getMessage();
     }
@@ -52,18 +50,19 @@ function new_product($args) {
 
 function edit_product($args) {
     //Verify all arguments passed and not null
-    if (!isset($args['name'],$args['new_name'],$args['description'])) {
+    if (!isset($args['product_id'],$args['new_product_id'],$args['name'],$args['description'])) {
         return 'error: incorrect or null arguments passed to edit_product function.';
     }
+    $product_id = $args['product_id'];
+    $new_product_id = $args['new_product_id'];
     $name = $args['name'];
-    $new_name = $args['new_name'];
     $description = $args['description'];
 
     $pdo = db_connect();
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     try {
-        $query = $pdo->exec('UPDATE Products SET name="'.$new_name.'", description="'.$description.'" WHERE name="'.$name.'"');
+        $query = $pdo->exec('UPDATE Products SET product_id="'.$new_product_id.'", name="'.$name.'", description="'.$description.'" WHERE product_id="'.$product_id.'"');
     } catch (PDOException $e) { 
         return $e->getMessage();
     }
@@ -77,16 +76,16 @@ function edit_product($args) {
 
 function delete_product($args) {
     //Verify all arguments passed and not null
-    if (!isset($args['name'])) {
-        return 'error: incorrect or null arguments passed to new_employee function.';
+    if (!isset($args['product_id'])) {
+        return 'error: incorrect or null arguments passed to delete_product function.';
     }
-    $name = $args['name'];
+    $product_id = $args['product_id'];
 
     $pdo = db_connect();
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     try {
-        $query = $pdo->exec('DELETE FROM Products WHERE name="'.$name.'"');
+        $query = $pdo->exec('DELETE FROM Products WHERE product_id="'.$product_id.'"');
     } catch(PDOException $e) {
         return $e->getMessage();
     }
