@@ -101,6 +101,7 @@
         reload_table_data();
     });
 
+//todo: customer_id, product_id fields are displayed as names now, editing should be changed to process names instead of ids
     $(document).on('click', '.db-table tr', function() {
         window.location = '#openEditEmpModal';
         //set header to current name of employee

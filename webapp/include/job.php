@@ -2,7 +2,6 @@
 
 require_once 'database.php';
 require_once 'helpers.php';
-require_once 'general.php';
 
 /*
     Return an array of employees from database
@@ -57,23 +56,10 @@ function new_job($args) {
     $qty = $args['qty'];
     $notes = $args['notes'];
 
-    //verify the customer and product ids exist in database
-    $customer = lookup(array('table'=>'Customers','column'=>'customer_id','search'=>$customer_id));
-    $product = lookup(array('table'=>'Products','column'=>'product_id','search'=>$product_id));
+    if (!exist('Customers','customer_id',$customer_id) ||
+        !exist('Products','product_id',$product_id)) {
 
-    //if customer or product is not an array, error message is stored in returned value
-    
-    if (!is_array($customer)) {
-        return $customer;
-    }
-    if (!is_array($product)) {
-        return $product;
-    }
-    if (empty($customer)) {
-        return 'failed. Customer does not exist in database.';
-    }
-    if (empty($product)) { 
-        return 'failed. Product does not exist in database.';
+        return 'Failed. Customer or product does not exist.';
     }
     
 
@@ -93,6 +79,7 @@ function new_job($args) {
     }
 }
 
+
 function edit_job($args) {
     //Verify all arguments passed and not null
     if (!isset($args['id'],$args['job_id'],$args['customer_id'],$args['product_id'],$args['qty'],$args['notes'])) {
@@ -105,6 +92,12 @@ function edit_job($args) {
     $product_id = $args['product_id'];
     $qty = $args['qty'];
     $notes = $args['notes'];
+
+    if (!exist('Customers','customer_id',$customer_id) ||
+        !exist('Products','product_id',$product_id)) {
+
+        return 'Failed. Customer or product does not exist.';
+    }
 
     $pdo = db_connect();
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

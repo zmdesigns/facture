@@ -33,6 +33,8 @@
             32   Edit            id,job_id,customer_id,          string
                                  product_id,qty,notes
             33   Delete          job_id                          string
+        General
+            90   Lookup          table,column,search             JSON        Returns all matching rows where column data = search in table
 
 */
 
@@ -111,7 +113,7 @@ switch($task) {
     case 33:
         $result = delete_job($args);
         break;
-    /* Generic Tasks - Works on all tables */
+    /* General Tasks - Works on all tables */
     case 90:
         $result = json_encode(lookup($args));
         break;

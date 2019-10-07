@@ -1,7 +1,6 @@
 <?php
 
 require_once 'database.php';
-require_once 'helpers.php';
 
 function lookup($args) {
     //Verify all arguments passed and not null
