@@ -111,6 +111,10 @@ switch($task) {
     case 33:
         $result = delete_job($args);
         break;
+    /* Generic Tasks - Works on all tables */
+    case 90:
+        $result = json_encode(lookup($args));
+        break;
 }
 
 echo $result;

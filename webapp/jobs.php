@@ -163,8 +163,8 @@
                                             '</td><td>'+el['date_added']+
                                             '</td><td>'+el['date_started']+
                                             '</td><td>'+el['date_finished']+
-                                            '</td><td>'+el['customer_id']+
-                                            '</td><td>'+el['product_id']+
+                                            '</td><td>'+el['customer_name']+
+                                            '</td><td>'+el['product_name']+
                                             '</td><td>'+el['qty']+
                                             '</td><td>'+el['notes']+'</td></tr>');
             });

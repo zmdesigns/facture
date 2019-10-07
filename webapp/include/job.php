@@ -2,6 +2,7 @@
 
 require_once 'database.php';
 require_once 'helpers.php';
+require_once 'general.php';
 
 /*
     Return an array of employees from database
@@ -10,7 +11,8 @@ function get_jobs() {
     $pdo = db_connect();
     
     $jobs = [];
-    $sql = 'SELECT * FROM Jobs ORDER BY id';
+   // $sql = 'SELECT * FROM Jobs ORDER BY id';
+    $sql = 'SELECT Jobs.*,Products.name product_name,Customers.name customer_name FROM Jobs INNER JOIN Products ON Jobs.product_id = Products.product_id INNER JOIN Customers ON Jobs.customer_id = Customers.id';
     foreach ($pdo->query($sql) as $row) {
 
         //format column dates/null representation
@@ -54,6 +56,26 @@ function new_job($args) {
     $product_id = $args['product_id'];
     $qty = $args['qty'];
     $notes = $args['notes'];
+
+    //verify the customer and product ids exist in database
+    $customer = lookup(array('table'=>'Customers','column'=>'customer_id','search'=>$customer_id));
+    $product = lookup(array('table'=>'Products','column'=>'product_id','search'=>$product_id));
+
+    //if customer or product is not an array, error message is stored in returned value
+    
+    if (!is_array($customer)) {
+        return $customer;
+    }
+    if (!is_array($product)) {
+        return $product;
+    }
+    if (empty($customer)) {
+        return 'failed. Customer does not exist in database.';
+    }
+    if (empty($product)) { 
+        return 'failed. Product does not exist in database.';
+    }
+    
 
     $pdo = db_connect();
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
