@@ -28,10 +28,10 @@
 
         Jobs
             30   List all        N/A                             JSON         Returns all columns as associative array
-            31   New             job_id,customer_id,             string
-                                 product_id,qty,notes            
-            32   Edit            id,job_id,customer_id,          string
-                                 product_id,qty,notes
+            31   New             job_id,customer_name,           string
+                                 product_name,qty,notes            
+            32   Edit            id,job_id,customer_name,        string
+                                 product_name,qty,notes
             33   Delete          job_id                          string
         Customer
             40   List all        N/A                             JSON       Returns all columns as associative array

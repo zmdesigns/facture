@@ -16,8 +16,10 @@
                     <a href="#close" title="Close" class="close">X</a>
                     <h2 class="modal-header">New Job</h2>
                     <div class="input-group"><label for="new-job_id-text">Job Id</label><input type="text" id="new-job_id-text"  size="2"></div>
-                    <div class="input-group"><label for="new-cust_id-text">Customer Id</label><input type="text" id="new-cust_id-text"  size="2"></div>
-                    <div class="input-group"><label for="new-prod_id-text">Product Id</label><input type="text" id="new-prod_id-text" size="2"></div>
+                    <div class="input-group"><label for="new-cust_id-text">Customer</label><input type="text" id="new-cust_id-text"  size="10" list="customers"></div>
+                    <datalist id="customers"></datalist> 
+                    <div class="input-group"><label for="new-prod_id-text">Product</label><input type="text" id="new-prod_id-text" size="10" list="products"></div>
+                    <datalist id="products"></datalist> 
                     <div class="input-group"><label for="new-qty-text">Qty</label><input type="text" id="new-qty-text" size="2"></div>
                     <div class="input-group"><label for="new-notes-text">Notes</label><textarea id="new-notes-text" rows="3" columns="7"></textarea></div>
                     
@@ -29,8 +31,8 @@
                     <a href="#close" title="Close" class="close">X</a>
                     <h2 class="modal-header"></h2>
                     <div class="input-group"><label for="edit-job_id-text">Job Id</label><input type="text" id="edit-job_id-text"  size="2"></div>
-                    <div class="input-group"><label for="edit-cust_id-text">Customer Id</label><input type="text" id="edit-cust_id-text"  size="2"></div>
-                    <div class="input-group"><label for="edit-prod_id-text">Product Id</label><input type="text" id="edit-prod_id-text" size="2"></div>
+                    <div class="input-group"><label for="edit-cust_id-text">Customer</label><input type="text" id="edit-cust_id-text"  size="10" list="customers"></div>
+                    <div class="input-group"><label for="edit-prod_id-text">Product</label><input type="text" id="edit-prod_id-text" size="10" list="products"></div>
                     <div class="input-group"><label for="edit-qty-text">Qty</label><input type="text" id="edit-qty-text" size="2"></div>
                     <div class="input-group"><label for="edit-notes-text">Notes</label><textarea id="edit-notes-text" rows="3" columns="7"></textarea></div>
                     
@@ -77,14 +79,16 @@
 <script type='text/javascript'>
 	$(document).ready(function() {
         reload_table_data();
+        fill_datalist('#customers',40,'name');
+        fill_datalist('#products',20,'name');
     });
 
     $('#new-job-btn').click(function() {
         var args = {
             'task': 31,
             'job_id': $('#new-job_id-text').val(),
-            'customer_id': $('#new-cust_id-text').val(),
-            'product_id': $('#new-prod_id-text').val(),
+            'customer_name': $('#new-cust_id-text').val(),
+            'product_name': $('#new-prod_id-text').val(),
             'qty': $('#new-qty-text').val(),
             'notes': $('#new-notes-text').val()
         };
@@ -101,7 +105,6 @@
         reload_table_data();
     });
 
-//todo: customer_id, product_id fields are displayed as names now, editing should be changed to process names instead of ids
     $(document).on('click', '.db-table tr', function() {
         window.location = '#openEditEmpModal';
         //set header to current name of employee
@@ -119,8 +122,8 @@
             'task': 32,
             'id': $('#openEditEmpModal .modal-header').text(),
             'job_id': $('#edit-job_id-text').val(),
-            'customer_id': $('#edit-cust_id-text').val(),
-            'product_id': $('#edit-prod_id-text').val(),
+            'customer_name': $('#edit-cust_id-text').val(),
+            'product_name': $('#edit-prod_id-text').val(),
             'qty': $('#edit-qty-text').val(),
             'notes': $('#edit-notes-text').val()
         };
@@ -138,6 +141,7 @@
         reload_table_data();
     });
 
+
     $('#del-job-btn').click(function() {
         var args = {'task': 33,
                     'id': $('#openEditEmpModal .modal-header').text()
@@ -147,6 +151,20 @@
         window.location = '#close';
         reload_table_data();
     });
+
+    function fill_datalist(datalist_id, api_task, db_column) {
+        data = fetch('include/api.php', {
+            method: 'POST',
+            body: JSON.stringify({'task': api_task})
+        }).then(response => response.json()) // parses JSON response into native Javascript objects
+        .then(function(data) {
+            data.forEach(function(el) {
+                $(datalist_id).append('<option value="'+el[db_column]+'">'+el[db_column]+'</option');
+            });
+        }).catch(function(error) {
+            console.log('There has been a problem with your fetch operation: ', error.message);
+        });
+    }
 
     function reload_table_data() {
         //clear table body rows if any
@@ -168,6 +186,7 @@
                                             '</td><td>'+el['product_name']+
                                             '</td><td>'+el['qty']+
                                             '</td><td>'+el['notes']+'</td></tr>');
+                
             });
         }).catch(function(error) {
             console.log('There has been a problem with your fetch operation: ', error.message);
