@@ -93,6 +93,16 @@ h4 {
     padding: 10px;
 }
 
+.db-table thead tr {
+    background-color: #fefefe;
+}
+
+.db-table tbody tr:hover {
+    background-color: #606061;
+    color: #fff;
+    cursor: pointer;
+}
+
 /* css grid */
 .g-header {
     grid-area: header;

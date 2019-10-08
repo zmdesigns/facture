@@ -33,6 +33,12 @@
             32   Edit            id,job_id,customer_id,          string
                                  product_id,qty,notes
             33   Delete          job_id                          string
+        Customer
+            40   List all        N/A                             JSON       Returns all columns as associative array
+            41   New             customer_id,name,notes          string
+            42   Edit            customer_id,new_name,           string
+                                 name,notes
+            43   Delete          name                            string
         General
             90   Lookup          table,column,search             JSON        Returns all matching rows where column data = search in table
 
@@ -45,6 +51,7 @@ require_once 'employee.php';
 require_once 'log.php';
 require_once 'product.php';
 require_once 'job.php';
+require_once 'customer.php';
 
 
 $task = null;
@@ -112,6 +119,19 @@ switch($task) {
         break;
     case 33:
         $result = delete_job($args);
+        break;
+    /* Customer Tasks */
+    case 40:
+        $result = json_encode(get_customers());
+        break;
+    case 41:
+        $result = new_customer($args);
+        break;
+    case 42:
+        $result = edit_customer($args);
+        break;
+    case 43:
+        $result = delete_customer($args);
         break;
     /* General Tasks - Works on all tables */
     case 90:
