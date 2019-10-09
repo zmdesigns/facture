@@ -102,7 +102,6 @@
         $('#new-notes-text').text('');
         //close modal
         window.location = '#close';
-        reload_table_data();
     });
 
     $(document).on('click', '.db-table tr', function() {
@@ -138,7 +137,6 @@
         $('#edit-notes-text').text('');
         //close modal
         window.location = '#close';
-        reload_table_data();
     });
 
 
@@ -146,10 +144,8 @@
         var args = {'task': 33,
                     'id': $('#openEditEmpModal .modal-header').text()
                    };
-
         api_call(args);
         window.location = '#close';
-        reload_table_data();
     });
 
     function fill_datalist(datalist_id, api_task, db_column) {
@@ -199,6 +195,7 @@
             body: JSON.stringify(args)
         }).then(function(data) {
             console.log(data); //todo: if page returns an error, let the user know
+            reload_table_data();
         }).catch(function(error) {
             console.log('There has been a problem with your fetch operation: ', error.message);
         });
