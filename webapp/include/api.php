@@ -33,14 +33,15 @@
             32   Edit            id,job_id,customer_name,        string
                                  product_name,qty,notes
             33   Delete          job_id                          string
+            34   List sorted     N/A                             JSON        Returns array of arrays of jobs, indexed by job_id
         Customer
-            40   List all        N/A                             JSON       Returns all columns as associative array
+            40   List all        N/A                             JSON        Returns all columns as associative array
             41   New             customer_id,name,notes          string
             42   Edit            customer_id,new_name,           string
                                  name,notes
             43   Delete          name                            string
         General
-            90   Lookup          table,column,search             JSON        Returns all matching rows where column data = search in table
+            90   Lookup          table,column,search             JSON         Returns all matching rows where column data = search in table
 
 */
 
@@ -119,6 +120,9 @@ switch($task) {
         break;
     case 33:
         $result = delete_job($args);
+        break;
+    case 34:
+        $result = json_encode(get_sorted_jobs());
         break;
     /* Customer Tasks */
     case 40:

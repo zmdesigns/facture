@@ -42,29 +42,20 @@
             </div>
         </div>
         <table class='db-table'>
-            <col class="tid-col">
             <col class="tjobid-col">
-            <col class="tadd-col">
-            <col class="tstart-col">
-            <col class="tfinish-col">
             <col class="tcustomer-col">
             <col class="tproduct-col">
             <col class="tqty-col">
-            <col class="tnotes-col">
             <thead>
                 <tr>
-                    <th>Id</th>
                     <th>Job Id</th>
-                    <th>Date Entered</th>
-                    <th>Date Started</th>
-                    <th>Date Finished</th>
+                    <th>Status</th>
                     <th>Customer</th>
                     <th>Product</th>
                     <th>Qty</th>
-                    <th>Notes</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="tcontent">
             </tbody>
         </table>
     </div>
@@ -75,10 +66,11 @@
 </body>
 
 <script src='https://code.jquery.com/jquery-3.4.1.min.js'></script>
+<script src='js/helpers.js'></script>
 
 <script type='text/javascript'>
 	$(document).ready(function() {
-        reload_table_data();
+        reload_sorted_table();
         fill_datalist('#customers',40,'name');
         fill_datalist('#products',20,'name');
     });
@@ -104,7 +96,13 @@
         window.location = '#close';
     });
 
+    $(document).on('click', '.db-table .header', function() {
+        $(this).nextUntil('.header').toggle();
+    });
+
     $(document).on('click', '.db-table tr', function() {
+        
+        /*
         window.location = '#openEditEmpModal';
         //set header to current name of employee
         $('#openEditEmpModal .modal-header').text($(this).find('td:eq(0)').text());
@@ -114,12 +112,12 @@
         $('#edit-prod_id-text').val($(this).find('td:eq(6)').text());
         $('#edit-qty-text').val($(this).find('td:eq(7)').text());
         $('#edit-notes-text').val($(this).find('td:eq(8)').text());
+        */
     });
 
     $('#edit-job-btn').click(function() {
         var args = {
             'task': 32,
-            'id': $('#openEditEmpModal .modal-header').text(),
             'job_id': $('#edit-job_id-text').val(),
             'customer_name': $('#edit-cust_id-text').val(),
             'product_name': $('#edit-prod_id-text').val(),
@@ -162,6 +160,49 @@
         });
     }
 
+    function reload_sorted_table() {
+        data = fetch('include/api.php', {
+            method: 'POST',
+            body: JSON.stringify({'task': 34})
+        }).then(response => response.json()) // parses JSON response into native Javascript objects
+        .then(function(data) {
+            //iterate job_ids
+            for (var job_id in data) {
+
+                var job_array = data[job_id];
+
+                //add header for job_id to table
+                $('.tcontent').append('<tr class="header"><td>Job# '+job_array[0]['job_id']+
+                                      '</td><td class="h-status">'+
+                                      '</td><td class="h-customer">'+
+                                      '</td><td class="h-product">'+
+                                      '</td><td class="h-qty"></td></tr>');
+
+                //iterate jobs with job_id
+                for (var index in job_array) {
+                    var job = job_array[index];
+                    var status = get_job_status(job['date_started'],job['date_finished']);
+                    $('.tcontent').append('<tr class="child-row '+job['job_id']+'"><td>'+job['job_id']+'-'+index+
+                                            '</td><td>'+status+
+                                            '</td><td>'+job['customer_name']+
+                                            '</td><td>'+job['product_name']+
+                                            '</td><td>'+job['qty']+'</td></tr>');
+
+                    //update header row for job
+                    var $header = $('.header').last();
+                    //update customer column
+                    var $h_cust = $header.children('.h-customer')
+                    $h_cust.text($h_cust.text() + ',' + job['customer_name']);
+                    if ($h_cust.text().charAt(0) === ',') {
+                        $h_cust.text($h_cust.text().substr(1));
+                    }
+                }
+            }
+        }).catch(function(error) {
+            console.log('There has been a problem with your fetch operation: ', error.message);
+        });
+    }
+
     function reload_table_data() {
         //clear table body rows if any
         $('.db-table tbody').html('');
@@ -173,8 +214,7 @@
         }).then(response => response.json()) // parses JSON response into native Javascript objects
         .then(function(data) {
             data.forEach(function(el) {
-                $('.db-table tbody').append('<tr><td>'+el['id']+
-                                            '</td><td>'+el['job_id']+
+                $('.db-table tbody').append('<tr><td>'+el['job_id']+
                                             '</td><td>'+el['date_added']+
                                             '</td><td>'+el['date_started']+
                                             '</td><td>'+el['date_finished']+

@@ -10,8 +10,7 @@ function get_jobs() {
     $pdo = db_connect();
     
     $jobs = [];
-   // $sql = 'SELECT * FROM Jobs ORDER BY id';
-    $sql = 'SELECT Jobs.*,Products.name product_name,Customers.name customer_name FROM Jobs INNER JOIN Products ON Jobs.product_id = Products.product_id INNER JOIN Customers ON Jobs.customer_id = Customers.customer_id';
+    $sql = 'SELECT Jobs.*,Products.name product_name,Customers.name customer_name FROM Jobs INNER JOIN Products ON Jobs.product_id = Products.product_id INNER JOIN Customers ON Jobs.customer_id = Customers.customer_id ORDER BY Jobs.job_id';
     foreach ($pdo->query($sql) as $row) {
 
         //format column dates/null representation
@@ -35,15 +34,18 @@ function get_jobs() {
     return $jobs;
 }
 
-/*
-    Add a new job to database
+function get_sorted_jobs() {
+    $pdo = db_connect();
     
-    job_id      - id of job 
-    customer_id - id of customer
-    product_id  - id of product
-    qty         - qty of product
-    notes       - notes for job
-*/
+    $jobs= [];
+    $sql = 'SELECT Jobs.*,Products.name product_name,Customers.name customer_name FROM Jobs INNER JOIN Products ON Jobs.product_id = Products.product_id INNER JOIN Customers ON Jobs.customer_id = Customers.customer_id ORDER BY Jobs.job_id';
+    foreach ($pdo->query($sql) as $row) {
+        $jobs[$row['job_id']][] = $row;
+    }
+
+    return $ids;
+}
+
 function new_job($args) {
     //Verify all arguments passed and not null
     if (!isset($args['job_id'],$args['customer_name'],$args['product_name'],$args['qty'],$args['notes'])) {
