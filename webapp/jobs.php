@@ -173,10 +173,10 @@
 
                 //add header for job_id to table
                 $('.tcontent').append('<tr class="header"><td>Job# '+job_array[0]['job_id']+
-                                      '</td><td class="h-status">'+
+                                      '</td><td class="h-status">0%'+
                                       '</td><td class="h-customer">'+
                                       '</td><td class="h-product">'+
-                                      '</td><td class="h-qty"></td></tr>');
+                                      '</td><td class="h-qty">0</td></tr>');
 
                 //iterate jobs with job_id
                 for (var index in job_array) {
@@ -190,12 +190,33 @@
 
                     //update header row for job
                     var $header = $('.header').last();
+                    //update status column1
+                    var $h_stat = $header.children('.h-status');
+                    var size = job_array.length;
+                    if (status == 'Finished') {
+                        var perc_i = $h_stat.text().indexOf('%');
+                        if (perc_i !== -1) {
+                            $h_stat.text($h_stat.text().substring(0,perc_i));
+                            $h_stat.text(parseInt($h_stat.text()) + (100 / size));
+                            $h_stat.text($h_stat.text() + '%');
+                        }
+                    }
+                    
                     //update customer column
-                    var $h_cust = $header.children('.h-customer')
+                    var $h_cust = $header.children('.h-customer');
                     $h_cust.text($h_cust.text() + ',' + job['customer_name']);
                     if ($h_cust.text().charAt(0) === ',') {
-                        $h_cust.text($h_cust.text().substr(1));
+                        $h_cust.text($h_cust.text().substring(1));
                     }
+                    //update product column
+                    var $h_prod = $header.children('.h-product');
+                    $h_prod.text($h_prod.text() + ',' + job['product_name']);
+                    if ($h_prod.text().charAt(0) === ',') {
+                        $h_prod.text($h_prod.text().substring(1));
+                    }
+                    //update qty column
+                    var $h_qty = $header.children('.h-qty');
+                    $h_qty.text(parseInt($h_qty.text()) + parseInt(job['qty']));
                 }
             }
         }).catch(function(error) {
