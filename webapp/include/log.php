@@ -25,7 +25,7 @@ function get_logs() {
 function last_log($args) {
     //Verify all arguments passed and not null
     if (!isset($args['employee_id'],$args['workstation_id'],$args['job_id'])) {
-        return 'error: incorrect or null arguments passed to new_product function.';
+        return 'error: incorrect or null arguments passed to last_log function.';
     }
 
     $employee_id = $args['employee_id'];
@@ -80,7 +80,7 @@ function new_log($args) {
     }
 
     $employee_id = $args['employee_id'];
-    $workstation_id = $args['workstation'];
+    $workstation_id = $args['workstation_id'];
     $job_id = $args['job_id'];
     $action = $args['action'];
 
@@ -121,6 +121,86 @@ function new_log($args) {
     else {
         return $pdo->errorCode();
     }
+}
+
+function hours_worked($args) {
+    //Verify all arguments passed
+    if (!isset($args['employee_id'],$args['workstation_id'],$args['job_id'])) {
+        return 'error: incorrect or null arguments passed to hours_worked function.';
+    }
+
+    $employee_id = $args['employee_id'];
+    $workstation_id = $args['workstation_id'];
+    $job_id = $args['job_id'];
+
+    //populate sql array with any non-empty arguments
+    $sql = [];
+    if ($employee_id) {
+        $sql[] = "employee_id = '$employee_id' ";
+    }
+    if ($workstation_id) {
+        $sql[] = "workstation_id = '$workstation_id' ";
+    }
+    if ($job_id) {
+        $sql[] = "job_id = '$job_id' ";
+    }
+    //build query string
+    $sel_query = "SELECT * FROM Logs";
+    if (!empty($sql)) {
+        $sel_query .= " WHERE " . implode(" AND ", $sql);
+        $sel_query .= " ORDER BY id";
+    }
+    else {
+        return 'error: no arguments for hours_worked function';
+    }
+
+    $pdo = db_connect();
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    try {
+        $result = $pdo->query($sel_query);
+    } catch (PDOException $e) {
+        return $e->getMessage();
+    }
+    
+    $rows = $result->fetchAll(PDO::FETCH_ASSOC);
+    if (!empty($rows)) {
+        $in_outs = calc_hours($rows);
+        return $in_outs;
+    }
+    else {
+        return '';
+    }
+}
+
+/* given an array of rows from Logs table, finds how many hours have been logged
+   function does not care about if employee/workstation/job match, be sure the rows passed make sense!
+   if there is not a clock out at the end of a clock in, it is assumed to be still in operation and 
+     will calculate clock out as current time of call to function 
+*/ 
+function calc_hours($rows) {
+    $hours_worked = 0;
+    $in_outs = 0;
+    foreach ($rows as $in_row) {
+        if ($in_row['action'] == 1) {
+            foreach($rows as $out_row) {
+                //find exact match but with clock out action
+                if ($out_row['action']         == 2 &&
+                    $out_row['employee_id']    == $in_row['employee_id'] &&
+                    $out_row['workstation_id'] == $in_row['workstation_id'] &&
+                    $out_row['job_id']         == $in_row['job_id']) {
+                        $in_outs++;
+                        $in = new DateTime($in_row['date_logged']);
+                        $out = new DateTime($out_row['date_logged']);
+                        $interval = $out->diff($in,true);
+                        $hours_worked += $interval->format('%i') / 60; //format interval by minutes / 60 for more accurate tracking
+                        $hours_worked += $interval->format('%h');
+                }
+            }
+        }
+    }
+
+    return round($hours_worked,2);
 }
 
 ?>

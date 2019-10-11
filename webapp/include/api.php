@@ -18,6 +18,8 @@
                                  job_id,action
             12   Last log        employee_id,workstation_id,     JSON        Returns last row that matches passed variables,null is passed for a wildcard
                                  job_id
+            13   Hours Worked    employee_id,workstation_id,     JSON        Returns rows that match passed arguments,empty string is passed for wildcard
+                                 job_id
         
         Products
             20   List all        N/A                             JSON        Returns all columns as associative array
@@ -104,6 +106,9 @@ switch($task) {
         break;
     case 12:
         $result = json_encode(last_log($args));
+        break;
+    case 13:
+        $result = hours_worked($args);
         break;
     /* Product Tasks */
     case 20:

@@ -46,6 +46,7 @@
             <col class="tcustomer-col">
             <col class="tproduct-col">
             <col class="tqty-col">
+            <col class="thrs-col">
             <thead>
                 <tr>
                     <th>Job Id</th>
@@ -53,6 +54,7 @@
                     <th>Customer</th>
                     <th>Product</th>
                     <th>Qty</th>
+                    <th>Hours Worked</th>
                 </tr>
             </thead>
             <tbody class="tcontent">
@@ -167,17 +169,31 @@
         }).then(response => response.json()) // parses JSON response into native Javascript objects
         .then(function(data) {
             //iterate job_ids
-            for (var job_id in data) {
-
-                var job_array = data[job_id];
+            $.each(data, function (job_id, job_array) {
 
                 //add header for job_id to table
-                $('.tcontent').append('<tr class="header"><td>Job# '+job_array[0]['job_id']+
+                $('.tcontent').append('<tr class="header '+job_id+'"><td>Job# '+job_array[0]['job_id']+
                                       '</td><td class="h-status">0%'+
                                       '</td><td class="h-customer">'+
                                       '</td><td class="h-product">'+
-                                      '</td><td class="h-qty">0</td></tr>');
+                                      '</td><td class="h-qty">0'+
+                                      '</td><td class="h-hrs"></td></tr>');
 
+                
+                //calculate hours worked for job_id
+                data = fetch('include/api.php', {
+                    method: 'POST',
+                    dataType: 'text/plain',
+                    body: JSON.stringify({'task': 13,
+                                          'employee_id': '',
+                                          'workstation_id': '',
+                                          'job_id': job_id})
+                }).then(response => response.text())
+                .then(function(data) {
+                    console.log(data);
+                    $('.header.'+job_id).children('.h-hrs').text(data);
+                });
+                
                 //iterate jobs with job_id
                 for (var index in job_array) {
                     var job = job_array[index];
@@ -218,7 +234,7 @@
                     var $h_qty = $header.children('.h-qty');
                     $h_qty.text(parseInt($h_qty.text()) + parseInt(job['qty']));
                 }
-            }
+            });
         }).catch(function(error) {
             console.log('There has been a problem with your fetch operation: ', error.message);
         });
