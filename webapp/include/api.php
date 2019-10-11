@@ -34,14 +34,23 @@
                                  product_name,qty,notes
             33   Delete          job_id                          string
             34   List sorted     N/A                             JSON        Returns array of arrays of jobs, indexed by job_id
+
         Customer
             40   List all        N/A                             JSON        Returns all columns as associative array
             41   New             customer_id,name,notes          string
             42   Edit            customer_id,new_name,           string
                                  name,notes
             43   Delete          name                            string
+
+        Workstation
+            50   List all        N/A                             JSON        Returns all columns as associative array
+            51   New             station_id,name,notes           string      
+            52   Edit            station_id,new_name,name,       string
+                                 notes
+            53   Delete          name                            string
+
         General
-            90   Lookup          table,column,search             JSON         Returns all matching rows where column data = search in table
+            90   Lookup          table,column,search             JSON        Returns all matching rows where column data = search in table
 
 */
 
@@ -53,6 +62,7 @@ require_once 'log.php';
 require_once 'product.php';
 require_once 'job.php';
 require_once 'customer.php';
+require_once 'workstation.php';
 
 
 $task = null;
@@ -136,6 +146,19 @@ switch($task) {
         break;
     case 43:
         $result = delete_customer($args);
+        break;
+    /* Workstation Tasks */
+    case 50:
+        $result = json_encode(get_workstations());
+        break;
+    case 51:
+        $result = new_workstation($args);
+        break;
+    case 52:
+        $result = edit_workstation($args);
+        break;
+    case 53:
+        $result = delete_workstation($args);
         break;
     /* General Tasks - Works on all tables */
     case 90:
