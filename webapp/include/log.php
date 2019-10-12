@@ -35,8 +35,7 @@ function last_log($args) {
     $pdo = db_connect();
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    unset($sql);
-
+    $sql = [];
     if ($employee_id) {
         $sql[] = "employee_id = '$employee_id' ";
     }
@@ -199,8 +198,28 @@ function calc_hours($rows) {
             }
         }
     }
-
     return round($hours_worked,2);
+}
+
+//given employee_id, workstation_id, job_id where a blank string is wildcard,
+//return a formatted string detailing the last active date/time
+function activity_string($args) {
+    $last = last_log($args);
+
+    //if a log entry was not found
+    if (!is_array($last)) {
+        return 'No activity found';
+    }
+
+    //format date for string
+    $log_date = format_datetime($last['date_logged']);
+
+    //if last action was a clock in, still active
+    if ($last['action'] == 1) {
+        return 'Active since '.$log_date;
+    }
+
+    return 'Last active on '.$log_date;
 }
 
 ?>

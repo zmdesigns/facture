@@ -20,6 +20,8 @@
                                  job_id
             13   Hours Worked    employee_id,workstation_id,     JSON        Returns rows that match passed arguments,empty string is passed for wildcard
                                  job_id
+            14   Activity        employee_id,workstation_id,     string      returns a formated string of last or current activity, or no activity if none found
+                                 job_id
         
         Products
             20   List all        N/A                             JSON        Returns all columns as associative array
@@ -109,6 +111,9 @@ switch($task) {
         break;
     case 13:
         $result = hours_worked($args);
+        break;
+    case 14:
+        $result = activity_string($args);
         break;
     /* Product Tasks */
     case 20:

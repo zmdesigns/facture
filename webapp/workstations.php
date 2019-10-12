@@ -42,6 +42,7 @@
                 <tr>
                     <th>Workstation Name</th>
                     <th>Workstation Id</th>
+                    <th>Activity</th>
                     <th>Description</th>
                 </tr>
             </thead>
@@ -115,16 +116,19 @@
         //fill input with data for employee that was clicked on
         $('#edit-name-text').val($(this).find('td:eq(0)').text());
         $('#edit-id-text').val($(this).find('td:eq(1)').text());
-        $('#edit-notes-text').val($(this).find('td:eq(2)').text());
+        $('#edit-notes-text').val($(this).find('td:eq(3)').text());
     });
 
-    function api_call(args) {
+    function api_call(args,reload=true) {
         data = fetch('include/api.php', {
             method: 'POST',
             body: JSON.stringify(args)
-        }).then(function(data) {
+        }).then(response => response.text())
+        .then(function(data) {
             console.log(data); //todo: if page returns an error, let the user know
-            reload_table_data();
+            if (reload) {
+                reload_table_data();
+            }
         }).catch(function(error) {
             console.log('There has been a problem with your fetch operation: ', error.message);
         });
@@ -140,10 +144,25 @@
             body: JSON.stringify({'task': 50})
         }).then(response => response.json()) // parses JSON response into native Javascript objects
         .then(function(data) {
-            data.forEach(function(el) {
+            $.each(data, function(index, el) {
                 $('.db-table tbody').append('<tr><td>'+el['name']+
                                             '</td><td>'+el['station_id']+
+                                            '</td><td>'+
                                             '</td><td>'+el['notes']+'</td></tr>');
+
+                var args = {'task': 14,
+                            'workstation_id': el['station_id'],
+                            'employee_id': '',
+                            'job_id': ''};
+                data = fetch('include/api.php', {
+                    method: 'POST',
+                    body: JSON.stringify(args)
+                }).then(response => response.text())
+                .then(function(data) {
+                    $("td:contains('"+el['station_id']+"')").next().text(data);
+                });
+                
+                
             });
         }).catch(function(error) {
             console.log('There has been a problem with your fetch operation: ', error.message);

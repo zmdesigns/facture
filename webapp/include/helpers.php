@@ -11,6 +11,11 @@ function sanitize_input($input)
 	return $input;
 }
 
+function format_datetime($timestamp_str) {
+    $dt = date('g:iA m-d-Y', strtotime($timestamp_str));
+    return $dt;
+}
+
 function format_date($timestamp_str) {
     $d = date('m-d-Y', strtotime($timestamp_str));
     return $d;
