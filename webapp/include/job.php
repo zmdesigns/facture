@@ -2,6 +2,7 @@
 
 require_once 'database.php';
 require_once 'helpers.php';
+require_once 'log.php';
 
 /*
     Return an array of employees from database
@@ -35,15 +36,19 @@ function get_jobs() {
 }
 
 function get_sorted_jobs() {
-    $pdo = db_connect();
-    
+
+    $pdo = db_connect(); 
     $jobs= [];
     $sql = 'SELECT Jobs.*,Products.name product_name,Customers.name customer_name FROM Jobs INNER JOIN Products ON Jobs.product_id = Products.product_id INNER JOIN Customers ON Jobs.customer_id = Customers.customer_id ORDER BY Jobs.job_id';
     foreach ($pdo->query($sql) as $row) {
+        //get hours worked for job and add it to row
+        $row['hours'] = hours_worked(array('employee_id'=>'',
+                                      'workstation_id'=>'',
+                                      'job_id'=>$row['job_id']));
         $jobs[$row['job_id']][] = $row;
     }
 
-    return $ids;
+    return $jobs;
 }
 
 function new_job($args) {

@@ -164,8 +164,8 @@ function hours_worked($args) {
     
     $rows = $result->fetchAll(PDO::FETCH_ASSOC);
     if (!empty($rows)) {
-        $in_outs = calc_hours($rows);
-        return $in_outs;
+        $hours = calc_hours($rows);
+        return $hours;
     }
     else {
         return '';
