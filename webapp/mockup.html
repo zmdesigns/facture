@@ -23,43 +23,93 @@
         </div>
 
         <div class='content-header'><h2>Jobs</h2></div>
-        <div class='job-detail col-1'>
-            <div class='progress-bar-outline'><div class='progress-bar'></div></div>
-            <h3 class='job-title'>Job# S4531</h3>
-            <p><i>In Progress</i></p>
-            <p>G3211 2" Sprocket Gear: 40/50</p>
-            <p>G3374</b> 36" Shaft: 1/2</p>
-            <p>Grimway Farms</p>
-            <p>Assigned to: CNC2, FIN1</p>
-        </div>
-        <div class='job-detail col-2'>
-            <div class='progress-bar-outline'><div class='progress-bar'></div></div>
-            <h3 class='job-title'>Job# S4531</h3>
-            <p><i>In Progress</i></p>
-            <p>G3211 2" Sprocket Gear: 40/50</p>
-            <p>G3374</b> 36" Shaft: 1/2</p>
-            <p>Grimway Farms</p>
-            <p>Assigned to: CNC2, FIN1</p>
+        <div class='job-detail'>
+            <h3 class='job-title col-1'>S4531</h3>
+            <h3 class='status'>(In Progress)</h3>
+            <h3 class='customer'>Grimway Farms</h3>
+            
+            <div class="product-detail col-1">
+                <p><b>Part Number - Name</b></p>
+                <p class='product'><a class='modal-link'>G3211 - 2" Sprocket Gear</a></p>
+                <p class='product'><a class='modal-link'>G3374 - 36" Shaft</a></p>
+            </div>
+            <div class="product-detail col-2">
+                <p><b>Quantity</b></p>
+                <p class='qty'>50</p>
+                <p class='qty'>12</p>
+            </div>
+            <div class='product-detail col-3'>
+                <p><b>Hours Worked</b></p>
+                <p class='hours_worked'>20 hours</p>
+                <p class='hours_worked'>5 hours</p>
+            </div>
         </div>
 
-        <div class='job-detail col-1'>
-            <div class='progress-bar-outline'><div class='progress-bar'></div></div>
-            <h3 class='job-title'>Job# S4531</h3>
-            <p><i>In Progress</i></p>
-            <p>G3211 2" Sprocket Gear: 40/50</p>
-            <p>G3374</b> 36" Shaft: 1/2</p>
-            <p>Grimway Farms</p>
-            <p>Assigned to: CNC2, FIN1</p>
-        </div>
-        <div class='job-detail col-2'>
-            <div class='progress-bar-outline'><div class='progress-bar'></div></div>
-            <h3 class='job-title'>Job# S4531</h3>
-            <p><i>In Progress</i></p>
-            <p>G3211 2" Sprocket Gear: 40/50</p>
-            <p>G3374</b> 36" Shaft: 1/2</p>
-            <p>Grimway Farms</p>
-            <p>Assigned to: CNC2, FIN1</p>
+        <div id="openProductModal" class="modal-dialog">
+            <div>
+                <a href="#close" title="Close" class="close">X</a>
+                <h2 class="modal-header">G3211 - 2" Sprocket Gear</h2>
+                <div class='workstation-detail'>
+                    <h2 class='station-title'>CNC1</h2>
+                    <div class='station-emp'>
+                        <p><b>Employee</b></p>
+                        <p>Homer Simpson</p>
+                        <p>Johnny G. Gun</p>
+                    </div>
+                    <div class='station-hrs'>
+                        <p><b>Hours</b></p>
+                        <p>10</p>
+                        <p>5</p>
+                    </div>
+                    <div class='station-sdt'>
+                        <p><b>Started Work</b></p>
+                        <p>10:03AM 3/12/19</p>
+                        <p>2:45PM 3/10/19</p>
+                    </div>
+                    <div class='station-edt'>
+                        <p><b>Last Worked</b></p>
+                        <p>3:33PM 3/21/19</p>
+                        <p>9:52AM 3/16/19</p>
+                    </div>
+                    <p class='station-totals'>15 Hours Total</p>
+                    <p class='station-days'>11 Days in Production</p>
+                </div>
+                <div class='workstation-detail'>
+                        <h2 class='station-title'>CNC1</h2>
+                        <div class='station-emp'>
+                            <p><b>Employee</b></p>
+                            <p>Homer Simpson</p>
+                            <p>Johnny G. Gun</p>
+                        </div>
+                        <div class='station-hrs'>
+                            <p><b>Hours</b></p>
+                            <p>10</p>
+                            <p>5</p>
+                        </div>
+                        <div class='station-sdt'>
+                            <p><b>Started Work</b></p>
+                            <p>10:03AM 3/12/19</p>
+                            <p>2:45PM 3/10/19</p>
+                        </div>
+                        <div class='station-edt'>
+                            <p><b>Last Worked</b></p>
+                            <p>3:33PM 3/21/19</p>
+                            <p>9:52AM 3/16/19</p>
+                        </div>
+                        <p class='station-totals'>15 Hours Total</p>
+                        <p class='station-days'>11 Days in Production</p>
+                    </div>
+            </div>
         </div>
     </div>
+
+<script src='https://code.jquery.com/jquery-3.4.1.min.js'></script>
+
+<script type='text/javascript'>
+    $(document).on('click', '.modal-link', function() {
+        window.location = '#openProductModal';
+    });
+</script>
+
 </body>
 </html>
