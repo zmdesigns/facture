@@ -1,5 +1,5 @@
 <?php include "include/header.php"; ?>
-<link rel="stylesheet" href="css/mockup.css">
+<link rel="stylesheet" href="css/jobs.css">
 </head>
 <body>
     <div class='container-jobs'>
@@ -32,8 +32,27 @@
     });
 
     $(document).on('click', '.prod-modal-link', function() {
-        window.location = '#openProductModal';
+        var job_id = $(this).parents('.product-detail').siblings('.job-title').text();
+        var product_id = $(this).text().split('-')[0];
+        data = fetch('include/api.php', {
+            method: 'POST',
+            body: JSON.stringify({'task': 15,
+                                  'job_id': job_id,
+                                  'product_id':product_id})
+        }).then(response => response.json()) // parses JSON response into native Javascript objects
+        .then(function(data) {
+            console.log(data);
+        });
     });
+
+    function gen_product_modal(job_id, product_name, product_id, qty) {
+        var $modal = $('<div id="'+product_id+'Modal" class="modal-dialog">');
+
+        var $content = $('<div></div>');
+        $('<a href="#close" title="Close" class="close">X</a>').appendTo($content);
+        $('<h2 class="modal-header">'+product_id+' - '+product_name+' ('+qty+')</h2>').appendTo($content);
+
+    }
 
     function reload_content() {
         data = fetch('include/api.php', {
@@ -65,7 +84,7 @@
         $('<p class="hrs-header">Hours Worked</p>').appendTo($col3);
         $.each(job, function(i, product) {
             $('<p class="product"><a class="prod-modal-link">'+
-                product['product_name']+'</a></p>').appendTo($col1);
+                product['product_id']+'-'+product['product_name']+'</a></p>').appendTo($col1);
 
             $('<p class="qty"><a class="prod-modal-link">'+
                 product['qty']+'</a></p>').appendTo($col2);

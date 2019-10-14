@@ -21,5 +21,29 @@ function lookup($args) {
     return $results;
 }
 
+/* Return an array of rows where the indexed value of row == $search */
+function lookup_from_rows($rows, $index, $search) {
 
+    $results = [];
+    foreach($rows as $row) {
+        if ($row[$index] == $search) {
+            $results[] = $row;
+        }
+    }
+
+    return $results;
+}
+
+/* Return an array of values with no duplicates from an indexed value of rows */
+function unique_values_from_rows($rows, $index) {
+
+    $results = [];
+    foreach($rows as $row) {
+        if (!in_array($row[$index],$results)) {
+            $results[] = $row[$index];
+        }
+    }
+
+    return $results;
+}
 ?>

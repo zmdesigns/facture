@@ -22,7 +22,8 @@
                                  job_id
             14   Activity        employee_id,workstation_id,     string      returns a formated string of last or current activity, or no activity if none found
                                  job_id
-        
+            15   Job Log Sort    job_id                          json        Returns JSON array of summarized log of clockins-outs 
+
         Products
             20   List all        N/A                             JSON        Returns all columns as associative array
             21   New             product_id,name,description     string
@@ -61,6 +62,7 @@
 require_once 'database.php';
 require_once 'helpers.php';
 // files that contain functions for tasks:
+require_once 'general.php';
 require_once 'employee.php';
 require_once 'log.php';
 require_once 'product.php';
@@ -114,6 +116,9 @@ switch($task) {
         break;
     case 14:
         $result = activity_string($args);
+        break;
+    case 15:
+        $result = json_encode(job_log_sorted($args));
         break;
     /* Product Tasks */
     case 20:

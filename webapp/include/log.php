@@ -2,6 +2,7 @@
 
 require_once 'database.php';
 require_once 'helpers.php';
+require_once 'general.php';
 
 function get_logs() {
     $pdo = db_connect();
@@ -179,26 +180,56 @@ function hours_worked($args) {
 */ 
 function calc_hours($rows) {
     $hours_worked = 0;
-    $in_outs = 0;
     foreach ($rows as $in_row) {
+        //for each log that is a clock in
         if ($in_row['action'] == 1) {
-            foreach($rows as $out_row) {
-                //find exact match but with clock out action
-                if ($out_row['action']         == 2 &&
-                    $out_row['employee_id']    == $in_row['employee_id'] &&
-                    $out_row['workstation_id'] == $in_row['workstation_id'] &&
-                    $out_row['job_id']         == $in_row['job_id']) {
-                        $in_outs++;
-                        $in = new DateTime($in_row['date_logged']);
-                        $out = new DateTime($out_row['date_logged']);
-                        $interval = $out->diff($in,true);
-                        $hours_worked += $interval->format('%i') / 60; //format interval by minutes / 60 for more accurate tracking
-                        $hours_worked += $interval->format('%h');
-                }
+            $in = new DateTime($in_row['date_logged']);
+            //set out date to current time
+            $out = new DateTime();
+            //attempt to find a clock out
+            $out_row = find_log_match($rows,$in_row);
+            //if a clock out is found, set out to that time
+            if ($out_row) {
+                $out = new DateTime($out_row['date_logged']);
             }
+            //find difference and add it to hours worked
+            $hours_worked += hour_diff($in,$out);
         }
     }
     return round($hours_worked,2);
+}
+
+function hour_diff($dt1, $dt2) {
+    $hours = 0;
+    $interval = $dt2->diff($dt1,true);
+    $hours += $interval->format('%i') / 60; //format interval by minutes / 60 for more accurate tracking
+    $hours += $interval->format('%h');
+
+    return $hours;
+}
+
+function find_log_match($rows, $row) {
+
+    //determine what action value is opposite
+    $to_match = 0;
+    if ($row['action'] == 2) {
+        $to_match = 1;
+    }
+    else {
+        $to_match = 2;
+    }
+
+    //find match with opposite action
+    foreach($rows as $match_row) {
+        if ($match_row['action']         == $to_match &&
+            $match_row['employee_id']    == $row['employee_id'] &&
+            $match_row['workstation_id'] == $row['workstation_id'] &&
+            $match_row['job_id']         == $row['job_id']) {
+                return $match_row;
+        }
+    }
+    //no match found
+    return NULL;
 }
 
 //given employee_id, workstation_id, job_id where a blank string is wildcard,
@@ -220,6 +251,50 @@ function activity_string($args) {
     }
 
     return 'Last active on '.$log_date;
+}
+
+
+function job_log_sorted($args) {
+    //Verify all arguments passed
+    if (!isset($args['job_id'],$args['product_id'])) {
+        return 'error: incorrect or null arguments passed to job_log_sorted function.';
+    }
+    $job_id = $args['job_id'];
+    $product_id = $args['product_id'];
+
+    //find all logs for job_id
+    $rows = lookup(['table'=>'Logs',
+                    'column'=>'job_id',
+                    'search'=>$job_id]);
+
+    $prod_rows = lookup_from_rows($rows,'product_id',$product_id);
+
+    //get a list of workstation_ids that were used to work on job_id
+    $workstations = unique_values_from_rows($prod_rows,'workstation_id');
+
+    $data = [];
+    foreach($workstations as $station) {
+        $data[$station] = [];
+        //get an array of log entries for workstation from rows with job_id
+        $station_log = lookup_from_rows($prod_rows,'workstation_id',$station);
+        foreach($station_log as $log_entry) {
+            
+            if ($log_entry['action'] == 1) {
+                //find clock-out action for clock in
+                $out_entry = find_log_match($prod_rows, $log_entry);
+                if ($out_entry) {
+                    $in = new DateTime($log_entry['date_logged']);
+                    $out = new DateTime($out_entry['date_logged']);
+                    $hours = hour_diff($in,$out);
+                    $data[$station][] = ['start'=>$log_entry['date_logged'],
+                                         'end'=>$out_entry['date_logged'],
+                                         'employee'=>$log_entry['employee_id'],
+                                         'hours'=>$hours];
+                }
+            }
+        }
+    }
+    return $data;
 }
 
 ?>
