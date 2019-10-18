@@ -33,7 +33,7 @@ bool Workstation::clock_action(int employee_id, int job_id, int action) {
 }
 
 //searches database for last clock action from employee/job
-//use 0 for either variable for wildcard of that var in search
+//use 0 for either variable for wildcard
 int Workstation::last_clock_action(int employee_id, int job_id) {
     std::string json_str = server->json_req_string(12, employee_id,p_id,job_id,3);
     server->make_request(json_str);

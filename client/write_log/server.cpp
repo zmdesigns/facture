@@ -8,7 +8,7 @@ JTServer::JTServer(std::string server_address) : address(server_address) {
 bool JTServer::make_request(std::string json_string) {
     size_t json_len = json_string.length();
 
-    std::string post_header = "POST /include/api.h HTTP/1.1";
+    std::string post_header = "POST /include/api.php HTTP/1.1";
     std::string host_header = "Host: "+address;
     std::string user_header = "User-Agent: ArduinoWiFi/1.1";
     std::string content_type_header = "Content-Type: application/json";
@@ -47,10 +47,10 @@ bool JTServer::make_request(std::string json_string) {
     return false;
 }
 
-std::string JTServer::json_req_string(std::string task, int employee, int workstation, int job, int action) {
+std::string JTServer::json_req_string(int task, int employee, int workstation, int job, int action) {
     using namespace std;
     
-    return "{\"task\":"+task+
+    return "{\"task\":"+to_string(task)+
            ",\"employee_id\":\""+to_string(employee)+
            "\",\"workstation_id\":\""+to_string(workstation)+
            "\",\"job_id\":\""+to_string(job)+
@@ -68,10 +68,11 @@ std::string JTServer::recv_data() {
         data += c;
     }
 
+    
     if (!data.empty()) {
         //check for a quoted string in response, if not return full response
-        size_t body_start = data.find("\"");
-        size_t body_end = data.rfind("\"");
+        size_t body_start = data.find("{");
+        size_t body_end = data.rfind("}");
 
         if (body_start != string::npos && body_start != body_end) {
 
