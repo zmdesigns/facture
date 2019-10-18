@@ -5,7 +5,8 @@ JTServer::JTServer(std::string server_address) : address(server_address) {
     client = new WiFiClient();
 }
 
-bool JTServer::make_request(std::string json_string) {
+bool JTServer::make_request(std::map<std::string,std::string> args) {
+    std::string json_string = json_req_string(args);
     size_t json_len = json_string.length();
 
     std::string post_header = "POST /include/api.php HTTP/1.1";

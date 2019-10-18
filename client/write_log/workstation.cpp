@@ -28,11 +28,8 @@ bool Workstation::clock_action(int employee_id, int job_id, int action) {
     args["job_id"] = std::to_string(job_id);
     args["action"] = std::to_string(action);
 
-    /* create the json string */
-    std::string json_str = server->json_req_string(args);
-
     /* Connect to server and send POST request */
-    if (server->make_request(json_str)) {
+    if (server->make_request(args)) {
         return true;
     }
     else {
@@ -51,8 +48,15 @@ int Workstation::last_clock_action(int employee_id, int job_id) {
     args["job_id"] = std::to_string(job_id);
     args["action"] = "3";
 
-    std::string json_str = server->json_req_string(args);
-    server->make_request(json_str);
+    server->make_request(args);
+}
+
+bool Workstation::get_job_list() {
+
+    std::map<std::string,std::string> args;
+    args["task"] = "34";
+
+    server->make_request(args);    
 }
 
 void Workstation::recv_data() {
