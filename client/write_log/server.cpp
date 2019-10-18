@@ -47,14 +47,18 @@ bool JTServer::make_request(std::string json_string) {
     return false;
 }
 
-std::string JTServer::json_req_string(int task, int employee, int workstation, int job, int action) {
-    using namespace std;
+std::string JTServer::json_req_string(std::map<std::string,std::string> args) {
+    using std::string;
+
+    string json_string = "{";
+
+    for(std::map<string,string>::iterator it=args.begin(); it!=args.end(); ++it) {
+        json_string += "\"" + it->first + "\":\"" + it->second + "\",";
+    }
+    //replace end comma with curley bracket to end json string
+    json_string.back() = '}';
     
-    return "{\"task\":"+to_string(task)+
-           ",\"employee_id\":\""+to_string(employee)+
-           "\",\"workstation_id\":\""+to_string(workstation)+
-           "\",\"job_id\":\""+to_string(job)+
-           "\",\"action\":\""+to_string(action)+"\"}";
+    return json_string;
 }
 
 std::string JTServer::recv_data() {
