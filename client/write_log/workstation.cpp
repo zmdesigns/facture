@@ -62,5 +62,8 @@ bool Workstation::get_job_list() {
 void Workstation::recv_data() {
     std::string data = server->recv_data();
 
-    Serial.write(data.c_str());
+    if (data.size() > 0) {
+        Serial.write(data.c_str());
+        Serial.println("\n----------------------\n");
+    }
 }

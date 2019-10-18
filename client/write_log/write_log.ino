@@ -47,7 +47,7 @@ void setup() {
     Serial.println("Connected to wifi");
     printWiFiStatus();
 
-    Serial.println("\n 1: Clock in \n 2: Clock out \n 3: Check last clock action");
+    Serial.println("\n 1: Clock in \n 2: Clock out \n 3: Check last clock action\n 4: Get Job List");
 
     wrkstn = new Workstation(1, "jtrkr.zackmdesigns.com");
     
@@ -90,6 +90,10 @@ void handle_serial_input(char rcvd_char) {
         else if (rcvd_char == '3') {
             Serial.println("Checking last clock action..");
             wrkstn->last_clock_action(66,66);
+        }
+        else if (rcvd_char == '4') {
+            Serial.println("Getting job list..");
+            wrkstn->get_job_list();
         }
     }
 }

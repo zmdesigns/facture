@@ -75,21 +75,28 @@ std::string JTServer::recv_data() {
 
     
     if (!data.empty()) {
-        //check for a quoted string in response, if not return full response
+        //check for a bracket in response, if not return last line of respone
         size_t body_start = data.find("{");
         size_t body_end = data.rfind("}");
 
-        if (body_start != string::npos && body_start != body_end) {
+        if (body_start == string::npos || body_end == string::npos) {
+            //no brackets, find the last line of response
+            body_start = data.rfind("\n");
+            body_end = data.size() - 1;
 
-            //quoted string found, copy it from rest of response and return it
-            size_t len = body_end - body_start + 1;
-            char buffer[len+1];
-            data.copy(buffer,len,body_start);
-            buffer[len]  ='\0'; //end of string
-
-            data = buffer;
+            if (body_start == string::npos) {
+                //if there is no newline character, something went wrong
+                //return whatever response was recieved for troubleshooting
+                return data;
+            }
         }
-    }
+        //copy the part of the response we care about
+        size_t len = body_end - body_start + 1;
+        char buffer[len+1];
+        data.copy(buffer,len,body_start);
+        buffer[len]  ='\0'; //end of string
 
+        data = buffer;
+    }
     return data;
 }
