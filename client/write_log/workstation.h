@@ -1,4 +1,6 @@
 #include <string>
+#include <vector>
+#include <Arduino_JSON.h>
 #include "server.h"
 
 class Workstation {

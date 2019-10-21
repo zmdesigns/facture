@@ -54,16 +54,72 @@ int Workstation::last_clock_action(int employee_id, int job_id) {
 bool Workstation::get_job_list() {
 
     std::map<std::string,std::string> args;
-    args["task"] = "34";
+    args["task"] = "30";
 
     server->make_request(args);    
 }
 
+const std::vector<std::string> explode(const std::string& s, const char& c)
+{
+	std::string buff{""};
+	std::vector<std::string> v;
+	
+	for(auto n:s)
+	{
+		if(n != c) buff+=n; else
+		if(n == c && buff != "") { v.push_back(buff); buff = ""; }
+	}
+	if(buff != "") v.push_back(buff);
+	
+	return v;
+}
+
+std::vector<std::string>seperate(std::string str,char s, char e) {
+    std::vector<std::string> v;
+    bool started = false;
+    std::string buffer = "";
+
+    for(std::string::iterator it=str.begin(); it != str.end(); ++it) {
+        char c = *it;
+        if (!started) {
+            if (c == s) {
+                started = true;
+            }
+        }
+        if (started) {
+            buffer += c;
+
+            if (c == e) {
+                v.push_back(buffer);
+                buffer = "";
+                started = false;
+            }
+        }
+    }
+    return v;
+}
+
+//note: seems to be missing a job 
 void Workstation::recv_data() {
     std::string data = server->recv_data();
 
     if (data.size() > 0) {
-        Serial.write(data.c_str());
-        Serial.println("\n----------------------\n");
+        //Serial.write(data.c_str());
+        Serial.println("\n---------START-------------\n");
+
+        std::vector<std::string> jobs = seperate(data,'{','}');
+
+        if (!jobs.empty()) {
+            for(std::vector<std::string>::iterator it=jobs.begin();it != jobs.end(); ++it) {
+                std::string job = *it;
+                JSONVar j = JSON.parse(job.c_str());
+                Serial.println(j["job_id"]);
+            }
+        }
+        else {
+            Serial.write(data.c_str());
+        }
+
+        Serial.println("\n----------END------------\n");
     }
 }
