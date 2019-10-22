@@ -66,14 +66,13 @@ std::string JTServer::recv_data() {
     using namespace std;
 
     string data = "";
-
     //read incoming data from server and save it in data variable
     while (client->available()) {
         char c = client->read();
         data += c;
+        delay(1); //needed to allow data time to be recieved/not break loop
     }
 
-    
     if (!data.empty()) {
         //check for a bracket in response, if not return last line of respone
         size_t body_start = data.find("{");
