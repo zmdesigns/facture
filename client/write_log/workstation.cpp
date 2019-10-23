@@ -60,6 +60,7 @@ bool Workstation::get_job_list() {
     server->make_request(args);    
 }
 
+void add_job(std::string);
 void Workstation::recv_data() {
     std::string data = server->recv_data();
 
@@ -73,8 +74,18 @@ void Workstation::recv_data() {
             for(std::vector<std::string>::iterator it=jobs.begin();it != jobs.end(); ++it) {
                 std::string job = *it;
                 JSONVar j = JSON.parse(job.c_str());
-                Serial.println(j["job_id"]);
+
+                std::string job_str = "Job:";
+                job_str += (const char*)j["job_id"];
+                job_str += " Product:";
+                job_str += (const char*)j["product_id"];
+
+                //add job to job list used by display
+                add_job(job_str);
+
+                Serial.println(job_str.c_str());
             }
+
         }
         else {
             Serial.write(data.c_str());

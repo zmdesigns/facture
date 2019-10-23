@@ -1,4 +1,9 @@
+char foo;
+#ifndef DISPLAY_H
+#define DISPLAY_H
+
 #include <string>
+#include <vector>
 #include "Nextion.h"
 
 
@@ -20,6 +25,8 @@ NexButton bClear = NexButton(1, 12, "bClear");
 NexText tNumpad = NexText(1, 13, "tNumpad");
 
 //job list screen
+NexPage jobListPage = NexPage(2, 0, "page2");
+NexButton bLoadJobs = NexButton(2, 8, "bLoadJobs");
 NexButton bArrowUp = NexButton(2, 7, "bArrowUp");
 NexButton bJob1 = NexButton(2, 3, "bJob1");
 NexButton bJob2 = NexButton(2, 4, "bJob2");
@@ -51,12 +58,24 @@ void select_job(std::string job_name) {
     Serial.println(selected_job.c_str());
     Serial.println(numpad_value.c_str());
 
-
+    //go back to home page
     nexSerial.print("page 0");
     nexSerial.write(0xff);
     nexSerial.write(0xff);
     nexSerial.write(0xff);
     
+}
+
+std::vector<std::string> job_list;
+int job_list_index = 0;
+void add_job(std::string job_str) {
+    job_list.push_back(job_str);
+}
+//populate job list buttons
+void load_jobs() {
+    if (!job_list.empty()) {
+        bJob1.setText(job_list.at(job_list_index).c_str());
+    }
 }
 
 //component callbacks
@@ -76,6 +95,9 @@ void bNum9PopCallback(void *ptr) { update_numpad_text('9'); }
 void bClearPopCallback(void *ptr) { update_numpad_text('0',true); }
 
 // job list screen
+
+void jobListPageCallback(void *ptr) { Serial.println("Job Page Callback!"); }
+void bLoadJobsCallback(void *ptr) { load_jobs(); }
 void bArrowUpPopCallback(void *ptr) {  }
 void bJob1PopCallback(void *ptr) { select_job("Job1"); }
 void bJob2PopCallback(void *ptr) { select_job("Job2"); }
@@ -101,6 +123,8 @@ void attach_callbacks() {
     bClear.attachPop(bClearPopCallback, &bClear);
 
     //job list screen
+    jobListPage.attachPop(jobListPageCallback, &jobListPage);
+    bLoadJobs.attachPop(bLoadJobsCallback, &bLoadJobs);
     bArrowUp.attachPop(bArrowUpPopCallback, &bArrowUp);
     bJob1.attachPop(bJob1PopCallback, &bJob1);
     bJob2.attachPop(bJob2PopCallback, &bJob2);
@@ -122,6 +146,8 @@ NexTouch *nex_listen_list[] = {&bClockIn,
                                &bNum8,
                                &bNum9,
                                &bClear,
+                               &jobListPage,
+                               &bLoadJobs,
                                &bArrowUp,
                                &bJob1,
                                &bJob2,
@@ -129,3 +155,5 @@ NexTouch *nex_listen_list[] = {&bClockIn,
                                &bJob4,
                                &bArrowDown,
                                NULL };
+
+#endif
