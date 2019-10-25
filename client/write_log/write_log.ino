@@ -1,13 +1,13 @@
 #include "arduino_secrets.h"
 #include <SPI.h>
 #include <WiFi101.h>
-#include <Arduino_JSON.h>
 /* Arduino defines max and min which collides with std. let's ignore arduino's def */
 #undef max
 #undef min
+#include "workstation.h"
 #include "Nextion.h"
 #include "display.h"
-#include "workstation.h"
+
 
 char ssid[] = SECRET_SSID;        
 char pass[] = SECRET_PASS;    

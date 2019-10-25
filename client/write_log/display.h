@@ -27,12 +27,12 @@ NexText tNumpad = NexText(1, 13, "tNumpad");
 //job list screen
 NexPage jobListPage = NexPage(2, 0, "page2");
 NexButton bLoadJobs = NexButton(2, 8, "bLoadJobs");
-NexButton bArrowUp = NexButton(2, 7, "bArrowUp");
-NexButton bJob1 = NexButton(2, 3, "bJob1");
-NexButton bJob2 = NexButton(2, 4, "bJob2");
-NexButton bJob3 = NexButton(2, 5, "bJob3");
-NexButton bJob4 = NexButton(2, 6, "bJob4");
-NexButton bArrowDown = NexButton(2, 8, "bArrowDown");
+NexButton bArrowUp = NexButton(2, 6, "bArrowUp");
+NexButton bJob1 = NexButton(2, 2, "bJob1");
+NexButton bJob2 = NexButton(2, 3, "bJob2");
+NexButton bJob3 = NexButton(2, 4, "bJob3");
+NexButton bJob4 = NexButton(2, 5, "bJob4");
+NexButton bArrowDown = NexButton(2, 7, "bArrowDown");
 
 
 //manage employee clock in code on numpad screen
@@ -48,13 +48,58 @@ void update_numpad_text(char c,bool clear_text=false) {
     tNumpad.setText(numpad_value.c_str());
 }
 
+//list of strings representing each job
+std::vector<std::string> job_list;
+//objects for each job button
+std::vector<NexButton*> job_buttons = { &bJob1, &bJob2, &bJob3, &bJob4 };
+//index in job_list of top button on screen
+int job_list_index = 0;
+//add a job string to job_list,
+//this is a function to avoid a linker error particular to ardruino:
+//  each source file is compiled seperate of any other
+//  which means pre-processor ifndef #define #endif tricks do not work
+//  to include a file from multiple source files
+//  A function prototype of this function is declared in workstation.cpp
+//  for it to be used there :(
+void add_job(std::string job_str) {
+    job_list.push_back(job_str);
+}
+//populate job list buttons
+void load_jobs() {
+    if (!job_list.empty()) {
+        for(int i=0;i<=3;++i) {
+            if (job_list_index + i >= job_list.size()) {
+                job_list_index = 0;
+                i = 0;
+            }
+            job_buttons.at(i)->setText(job_list.at(job_list_index + i).c_str());
+        }
+    }   
+}
 
-//manage selected job/page of job list on job screen
+//When a arrow button is pressed on job page
+//this moves job_list_index up or down to display
+//jobs above or below currently displayed jobs
+void move_job_index(int amount) {
+    if (job_list_index + amount < job_list.size()) {
+        if (job_list_index + amount >= 0) {
+            job_list_index += amount;
+        }
+        else {
+            job_list_index = 0;
+        }
+        load_jobs();
+    }
+}
+
+//When a job button is pressed on job page
+//this function saves the string of the job button pressed
+//as selected_job, then goes back to home page
 std::string selected_job = "";
-int job_page = 0;
-
-void select_job(std::string job_name) {
-    selected_job = job_name;
+void select_job(int button_index) {
+    char buffer[20];
+    job_buttons.at(button_index)->getText(buffer,20);
+    selected_job = buffer;
     Serial.println(selected_job.c_str());
     Serial.println(numpad_value.c_str());
 
@@ -64,18 +109,6 @@ void select_job(std::string job_name) {
     nexSerial.write(0xff);
     nexSerial.write(0xff);
     
-}
-
-std::vector<std::string> job_list;
-int job_list_index = 0;
-void add_job(std::string job_str) {
-    job_list.push_back(job_str);
-}
-//populate job list buttons
-void load_jobs() {
-    if (!job_list.empty()) {
-        bJob1.setText(job_list.at(job_list_index).c_str());
-    }
 }
 
 //component callbacks
@@ -98,12 +131,12 @@ void bClearPopCallback(void *ptr) { update_numpad_text('0',true); }
 
 void jobListPageCallback(void *ptr) { Serial.println("Job Page Callback!"); }
 void bLoadJobsCallback(void *ptr) { load_jobs(); }
-void bArrowUpPopCallback(void *ptr) {  }
-void bJob1PopCallback(void *ptr) { select_job("Job1"); }
-void bJob2PopCallback(void *ptr) { select_job("Job2"); }
-void bJob3PopCallback(void *ptr) { select_job("Job3"); }
-void bJob4PopCallback(void *ptr) { select_job("Job4"); }
-void bArrowDownPopCallback(void *ptr) {  }
+void bArrowUpPopCallback(void *ptr) { move_job_index(-1); }
+void bJob1PopCallback(void *ptr) { select_job(0); }
+void bJob2PopCallback(void *ptr) { select_job(1); }
+void bJob3PopCallback(void *ptr) { select_job(2); }
+void bJob4PopCallback(void *ptr) { select_job(3); }
+void bArrowDownPopCallback(void *ptr) { move_job_index(1); }
 
 
 void attach_callbacks() {
@@ -131,7 +164,6 @@ void attach_callbacks() {
     bJob3.attachPop(bJob3PopCallback, &bJob3);
     bJob4.attachPop(bJob4PopCallback, &bJob4);
     bArrowDown.attachPop(bArrowDownPopCallback, &bArrowDown);
-
 }
 
 //add component objects to event listen array
