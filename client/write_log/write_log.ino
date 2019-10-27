@@ -13,22 +13,9 @@ Workstation* wrkstn;
 
 void setup() {
 
-    //Initialize serial and wait for port to open
-    //Serial.begin(9600);
-
     //init display and attach callbacks in display.h
     nexInit();
     attach_callbacks();
-
-/*
-    while (!Serial) {
-        ; //wait for serial port to connect. Needed for native USB port only
-    }
-*/
-
-    
-
-    //Serial.println("\n 1: Clock in \n 2: Clock out \n 3: Check last clock action\n 4: Get Job List");
 
     //wrkstn = new Workstation(1, "jtrkr.zackmdesigns.com");
     //wrkstn->get_job_list();

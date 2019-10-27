@@ -12,8 +12,10 @@ NexButton bSettings = NexButton(3, 4, "bSettings");
 // settings screen
 NexButton bNetworks = NexButton(0, 5, "bNetworks");
 NexButton bPassword = NexButton(0, 6, "bPassword");
+NexButton bConnect = NexButton(0, 8, "bConnect");
 NexButton bDone = NexButton(0, 7, "bDone");
 NexText tStatus = NexText(0, 4, "tStatus");
+NexPage pSettingsPage = NexPage(0, 0, "page0");
 
 // networks screen
 NexButton bScan = NexButton(4, 8, "bScan");
@@ -27,6 +29,10 @@ NexButton bNetwork7 = NexButton(4, 11, "bNetwork7");
 NexButton bNetwork8 = NexButton(4, 12, "bNetwork8");
 NexButton bCancel = NexButton(4, 7, "bCancel");
 NexText tNetworks = NexText(4, 4, "tNetworks");
+
+// password screen
+//this is an event for every letter
+NexTouch bletter = NexTouch(5, 2, "");
 
 // numpad screen
 NexButton bNum1 = NexButton(1, 2, "bNum1");
@@ -177,7 +183,47 @@ void select_network(int button) {
     std::string strength = network_signal(ssid);
     std::string msg = ssid + ": " + strength;
     tNetworks.setText(msg.c_str());
-    tStatus.setText(msg.c_str());
+    network_buttons.at(button-1)->Set_background_color_bco(1024);
+}
+
+void update_network_status() {
+    if (ssid != "") {
+        std::string strength = network_signal(ssid);
+        std::string msg = "tStatus.txt=\"" + ssid + " selected. Strength:" + strength + "\"";
+        nexSerial.print(msg.c_str());
+        nexSerial.write(0xff);
+        nexSerial.write(0xff);
+        nexSerial.write(0xff);
+    }
+}
+
+void connect_network() {
+    if (ssid == "") {
+        nexSerial.print("tStatus.txt=\"Select a newtwork first\"");
+        nexSerial.write(0xff);
+        nexSerial.write(0xff);
+        nexSerial.write(0xff);
+    }
+    else {
+        std::string msg = "tStatus.txt=\"Connecting to " + ssid + "..\"";
+        nexSerial.print(msg.c_str());
+        nexSerial.write(0xff);
+        nexSerial.write(0xff);
+        nexSerial.write(0xff);
+        int status = wifi_connect(ssid.c_str(),pass.c_str());
+        if (status == WL_CONNECTED) {
+            nexSerial.print("tStatus.txt=\"Connected!\"");
+            nexSerial.write(0xff);
+            nexSerial.write(0xff);
+            nexSerial.write(0xff);
+        }
+        else {
+            nexSerial.print("tStatus.txt=\"Failed to Connect\"");
+            nexSerial.write(0xff);
+            nexSerial.write(0xff);
+            nexSerial.write(0xff);
+        }
+    }
 }
 
 //component callbacks
@@ -188,7 +234,9 @@ void bSettingsPopCallback(void *ptr) { }
 // settings screen
 void bNetworksPopCallback(void *ptr) { }
 void bPasswordPopCallback(void *ptr) { }
+void bConnectPopCallback(void *ptr) { connect_network(); }
 void bDonePopCallback(void *ptr) { }
+void pSettingsPagePopCallback(void *ptr) { update_network_status(); }
 
 // networks screen
 void bScanPopCallback(void *ptr) { scan_networks(); }
@@ -234,7 +282,9 @@ void attach_callbacks() {
     //settings screen
     bNetworks.attachPop(bNetworksPopCallback, &bNetworks);
     bPassword.attachPop(bPasswordPopCallback, &bPassword);
+    bConnect.attachPop(bConnectPopCallback, &bConnect);
     bDone.attachPop(bDonePopCallback, &bDone);
+    pSettingsPage.attachPop(pSettingsPagePopCallback, &pSettingsPage);
 
     //networks screen
     bScan.attachPop(bScanPopCallback, &bScan);
@@ -276,7 +326,9 @@ NexTouch *nex_listen_list[] = {&bClockIn,
                                &bSettings,
                                &bNetworks,
                                &bPassword,
+                               &bConnect,
                                &bDone,
+                               &pSettingsPage,
                                &bScan,
                                &bNetwork1,
                                &bNetwork2,

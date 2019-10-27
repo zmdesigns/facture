@@ -54,13 +54,15 @@ int wifi_connect(const char* ssid, const char* pass) {
         while (true);
     }
     
+    int max_tries = 2;
+    int tries = 0;
     //attempt to connect to WiFi network
-    while (status != WL_CONNECTED) {
+    while (status != WL_CONNECTED && tries < max_tries) {
         status = WiFi.begin(ssid, pass);
 
         //wait 10 seconds for connection
         delay(10000);
-
+        tries++;
     }
     return status;
 }
