@@ -1,15 +1,32 @@
-char foo;
-#ifndef DISPLAY_H
-#define DISPLAY_H
-
 #include <string>
 #include <vector>
 #include "Nextion.h"
+#include "include\network.h"
 
 
 //component objects
-// start screen
-NexButton bClockIn = NexButton(0, 3, "bClockIn"); //page-id,component-id,component-name
+// home screen
+NexButton bClockIn = NexButton(3, 2, "bClockIn"); //page-id,component-id,component-name
+NexButton bSettings = NexButton(3, 4, "bSettings");
+
+// settings screen
+NexButton bNetworks = NexButton(0, 5, "bNetworks");
+NexButton bPassword = NexButton(0, 6, "bPassword");
+NexButton bDone = NexButton(0, 7, "bDone");
+NexText tStatus = NexText(0, 4, "tStatus");
+
+// networks screen
+NexButton bScan = NexButton(4, 8, "bScan");
+NexButton bNetwork1 = NexButton(4, 2, "bNetwork1");
+NexButton bNetwork2 = NexButton(4, 3, "bNetwork2");
+NexButton bNetwork3 = NexButton(4, 5, "bNetwork3");
+NexButton bNetwork4 = NexButton(4, 6, "bNetwork4");
+NexButton bNetwork5 = NexButton(4, 9, "bNetwork5");
+NexButton bNetwork6 = NexButton(4, 10, "bNetwork6");
+NexButton bNetwork7 = NexButton(4, 11, "bNetwork7");
+NexButton bNetwork8 = NexButton(4, 12, "bNetwork8");
+NexButton bCancel = NexButton(4, 7, "bCancel");
+NexText tNetworks = NexText(4, 4, "tNetworks");
 
 // numpad screen
 NexButton bNum1 = NexButton(1, 2, "bNum1");
@@ -64,6 +81,7 @@ int job_list_index = 0;
 void add_job(std::string job_str) {
     job_list.push_back(job_str);
 }
+
 //populate job list buttons
 void load_jobs() {
     if (!job_list.empty()) {
@@ -111,9 +129,78 @@ void select_job(int button_index) {
     
 }
 
+std::vector<NexButton*> network_buttons = { &bNetwork1, 
+                                                &bNetwork2, 
+                                                &bNetwork3, 
+                                                &bNetwork4, 
+                                                &bNetwork5,
+                                                &bNetwork6,
+                                                &bNetwork7,
+                                                &bNetwork8 };
+
+void scan_networks() {
+    //update number of networks in range text
+    //we send commands direct to nextion serial
+    //because it is more reliable, quick updating of text
+    //when using the library doesn't always work
+    nexSerial.print("tNetworks.txt=\"Scanning..\"");
+    nexSerial.write(0xff);
+    nexSerial.write(0xff);
+    nexSerial.write(0xff);
+    std::vector<std::string> networks = network_list();
+    std::string cmd = "tNetworks.txt=\"Networks in Range:" + std::to_string(networks.size()) + "\"";
+    nexSerial.print(cmd.c_str());
+    nexSerial.write(0xff);
+    nexSerial.write(0xff);
+    nexSerial.write(0xff);
+
+    //iterate network and network button vectors
+    //change button text to SSID of network until it runs out of buttons
+    for(int i=0;i < network_buttons.size();++i) {
+        if (i < networks.size()) {
+            network_buttons.at(i)->setText(networks.at(i).c_str());
+        }
+        else {
+            //reset button text to blank if no more networks
+            network_buttons.at(i)->setText("");
+        }
+    }
+}
+
+void select_network(int button) {
+    char buffer[30];
+    network_buttons.at(button-1)->getText(buffer,30);
+    ssid = buffer;
+
+    tNetworks.setText("Selecting..");
+
+    std::string strength = network_signal(ssid);
+    std::string msg = ssid + ": " + strength;
+    tNetworks.setText(msg.c_str());
+    tStatus.setText(msg.c_str());
+}
+
 //component callbacks
-// starting screen
-void bClockInPopCallback(void *ptr) { Serial.println("Clock-in button pressed!"); }
+// home screen
+void bClockInPopCallback(void *ptr) { }
+void bSettingsPopCallback(void *ptr) { }
+
+// settings screen
+void bNetworksPopCallback(void *ptr) { }
+void bPasswordPopCallback(void *ptr) { }
+void bDonePopCallback(void *ptr) { }
+
+// networks screen
+void bScanPopCallback(void *ptr) { scan_networks(); }
+void bNetwork1PopCallback(void *ptr) { select_network(1); }
+void bNetwork2PopCallback(void *ptr) { select_network(2); }
+void bNetwork3PopCallback(void *ptr) { select_network(3); }
+void bNetwork4PopCallback(void *ptr) { select_network(4); }
+void bNetwork5PopCallback(void *ptr) { select_network(5); }
+void bNetwork6PopCallback(void *ptr) { select_network(6); }
+void bNetwork7PopCallback(void *ptr) { select_network(7); }
+void bNetwork8PopCallback(void *ptr) { select_network(8); }
+void bCancelPopCallback(void *ptr) { }
 
 // numpad screen
 void bNum1PopCallback(void *ptr) { update_numpad_text('1'); }
@@ -142,6 +229,24 @@ void bArrowDownPopCallback(void *ptr) { move_job_index(1); }
 void attach_callbacks() {
     //starting screen
     bClockIn.attachPop(bClockInPopCallback, &bClockIn);
+    bSettings.attachPop(bSettingsPopCallback, &bSettings);
+
+    //settings screen
+    bNetworks.attachPop(bNetworksPopCallback, &bNetworks);
+    bPassword.attachPop(bPasswordPopCallback, &bPassword);
+    bDone.attachPop(bDonePopCallback, &bDone);
+
+    //networks screen
+    bScan.attachPop(bScanPopCallback, &bScan);
+    bNetwork1.attachPop(bNetwork1PopCallback, &bNetwork1);
+    bNetwork2.attachPop(bNetwork2PopCallback, &bNetwork2);
+    bNetwork3.attachPop(bNetwork3PopCallback, &bNetwork3);
+    bNetwork4.attachPop(bNetwork4PopCallback, &bNetwork4);
+    bNetwork5.attachPop(bNetwork5PopCallback, &bNetwork5);
+    bNetwork6.attachPop(bNetwork6PopCallback, &bNetwork6);
+    bNetwork7.attachPop(bNetwork7PopCallback, &bNetwork7);
+    bNetwork8.attachPop(bNetwork8PopCallback, &bNetwork8);
+    bCancel.attachPop(bCancelPopCallback, &bCancel);
 
     //numpad screen
     bNum1.attachPop(bNum1PopCallback, &bNum1);
@@ -168,6 +273,20 @@ void attach_callbacks() {
 
 //add component objects to event listen array
 NexTouch *nex_listen_list[] = {&bClockIn,
+                               &bSettings,
+                               &bNetworks,
+                               &bPassword,
+                               &bDone,
+                               &bScan,
+                               &bNetwork1,
+                               &bNetwork2,
+                               &bNetwork3,
+                               &bNetwork4,
+                               &bNetwork5,
+                               &bNetwork6,
+                               &bNetwork7,
+                               &bNetwork8,
+                               &bCancel,
                                &bNum1,
                                &bNum2,
                                &bNum3,
@@ -187,5 +306,3 @@ NexTouch *nex_listen_list[] = {&bClockIn,
                                &bJob4,
                                &bArrowDown,
                                NULL };
-
-#endif

@@ -1,64 +1,45 @@
 #include "arduino_secrets.h"
 #include <SPI.h>
-#include <WiFi101.h>
 /* Arduino defines max and min which collides with std. let's ignore arduino's def */
 #undef max
 #undef min
 #include "workstation.h"
 #include "Nextion.h"
 #include "display.h"
-
-
-char ssid[] = SECRET_SSID;        
-char pass[] = SECRET_PASS;    
+  
 int keyIndex = 0;   //only for WEP
 bool stopped = false; //for loop to know if client has been stopped
-int status = WL_IDLE_STATUS;
 Workstation* wrkstn;
 
 void setup() {
+
     //Initialize serial and wait for port to open
-    Serial.begin(9600);
+    //Serial.begin(9600);
 
     //init display and attach callbacks in display.h
     nexInit();
     attach_callbacks();
 
+/*
     while (!Serial) {
         ; //wait for serial port to connect. Needed for native USB port only
     }
+*/
 
-    // check for the presence of the shield
-    if (WiFi.status() == WL_NO_SHIELD) {
-        Serial.println("WiFi shield not present");
-        //don't continue
-        while (true);
-    }
-
-    //attempt to connect to WiFi network
-    while (status != WL_CONNECTED) {
-        Serial.print("Attempting to connect to SSID: ");
-        Serial.println(ssid);
-        status = WiFi.begin(ssid, pass);
-
-        //wait 10 seconds for connection
-        delay(10000);
-    }
-    Serial.println("Connected to wifi");
-    printWiFiStatus();
-
-    Serial.println("\n 1: Clock in \n 2: Clock out \n 3: Check last clock action\n 4: Get Job List");
-
-    wrkstn = new Workstation(1, "jtrkr.zackmdesigns.com");
     
+
+    //Serial.println("\n 1: Clock in \n 2: Clock out \n 3: Check last clock action\n 4: Get Job List");
+
+    //wrkstn = new Workstation(1, "jtrkr.zackmdesigns.com");
+    //wrkstn->get_job_list();
 }
 
 void loop() {
     //if there is input from the serial read it
-    handle_serial_input(recv_serial_input());
+    //handle_serial_input(recv_serial_input());
 
     //handle response from server
-    wrkstn->recv_data();
+    //wrkstn->recv_data();
 
     //listen and respond to display events
     nexLoop(nex_listen_list);

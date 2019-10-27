@@ -61,6 +61,7 @@ bool Workstation::get_job_list() {
 }
 
 void add_job(std::string);
+
 void Workstation::recv_data() {
     std::string data = server->recv_data();
 
@@ -85,7 +86,6 @@ void Workstation::recv_data() {
 
                 Serial.println(job_str.c_str());
             }
-
         }
         else {
             Serial.write(data.c_str());
