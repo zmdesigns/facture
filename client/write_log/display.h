@@ -31,8 +31,46 @@ NexButton bCancel = NexButton(4, 7, "bCancel");
 NexText tNetworks = NexText(4, 4, "tNetworks");
 
 // password screen
-//this is an event for every letter
-NexTouch bletter = NexTouch(5, 2, "");
+NexText tField = NexText(5, 41, "t0");
+NexButton ba = NexButton(5, 2, "b0");
+NexButton bb = NexButton(5, 3, "b1");
+NexButton bc = NexButton(5, 4, "b2");
+NexButton bd = NexButton(5, 5, "b3");
+NexButton be = NexButton(5, 6, "b4");
+NexButton bf = NexButton(5, 7, "b5");
+NexButton bg = NexButton(5, 8, "b6");
+NexButton bh = NexButton(5, 9, "b7");
+NexButton bi = NexButton(5, 10, "b8");
+NexButton bj = NexButton(5, 11, "b9");
+NexButton bk = NexButton(5, 12, "b10");
+NexButton bl = NexButton(5, 13, "b11");
+NexButton bm = NexButton(5, 14, "b12");
+NexButton bn = NexButton(5, 15, "b13");
+NexButton bo = NexButton(5, 16, "b14");
+NexButton bp = NexButton(5, 17, "b15");
+NexButton bq = NexButton(5, 18, "b16");
+NexButton br = NexButton(5, 19, "b17");
+NexButton bs = NexButton(5, 20, "b18");
+NexButton bt = NexButton(5, 21, "b19");
+NexButton bu = NexButton(5, 22, "b20");
+NexButton bv = NexButton(5, 23, "b21");
+NexButton bw = NexButton(5, 24, "b22");
+NexButton bx = NexButton(5, 25, "b23");
+NexButton by = NexButton(5, 26, "b24");
+NexButton bz = NexButton(5, 27, "b25");
+NexButton b0 = NexButton(5, 28, "b26");
+NexButton b1 = NexButton(5, 29, "b27");
+NexButton b2 = NexButton(5, 30, "b28");
+NexButton b3 = NexButton(5, 31, "b29");
+NexButton b4 = NexButton(5, 32, "b30");
+NexButton b5 = NexButton(5, 33, "b31");
+NexButton b6 = NexButton(5, 34, "b32");
+NexButton b7 = NexButton(5, 35, "b33");
+NexButton b8 = NexButton(5, 36, "b34");
+NexButton b9 = NexButton(5, 37, "b35");
+NexButton bCaps = NexButton(5, 38, "b36");
+NexButton bBackspace = NexButton(5, 39, "b37");
+NexButton bEnter = NexButton(5, 40, "b39");
 
 // numpad screen
 NexButton bNum1 = NexButton(1, 2, "bNum1");
@@ -226,6 +264,16 @@ void connect_network() {
     }
 }
 
+void press_letter(char letter) {
+    std::string field = "t0.txt+=\"";
+    field.push_back(letter);
+    field.push_back('\"');
+    nexSerial.print(field.c_str());
+    nexSerial.write(0xff);
+    nexSerial.write(0xff);
+    nexSerial.write(0xff);
+}
+
 //component callbacks
 // home screen
 void bClockInPopCallback(void *ptr) { }
@@ -249,6 +297,44 @@ void bNetwork6PopCallback(void *ptr) { select_network(6); }
 void bNetwork7PopCallback(void *ptr) { select_network(7); }
 void bNetwork8PopCallback(void *ptr) { select_network(8); }
 void bCancelPopCallback(void *ptr) { }
+
+// password screen
+void baPopCallback(void *ptr) { press_letter('a'); }
+void bbPopCallback(void *ptr) { press_letter('b'); }
+void bcPopCallback(void *ptr) { press_letter('c'); }
+void bdPopCallback(void *ptr) { press_letter('d'); }
+void bePopCallback(void *ptr) { press_letter('e'); }
+void bfPopCallback(void *ptr) { press_letter('f'); }
+void bgPopCallback(void *ptr) { press_letter('g'); }
+void bhPopCallback(void *ptr) { press_letter('h'); }
+void biPopCallback(void *ptr) { press_letter('i'); }
+void bjPopCallback(void *ptr) { press_letter('j'); }
+void bkPopCallback(void *ptr) { press_letter('k'); }
+void blPopCallback(void *ptr) { press_letter('l'); }
+void bmPopCallback(void *ptr) { press_letter('m'); }
+void bnPopCallback(void *ptr) { press_letter('n'); }
+void boPopCallback(void *ptr) { press_letter('o'); }
+void bpPopCallback(void *ptr) { press_letter('p'); }
+void bqPopCallback(void *ptr) { press_letter('q'); }
+void brPopCallback(void *ptr) { press_letter('r'); }
+void bsPopCallback(void *ptr) { press_letter('s'); }
+void btPopCallback(void *ptr) { press_letter('t'); }
+void buPopCallback(void *ptr) { press_letter('u'); }
+void bvPopCallback(void *ptr) { press_letter('v'); }
+void bwPopCallback(void *ptr) { press_letter('w'); }
+void bxPopCallback(void *ptr) { press_letter('x'); }
+void byPopCallback(void *ptr) { press_letter('y'); }
+void bzPopCallback(void *ptr) { press_letter('z'); }
+void b0PopCallback(void *ptr) { press_letter('0'); }
+void b1PopCallback(void *ptr) { press_letter('1'); }
+void b2PopCallback(void *ptr) { press_letter('2'); }
+void b3PopCallback(void *ptr) { press_letter('3'); }
+void b4PopCallback(void *ptr) { press_letter('4'); }
+void b5PopCallback(void *ptr) { press_letter('5'); }
+void b6PopCallback(void *ptr) { press_letter('6'); }
+void b7PopCallback(void *ptr) { press_letter('7'); }
+void b8PopCallback(void *ptr) { press_letter('8'); }
+void b9PopCallback(void *ptr) { press_letter('9'); }
 
 // numpad screen
 void bNum1PopCallback(void *ptr) { update_numpad_text('1'); }
@@ -298,6 +384,44 @@ void attach_callbacks() {
     bNetwork8.attachPop(bNetwork8PopCallback, &bNetwork8);
     bCancel.attachPop(bCancelPopCallback, &bCancel);
 
+    //password screen
+    ba.attachPop(baPopCallback, &ba);
+    bb.attachPop(bbPopCallback, &bb);
+    bc.attachPop(bcPopCallback, &bc);
+    bd.attachPop(bdPopCallback, &bd);
+    be.attachPop(bePopCallback, &be);
+    bf.attachPop(bfPopCallback, &bf);
+    bg.attachPop(bgPopCallback, &bg);
+    bh.attachPop(bhPopCallback, &bh);
+    bi.attachPop(biPopCallback, &bi);
+    bj.attachPop(bjPopCallback, &bj);
+    bk.attachPop(bkPopCallback, &bk);
+    bl.attachPop(blPopCallback, &bl);
+    bm.attachPop(bmPopCallback, &bm);
+    bn.attachPop(bnPopCallback, &bn);
+    bo.attachPop(boPopCallback, &bo);
+    bp.attachPop(bpPopCallback, &bp);
+    bq.attachPop(bqPopCallback, &bq);
+    br.attachPop(brPopCallback, &br);
+    bs.attachPop(bsPopCallback, &bs);
+    bt.attachPop(btPopCallback, &bt);
+    bu.attachPop(buPopCallback, &bu);
+    bv.attachPop(bvPopCallback, &bv);
+    bw.attachPop(bwPopCallback, &bw);
+    bx.attachPop(bxPopCallback, &bx);
+    by.attachPop(byPopCallback, &by);
+    bz.attachPop(bzPopCallback, &bz);
+    b0.attachPop(b0PopCallback, &b0);
+    b1.attachPop(b1PopCallback, &b1);
+    b2.attachPop(b2PopCallback, &b2);
+    b3.attachPop(b3PopCallback, &b3);
+    b4.attachPop(b4PopCallback, &b4);
+    b5.attachPop(b5PopCallback, &b5);
+    b6.attachPop(b6PopCallback, &b6);
+    b7.attachPop(b7PopCallback, &b7);
+    b8.attachPop(b8PopCallback, &b8);
+    b9.attachPop(b9PopCallback, &b9);
+
     //numpad screen
     bNum1.attachPop(bNum1PopCallback, &bNum1);
     bNum2.attachPop(bNum2PopCallback, &bNum2);
@@ -339,6 +463,42 @@ NexTouch *nex_listen_list[] = {&bClockIn,
                                &bNetwork7,
                                &bNetwork8,
                                &bCancel,
+                               &ba,
+                               &bb,
+                               &bc,
+                               &bd,
+                               &be,
+                               &bf,
+                               &bg,
+                               &bh,
+                               &bi,
+                               &bj,
+                               &bk,
+                               &bl,
+                               &bm,
+                               &bn,
+                               &bo,
+                               &bp,
+                               &bq,
+                               &br,
+                               &bs,
+                               &bt,
+                               &bu,
+                               &bv,
+                               &bw,
+                               &bx,
+                               &by,
+                               &bz,
+                               &b0,
+                               &b1,
+                               &b2,
+                               &b3,
+                               &b4,
+                               &b5,
+                               &b6,
+                               &b7,
+                               &b8,
+                               &b9,
                                &bNum1,
                                &bNum2,
                                &bNum3,
