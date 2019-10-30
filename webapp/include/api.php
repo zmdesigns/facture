@@ -15,7 +15,7 @@
         Log
             10   List all        N/A                             JSON        Returns all columns as associative array
             11   New             employee_id,workstation_id,     string      action: 1=clock-in 2=clock-out
-                                 job_id,action
+                                 job_id,product_id,action
             12   Last log        employee_id,workstation_id,     JSON        Returns last row that matches passed variables,null is passed for a wildcard
                                  job_id
             13   Hours Worked    employee_id,workstation_id,     JSON        Returns rows that match passed arguments,empty string is passed for wildcard

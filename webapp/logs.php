@@ -18,6 +18,7 @@
                     <div class="input-group"><label for="new-log-emp">Employee Id</label><input type="text" id="new-log-emp"  size="2"></div>
                     <div class="input-group"><label for="new-log-wrkstn">Workstation Id</label><input type="text" id="new-log-wrkstn" size="2"></div>
                     <div class="input-group"><label for="new-log-job">Job Id</label><input type="text" id="new-log-job" size="2"></div>
+                    <div class="input-group"><label for="new-log-prod">Product Id</label><input type="text" id="new-log-prod" size="2"></div>
                     <div class="input-group"><label for="new-log-action">Action</label><input type="text" id="new-log-action" size="2"></div>
                     
                     <button type="button" id="new-log-btn">Submit</button>
@@ -30,6 +31,7 @@
             <col class="emp-col">
             <col class="wrkstn-col">
             <col class="job-col">
+            <col class="prod-col">
             <col class="action-col">
             <thead>
                 <tr>
@@ -38,6 +40,7 @@
                     <th>Employee</th>
                     <th>Workstation</th>
                     <th>Job</th>
+                    <th>Product</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -66,6 +69,7 @@
             'employee_id': $('#new-log-emp').val(),
             'workstation_id': $('#new-log-wrkstn').val(),
             'job_id': $('#new-log-job').val(),
+            'product_id': $('#new-log-prod').val(),
             'action': $('#new-log-action').val()
         };
 
@@ -88,6 +92,7 @@
                                             '</td><td>'+el['employee_id']+
                                             '</td><td>'+el['workstation_id']+
                                             '</td><td>'+el['job_id']+
+                                            '</td><td>'+el['product_id']+
                                             '</td><td>'+el['action']+'</td></tr>');
             });
         }).catch(function(error) {

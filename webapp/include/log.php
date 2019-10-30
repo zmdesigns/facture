@@ -16,6 +16,7 @@ function get_logs() {
          'employee_id' => $row['employee_id'],
          'workstation_id' => $row['workstation_id'],
          'job_id' => $row['job_id'],
+         'product_id' => $row['product_id'],
          'action' => $row['action']];
     }
     return $logs;
@@ -75,13 +76,14 @@ function last_log($args) {
 
 function new_log($args) {
     //Verify all arguments passed and not null
-    if (!isset($args['employee_id'],$args['workstation_id'],$args['job_id'],$args['action'])) {
+    if (!isset($args['employee_id'],$args['workstation_id'],$args['job_id'],$args['product_id'],$args['action'])) {
         return 'error: incorrect or null arguments passed to new_product function.';
     }
 
     $employee_id = $args['employee_id'];
     $workstation_id = $args['workstation_id'];
     $job_id = $args['job_id'];
+    $product_id = $args['product_id'];
     $action = $args['action'];
 
     $pdo = db_connect();
@@ -111,7 +113,7 @@ function new_log($args) {
 
     //insert log entry into db
     try {
-        $query = $pdo->exec('INSERT INTO Logs(employee_id,workstation_id,job_id,action) VALUES ("'.$employee_id.'","'.$workstation_id.'","'.$job_id.'","'.$action.'")');
+        $query = $pdo->exec('INSERT INTO Logs(employee_id,workstation_id,job_id,product_id,action) VALUES ("'.$employee_id.'","'.$workstation_id.'","'.$job_id.'","'.$product_id.'","'.$action.'")');
     } catch (PDOException $e) { 
         return $e->getMessage();
     }
