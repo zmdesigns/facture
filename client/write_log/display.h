@@ -174,13 +174,13 @@ void select_job(int button_index) {
 }
 
 std::vector<NexButton*> network_buttons = { &bNetwork1, 
-                                                &bNetwork2, 
-                                                &bNetwork3, 
-                                                &bNetwork4, 
-                                                &bNetwork5,
-                                                &bNetwork6,
-                                                &bNetwork7,
-                                                &bNetwork8 };
+                                            &bNetwork2, 
+                                            &bNetwork3, 
+                                            &bNetwork4, 
+                                            &bNetwork5,
+                                            &bNetwork6,
+                                            &bNetwork7,
+                                            &bNetwork8 };
 
 void scan_networks() {
     //update number of networks in range text
@@ -274,6 +274,18 @@ void press_letter(char letter) {
     nexSerial.write(0xff);
 }
 
+void backspace() {
+    char buffer[40] = {0};
+    memset(buffer, 0, sizeof(buffer));
+    tField.getText(buffer, sizeof(buffer));
+    std::string pass_text(buffer);
+
+    if (pass_text.size() > 0) {
+        pass_text.pop_back(); //erase last character
+        tField.setText(pass_text.c_str());
+    }
+}
+
 //component callbacks
 // home screen
 void bClockInPopCallback(void *ptr) { }
@@ -335,6 +347,7 @@ void b6PopCallback(void *ptr) { press_letter('6'); }
 void b7PopCallback(void *ptr) { press_letter('7'); }
 void b8PopCallback(void *ptr) { press_letter('8'); }
 void b9PopCallback(void *ptr) { press_letter('9'); }
+void bBackspacePopCallback(void *ptr) { backspace(); }
 
 // numpad screen
 void bNum1PopCallback(void *ptr) { update_numpad_text('1'); }
@@ -349,7 +362,6 @@ void bNum9PopCallback(void *ptr) { update_numpad_text('9'); }
 void bClearPopCallback(void *ptr) { update_numpad_text('0',true); }
 
 // job list screen
-
 void jobListPageCallback(void *ptr) { Serial.println("Job Page Callback!"); }
 void bLoadJobsCallback(void *ptr) { load_jobs(); }
 void bArrowUpPopCallback(void *ptr) { move_job_index(-1); }
@@ -421,6 +433,7 @@ void attach_callbacks() {
     b7.attachPop(b7PopCallback, &b7);
     b8.attachPop(b8PopCallback, &b8);
     b9.attachPop(b9PopCallback, &b9);
+    bBackspace.attachPop(bBackspacePopCallback, &bBackspace);
 
     //numpad screen
     bNum1.attachPop(bNum1PopCallback, &bNum1);
@@ -499,6 +512,7 @@ NexTouch *nex_listen_list[] = {&bClockIn,
                                &b7,
                                &b8,
                                &b9,
+                               &bBackspace,
                                &bNum1,
                                &bNum2,
                                &bNum3,
