@@ -3,6 +3,8 @@
 #include "Nextion.h"
 #include "include\network.h"
 
+//included in helpers.h:
+char toggle_caps(char c, bool cap);
 
 //component objects
 // home screen
@@ -71,6 +73,9 @@ NexButton b9 = NexButton(5, 37, "b35");
 NexButton bCaps = NexButton(5, 38, "b36");
 NexButton bBackspace = NexButton(5, 39, "b37");
 NexButton bEnter = NexButton(5, 40, "b39");
+//letters+numbers - used to capitalize button text when caps button pressed
+std::vector<NexButton*> letter_btns = { &ba,&bb,&bc,&bd,&be,&bf,&bg,&bh,&bi,&bj,&bk,&bl,&bm,&bn,&bo,&bp,&bq,&br,&bs,&bt,&bu,&bv,&bw,&bx,&by,&bz,
+                                  &b0,&b1,&b2,&b3,&b4,&b5,&b6,&b7,&b8,&b9 };
 
 // numpad screen
 NexButton bNum1 = NexButton(1, 2, "bNum1");
@@ -165,7 +170,7 @@ void select_job(int button_index) {
     Serial.println(selected_job.c_str());
     Serial.println(numpad_value.c_str());
 
-    //go back to home page
+    //go back to settings page
     nexSerial.print("page 0");
     nexSerial.write(0xff);
     nexSerial.write(0xff);
@@ -248,7 +253,9 @@ void connect_network() {
         nexSerial.write(0xff);
         nexSerial.write(0xff);
         nexSerial.write(0xff);
+
         int status = wifi_connect(ssid.c_str(),pass.c_str());
+
         if (status == WL_CONNECTED) {
             nexSerial.print("tStatus.txt=\"Connected!\"");
             nexSerial.write(0xff);
@@ -264,7 +271,42 @@ void connect_network() {
     }
 }
 
+//boolean toggles when caps button is pressed
+//press_letter() checks cap value and
+//updates field with appropriate capitalization
+bool caps = false;
+void toggle_caps_button() {
+    if (!caps) {
+        //toggle color of caps button to let user know it's pressed
+        bCaps.Set_background_color_bco(1024);
+    }
+    else {
+        bCaps.Set_background_color_bco(50712);
+    }
+    //toggle caps boolean
+    caps = !caps;
+
+    //toggle button text for all letters
+    for(int i=0;i<letter_btns.size();++i) {
+        char buffer[1] = {0};
+        buffer[0] = 0;
+
+        letter_btns.at(i)->getText(buffer,sizeof(buffer));
+        char to_cap = buffer[0];
+
+        to_cap = toggle_caps(to_cap, caps);
+
+        buffer[0] = to_cap;
+        letter_btns.at(i)->setText(buffer);
+    }
+}
+
 void press_letter(char letter) {
+    //if caps button is pressed: capitalize letter/turn number->symbol
+    if (caps) {
+        letter = toggle_caps(letter,true);
+    }
+    //add letter pressed to text field
     std::string field = "t0.txt+=\"";
     field.push_back(letter);
     field.push_back('\"');
@@ -274,6 +316,7 @@ void press_letter(char letter) {
     nexSerial.write(0xff);
 }
 
+//remove last character from text field
 void backspace() {
     char buffer[40] = {0};
     memset(buffer, 0, sizeof(buffer));
@@ -284,6 +327,22 @@ void backspace() {
         pass_text.pop_back(); //erase last character
         tField.setText(pass_text.c_str());
     }
+}
+
+void enter_password() {
+    char buffer[40] = {0};
+    memset(buffer, 0, sizeof(buffer));
+    tField.getText(buffer, sizeof(buffer));
+    //set pass to password field text
+    pass = buffer;
+    //reset caps variable
+    caps = false;
+
+    //go back to settings page
+    nexSerial.print("page 0");
+    nexSerial.write(0xff);
+    nexSerial.write(0xff);
+    nexSerial.write(0xff);
 }
 
 //component callbacks
@@ -348,6 +407,8 @@ void b7PopCallback(void *ptr) { press_letter('7'); }
 void b8PopCallback(void *ptr) { press_letter('8'); }
 void b9PopCallback(void *ptr) { press_letter('9'); }
 void bBackspacePopCallback(void *ptr) { backspace(); }
+void bCapsPopCallback(void *ptr) { toggle_caps_button(); }
+void bEnterPopCallback(void *ptr) { enter_password(); }
 
 // numpad screen
 void bNum1PopCallback(void *ptr) { update_numpad_text('1'); }
@@ -434,6 +495,8 @@ void attach_callbacks() {
     b8.attachPop(b8PopCallback, &b8);
     b9.attachPop(b9PopCallback, &b9);
     bBackspace.attachPop(bBackspacePopCallback, &bBackspace);
+    bCaps.attachPop(bCapsPopCallback, &bCaps);
+    bEnter.attachPop(bEnterPopCallback, &bEnter);
 
     //numpad screen
     bNum1.attachPop(bNum1PopCallback, &bNum1);
@@ -513,6 +576,8 @@ NexTouch *nex_listen_list[] = {&bClockIn,
                                &b8,
                                &b9,
                                &bBackspace,
+                               &bCaps,
+                               &bEnter,
                                &bNum1,
                                &bNum2,
                                &bNum3,

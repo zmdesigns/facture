@@ -6,6 +6,7 @@
 #include "workstation.h"
 #include "Nextion.h"
 #include "display.h"
+#include "include\helpers.h"
   
 int keyIndex = 0;   //only for WEP
 bool stopped = false; //for loop to know if client has been stopped

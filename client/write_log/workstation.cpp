@@ -1,5 +1,6 @@
 #include "workstation.h"
-#include "include\helpers.h"
+
+std::vector<std::string>seperate(std::string str,char s, char e);
 
 Workstation::Workstation(int workstation_id, std::string server_address) : p_id(workstation_id) {
     server = new JTServer(server_address);
