@@ -1,8 +1,7 @@
 #include <vector>
-#include <WiFi101.h>
 
-std::string ssid = "";
-std::string pass = "";
+char ssid[] = SECRET_SSID;
+char pass[] = SECRET_PASS;
 
 //returns a vector of SSIDs of networks in range
 //empty vector if none in range or can't use wifi
@@ -45,18 +44,18 @@ std::string network_signal(std::string ssid) {
     }
 }
 
-int wifi_connect(const char* ssid, const char* pass) {
-    int status = WL_IDLE_STATUS;
+int wifi_connect() {
+    int status = WiFi.status();
 
     // check for the presence of the shield
-    if (WiFi.status() == WL_NO_SHIELD) {
+    if (status == WL_NO_SHIELD) {
         //don't continue
-        while (true);
+        return status;
     }
     
     int max_tries = 2;
     int tries = 0;
-    //attempt to connect to WiFi network
+    //attempt to connect to WiFi network if not connected
     while (status != WL_CONNECTED && tries < max_tries) {
         status = WiFi.begin(ssid, pass);
 
@@ -64,5 +63,6 @@ int wifi_connect(const char* ssid, const char* pass) {
         delay(10000);
         tries++;
     }
+
     return status;
 }

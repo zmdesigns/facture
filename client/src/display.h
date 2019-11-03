@@ -2,9 +2,7 @@
 #include <vector>
 #include "Nextion.h"
 #include "include\network.h"
-
-//included in helpers.h:
-char toggle_caps(char c, bool cap);
+#include "include\display_functions.h"
 
 //component objects
 // home screen
@@ -31,6 +29,14 @@ NexButton bNetwork7 = NexButton(4, 11, "bNetwork7");
 NexButton bNetwork8 = NexButton(4, 12, "bNetwork8");
 NexButton bCancel = NexButton(4, 7, "bCancel");
 NexText tNetworks = NexText(4, 4, "tNetworks");
+std::vector<NexButton*> network_buttons = { &bNetwork1, 
+                                            &bNetwork2, 
+                                            &bNetwork3, 
+                                            &bNetwork4, 
+                                            &bNetwork5,
+                                            &bNetwork6,
+                                            &bNetwork7,
+                                            &bNetwork8 };
 
 // password screen
 NexText tField = NexText(5, 41, "t0");
@@ -88,6 +94,7 @@ NexButton bNum7 = NexButton(1, 8, "bNum7");
 NexButton bNum8 = NexButton(1, 9, "bNum8");
 NexButton bNum9 = NexButton(1, 10, "bNum9");
 NexButton bClear = NexButton(1, 12, "bClear");
+NexButton bNumEnter = NexButton(1, 11, "bNumEnter");
 NexText tNumpad = NexText(1, 13, "tNumpad");
 
 //job list screen
@@ -99,251 +106,7 @@ NexButton bJob2 = NexButton(2, 3, "bJob2");
 NexButton bJob3 = NexButton(2, 4, "bJob3");
 NexButton bJob4 = NexButton(2, 5, "bJob4");
 NexButton bArrowDown = NexButton(2, 7, "bArrowDown");
-
-
-//manage employee clock in code on numpad screen
-std::string numpad_value = "";
-void update_numpad_text(char c,bool clear_text=false) {
-    if (clear_text) {
-        numpad_value = "";
-    }
-    else if (numpad_value.length() < 6) {
-        numpad_value += c;
-    }
-
-    tNumpad.setText(numpad_value.c_str());
-}
-
-//list of strings representing each job
-std::vector<std::string> job_list;
-//objects for each job button
 std::vector<NexButton*> job_buttons = { &bJob1, &bJob2, &bJob3, &bJob4 };
-//index in job_list of top button on screen
-int job_list_index = 0;
-//add a job string to job_list,
-//this is a function to avoid a linker error particular to ardruino:
-//  each source file is compiled seperate of any other
-//  which means pre-processor ifndef #define #endif tricks do not work
-//  to include a file from multiple source files
-//  A function prototype of this function is declared in workstation.cpp
-//  for it to be used there :(
-void add_job(std::string job_str) {
-    job_list.push_back(job_str);
-}
-
-//populate job list buttons
-void load_jobs() {
-    if (!job_list.empty()) {
-        for(int i=0;i<=3;++i) {
-            if (job_list_index + i >= job_list.size()) {
-                job_list_index = 0;
-                i = 0;
-            }
-            job_buttons.at(i)->setText(job_list.at(job_list_index + i).c_str());
-        }
-    }   
-}
-
-//When a arrow button is pressed on job page
-//this moves job_list_index up or down to display
-//jobs above or below currently displayed jobs
-void move_job_index(int amount) {
-    if (job_list_index + amount < job_list.size()) {
-        if (job_list_index + amount >= 0) {
-            job_list_index += amount;
-        }
-        else {
-            job_list_index = 0;
-        }
-        load_jobs();
-    }
-}
-
-//When a job button is pressed on job page
-//this function saves the string of the job button pressed
-//as selected_job, then goes back to home page
-std::string selected_job = "";
-void select_job(int button_index) {
-    char buffer[20];
-    job_buttons.at(button_index)->getText(buffer,20);
-    selected_job = buffer;
-    Serial.println(selected_job.c_str());
-    Serial.println(numpad_value.c_str());
-
-    //go back to settings page
-    nexSerial.print("page 0");
-    nexSerial.write(0xff);
-    nexSerial.write(0xff);
-    nexSerial.write(0xff);
-    
-}
-
-std::vector<NexButton*> network_buttons = { &bNetwork1, 
-                                            &bNetwork2, 
-                                            &bNetwork3, 
-                                            &bNetwork4, 
-                                            &bNetwork5,
-                                            &bNetwork6,
-                                            &bNetwork7,
-                                            &bNetwork8 };
-
-void scan_networks() {
-    //update number of networks in range text
-    //we send commands direct to nextion serial
-    //because it is more reliable, quick updating of text
-    //when using the library doesn't always work
-    nexSerial.print("tNetworks.txt=\"Scanning..\"");
-    nexSerial.write(0xff);
-    nexSerial.write(0xff);
-    nexSerial.write(0xff);
-    std::vector<std::string> networks = network_list();
-    std::string cmd = "tNetworks.txt=\"Networks in Range:" + std::to_string(networks.size()) + "\"";
-    nexSerial.print(cmd.c_str());
-    nexSerial.write(0xff);
-    nexSerial.write(0xff);
-    nexSerial.write(0xff);
-
-    //iterate network and network button vectors
-    //change button text to SSID of network until it runs out of buttons
-    for(int i=0;i < network_buttons.size();++i) {
-        if (i < networks.size()) {
-            network_buttons.at(i)->setText(networks.at(i).c_str());
-        }
-        else {
-            //reset button text to blank if no more networks
-            network_buttons.at(i)->setText("");
-        }
-    }
-}
-
-void select_network(int button) {
-    char buffer[30];
-    network_buttons.at(button-1)->getText(buffer,30);
-    ssid = buffer;
-
-    tNetworks.setText("Selecting..");
-
-    std::string strength = network_signal(ssid);
-    std::string msg = ssid + ": " + strength;
-    tNetworks.setText(msg.c_str());
-    network_buttons.at(button-1)->Set_background_color_bco(1024);
-}
-
-void update_network_status() {
-    if (ssid != "") {
-        std::string strength = network_signal(ssid);
-        std::string msg = "tStatus.txt=\"" + ssid + " selected. Strength:" + strength + "\"";
-        nexSerial.print(msg.c_str());
-        nexSerial.write(0xff);
-        nexSerial.write(0xff);
-        nexSerial.write(0xff);
-    }
-}
-
-void connect_network() {
-    if (ssid == "") {
-        nexSerial.print("tStatus.txt=\"Select a newtwork first\"");
-        nexSerial.write(0xff);
-        nexSerial.write(0xff);
-        nexSerial.write(0xff);
-    }
-    else {
-        std::string msg = "tStatus.txt=\"Connecting to " + ssid + "..\"";
-        nexSerial.print(msg.c_str());
-        nexSerial.write(0xff);
-        nexSerial.write(0xff);
-        nexSerial.write(0xff);
-
-        int status = wifi_connect(ssid.c_str(),pass.c_str());
-
-        if (status == WL_CONNECTED) {
-            nexSerial.print("tStatus.txt=\"Connected!\"");
-            nexSerial.write(0xff);
-            nexSerial.write(0xff);
-            nexSerial.write(0xff);
-        }
-        else {
-            nexSerial.print("tStatus.txt=\"Failed to Connect\"");
-            nexSerial.write(0xff);
-            nexSerial.write(0xff);
-            nexSerial.write(0xff);
-        }
-    }
-}
-
-//boolean toggles when caps button is pressed
-//press_letter() checks cap value and
-//updates field with appropriate capitalization
-bool caps = false;
-void toggle_caps_button() {
-    if (!caps) {
-        //toggle color of caps button to let user know it's pressed
-        bCaps.Set_background_color_bco(1024);
-    }
-    else {
-        bCaps.Set_background_color_bco(50712);
-    }
-    //toggle caps boolean
-    caps = !caps;
-
-    //toggle button text for all letters
-    for(int i=0;i<letter_btns.size();++i) {
-        char buffer[1] = {0};
-        buffer[0] = 0;
-
-        letter_btns.at(i)->getText(buffer,sizeof(buffer));
-        char to_cap = buffer[0];
-
-        to_cap = toggle_caps(to_cap, caps);
-
-        buffer[0] = to_cap;
-        letter_btns.at(i)->setText(buffer);
-    }
-}
-
-void press_letter(char letter) {
-    //if caps button is pressed: capitalize letter/turn number->symbol
-    if (caps) {
-        letter = toggle_caps(letter,true);
-    }
-    //add letter pressed to text field
-    std::string field = "t0.txt+=\"";
-    field.push_back(letter);
-    field.push_back('\"');
-    nexSerial.print(field.c_str());
-    nexSerial.write(0xff);
-    nexSerial.write(0xff);
-    nexSerial.write(0xff);
-}
-
-//remove last character from text field
-void backspace() {
-    char buffer[40] = {0};
-    memset(buffer, 0, sizeof(buffer));
-    tField.getText(buffer, sizeof(buffer));
-    std::string pass_text(buffer);
-
-    if (pass_text.size() > 0) {
-        pass_text.pop_back(); //erase last character
-        tField.setText(pass_text.c_str());
-    }
-}
-
-void enter_password() {
-    char buffer[40] = {0};
-    memset(buffer, 0, sizeof(buffer));
-    tField.getText(buffer, sizeof(buffer));
-    //set pass to password field text
-    pass = buffer;
-    //reset caps variable
-    caps = false;
-
-    //go back to settings page
-    nexSerial.print("page 0");
-    nexSerial.write(0xff);
-    nexSerial.write(0xff);
-    nexSerial.write(0xff);
-}
 
 //component callbacks
 // home screen
@@ -353,20 +116,20 @@ void bSettingsPopCallback(void *ptr) { }
 // settings screen
 void bNetworksPopCallback(void *ptr) { }
 void bPasswordPopCallback(void *ptr) { }
-void bConnectPopCallback(void *ptr) { connect_network(); }
+void bConnectPopCallback(void *ptr) { update_network_status(WiFi.status()); }
 void bDonePopCallback(void *ptr) { }
-void pSettingsPagePopCallback(void *ptr) { update_network_status(); }
+void pSettingsPagePopCallback(void *ptr) { update_network_status(WiFi.status()); }
 
 // networks screen
-void bScanPopCallback(void *ptr) { scan_networks(); }
-void bNetwork1PopCallback(void *ptr) { select_network(1); }
-void bNetwork2PopCallback(void *ptr) { select_network(2); }
-void bNetwork3PopCallback(void *ptr) { select_network(3); }
-void bNetwork4PopCallback(void *ptr) { select_network(4); }
-void bNetwork5PopCallback(void *ptr) { select_network(5); }
-void bNetwork6PopCallback(void *ptr) { select_network(6); }
-void bNetwork7PopCallback(void *ptr) { select_network(7); }
-void bNetwork8PopCallback(void *ptr) { select_network(8); }
+void bScanPopCallback(void *ptr) { update_network_buttons(&network_buttons); }
+void bNetwork1PopCallback(void *ptr) { selected_network = get_network_button_text(&network_buttons,0,&tNetworks); }
+void bNetwork2PopCallback(void *ptr) { selected_network = get_network_button_text(&network_buttons,1,&tNetworks); }
+void bNetwork3PopCallback(void *ptr) { selected_network = get_network_button_text(&network_buttons,2,&tNetworks); }
+void bNetwork4PopCallback(void *ptr) { selected_network = get_network_button_text(&network_buttons,3,&tNetworks); }
+void bNetwork5PopCallback(void *ptr) { selected_network = get_network_button_text(&network_buttons,4,&tNetworks); }
+void bNetwork6PopCallback(void *ptr) { selected_network = get_network_button_text(&network_buttons,5,&tNetworks); }
+void bNetwork7PopCallback(void *ptr) { selected_network = get_network_button_text(&network_buttons,6,&tNetworks); }
+void bNetwork8PopCallback(void *ptr) { selected_network = get_network_button_text(&network_buttons,7,&tNetworks); }
 void bCancelPopCallback(void *ptr) { }
 
 // password screen
@@ -406,31 +169,32 @@ void b6PopCallback(void *ptr) { press_letter('6'); }
 void b7PopCallback(void *ptr) { press_letter('7'); }
 void b8PopCallback(void *ptr) { press_letter('8'); }
 void b9PopCallback(void *ptr) { press_letter('9'); }
-void bBackspacePopCallback(void *ptr) { backspace(); }
-void bCapsPopCallback(void *ptr) { toggle_caps_button(); }
-void bEnterPopCallback(void *ptr) { enter_password(); }
+void bBackspacePopCallback(void *ptr) { backspace(&tField); }
+void bCapsPopCallback(void *ptr) { toggle_caps_letter_buttons(&bCaps,&letter_btns); }
+void bEnterPopCallback(void *ptr) { enter_password(&tField); }
 
 // numpad screen
-void bNum1PopCallback(void *ptr) { update_numpad_text('1'); }
-void bNum2PopCallback(void *ptr) { update_numpad_text('2'); }
-void bNum3PopCallback(void *ptr) { update_numpad_text('3'); }
-void bNum4PopCallback(void *ptr) { update_numpad_text('4'); }
-void bNum5PopCallback(void *ptr) { update_numpad_text('5'); }
-void bNum6PopCallback(void *ptr) { update_numpad_text('6'); }
-void bNum7PopCallback(void *ptr) { update_numpad_text('7'); }
-void bNum8PopCallback(void *ptr) { update_numpad_text('8'); }
-void bNum9PopCallback(void *ptr) { update_numpad_text('9'); }
-void bClearPopCallback(void *ptr) { update_numpad_text('0',true); }
+void bNum1PopCallback(void *ptr) { update_numpad_text(&tNumpad,'1'); }
+void bNum2PopCallback(void *ptr) { update_numpad_text(&tNumpad,'2'); }
+void bNum3PopCallback(void *ptr) { update_numpad_text(&tNumpad,'3'); }
+void bNum4PopCallback(void *ptr) { update_numpad_text(&tNumpad,'4'); }
+void bNum5PopCallback(void *ptr) { update_numpad_text(&tNumpad,'5'); }
+void bNum6PopCallback(void *ptr) { update_numpad_text(&tNumpad,'6'); }
+void bNum7PopCallback(void *ptr) { update_numpad_text(&tNumpad,'7'); }
+void bNum8PopCallback(void *ptr) { update_numpad_text(&tNumpad,'8'); }
+void bNum9PopCallback(void *ptr) { update_numpad_text(&tNumpad,'9'); }
+void bClearPopCallback(void *ptr) { update_numpad_text(&tNumpad,'0',true); }
+void bNumEnterPopCallback(void *ptr) { numpad_txt = get_numpad_text(&tNumpad); sendCommand("page 2"); }
 
 // job list screen
-void jobListPageCallback(void *ptr) { Serial.println("Job Page Callback!"); }
-void bLoadJobsCallback(void *ptr) { load_jobs(); }
-void bArrowUpPopCallback(void *ptr) { move_job_index(-1); }
-void bJob1PopCallback(void *ptr) { select_job(0); }
-void bJob2PopCallback(void *ptr) { select_job(1); }
-void bJob3PopCallback(void *ptr) { select_job(2); }
-void bJob4PopCallback(void *ptr) { select_job(3); }
-void bArrowDownPopCallback(void *ptr) { move_job_index(1); }
+void jobPagePopCallback(void *ptr) { update_job_buttons(&job_buttons); }
+void bLoadJobsCallback(void *ptr) { update_job_buttons(&job_buttons); }
+void bArrowUpPopCallback(void *ptr) { move_job_index(-1); update_job_buttons(&job_buttons); }
+void bJob1PopCallback(void *ptr) { selected_job = get_job_button_text(&job_buttons, 0); sendCommand("page 3"); }
+void bJob2PopCallback(void *ptr) { selected_job = get_job_button_text(&job_buttons, 1); sendCommand("page 3"); }
+void bJob3PopCallback(void *ptr) { selected_job = get_job_button_text(&job_buttons, 2); sendCommand("page 3"); }
+void bJob4PopCallback(void *ptr) { selected_job = get_job_button_text(&job_buttons, 3); sendCommand("page 3"); }
+void bArrowDownPopCallback(void *ptr) { move_job_index(1); update_job_buttons(&job_buttons); }
 
 
 void attach_callbacks() {
@@ -509,9 +273,10 @@ void attach_callbacks() {
     bNum8.attachPop(bNum8PopCallback, &bNum8);
     bNum9.attachPop(bNum9PopCallback, &bNum9);
     bClear.attachPop(bClearPopCallback, &bClear);
+    bNumEnter.attachPop(bNumEnterPopCallback, &bNumEnter);
 
     //job list screen
-    jobListPage.attachPop(jobListPageCallback, &jobListPage);
+    jobListPage.attachPop(jobPagePopCallback, &jobListPage);
     bLoadJobs.attachPop(bLoadJobsCallback, &bLoadJobs);
     bArrowUp.attachPop(bArrowUpPopCallback, &bArrowUp);
     bJob1.attachPop(bJob1PopCallback, &bJob1);
@@ -588,6 +353,7 @@ NexTouch *nex_listen_list[] = {&bClockIn,
                                &bNum8,
                                &bNum9,
                                &bClear,
+                               &bNumEnter,
                                &jobListPage,
                                &bLoadJobs,
                                &bArrowUp,

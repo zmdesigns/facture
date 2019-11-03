@@ -1,6 +1,7 @@
 #include "workstation.h"
 
-std::vector<std::string>seperate(std::string str,char s, char e);
+std::vector<std::string>seperate(std::string str,char s, char e); //defined in include/helpers
+void add_job(std::string); //defined in display.h
 
 Workstation::Workstation(int workstation_id, std::string server_address) : p_id(workstation_id) {
     server = new JTServer(server_address);
@@ -61,13 +62,12 @@ bool Workstation::get_job_list() {
     server->make_request(args);    
 }
 
-void add_job(std::string);
+
 
 void Workstation::recv_data() {
     std::string data = server->recv_data();
 
     if (data.size() > 0) {
-        //Serial.write(data.c_str());
         Serial.println("\n---------START-------------\n");
 
         std::vector<std::string> jobs = seperate(data,'{','}');
