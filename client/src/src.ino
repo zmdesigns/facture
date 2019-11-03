@@ -19,8 +19,6 @@ void setup() {
     nexInit();
     attach_callbacks();
 
-    update_network_status(status);
-
     //connect to network
     status = wifi_connect();
     if (status == WL_CONNECTED) {
@@ -42,9 +40,12 @@ void loop() {
     //send request to web app
     //if there is a pending clock action
     if (pending_clock_action > 0) {
-        Job* pending_job = job_list.at(selected_job_index);
-        int employee = stoi(numpad_txt);
-        wrkstn->clock_action(employee,pending_job->job_id,pending_job->product_id,pending_clock_action);
+        if (selected_job_index >= 0) {
+            Job* pending_job = job_list.at(selected_job_index);
+            int employee = stoi(numpad_txt);
+            wrkstn->clock_action(employee,pending_job->job_id,pending_job->product_id,pending_clock_action);
+            pending_clock_action = 0;
+        }
     }
 
     //listen and respond to display events

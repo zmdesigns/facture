@@ -8,8 +8,9 @@
 
 //component objects
 // home screen
-NexButton bClockIn = NexButton(3, 2, "bClockIn"); //page-id,component-id,component-name
-NexButton bSettings = NexButton(3, 4, "bSettings");
+NexButton bClockIn = NexButton(3, 6, "bClockIn"); //page-id,component-id,component-name
+NexButton bClockOut = NexButton(3, 4, "bClockOut");
+NexButton bSettings = NexButton(3, 3, "bSettings");
 
 // settings screen
 NexButton bNetworks = NexButton(0, 5, "bNetworks");
@@ -113,6 +114,7 @@ std::vector<NexButton*> job_buttons = { &bJob1, &bJob2, &bJob3, &bJob4 };
 //component callbacks
 // home screen
 void bClockInPopCallback(void *ptr) { }
+void bClockOutPopCallback(void *ptr) { clock_out(); }
 void bSettingsPopCallback(void *ptr) { }
 
 // settings screen
@@ -202,6 +204,7 @@ void bArrowDownPopCallback(void *ptr) { move_job_index(1); update_job_buttons(&j
 void attach_callbacks() {
     //starting screen
     bClockIn.attachPop(bClockInPopCallback, &bClockIn);
+    bClockOut.attachPop(bClockOutPopCallback, &bClockOut);
     bSettings.attachPop(bSettingsPopCallback, &bSettings);
 
     //settings screen
@@ -290,6 +293,7 @@ void attach_callbacks() {
 
 //add component objects to event listen array
 NexTouch *nex_listen_list[] = {&bClockIn,
+                               &bClockOut,
                                &bSettings,
                                &bNetworks,
                                &bPassword,

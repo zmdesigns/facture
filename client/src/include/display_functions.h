@@ -15,7 +15,7 @@
 std::string numpad_txt = "";
 std::vector<Job*> job_list;
 int job_list_index = 0;
-int selected_job_index = 0;
+int selected_job_index = -1;
 std::string selected_network = ssid;
 bool caps = false;
 int pending_clock_action = 0;
@@ -100,10 +100,18 @@ void select_job(std::vector<NexButton*>* job_btns, int btn_index) {
     //workstation clock action
     pending_clock_action = 1;
     sendCommand("page 3");
+    std::string cmd = "tClockStatus.txt=\"Clocked in. " + job_list.at(selected_job_index)->job_string() + "\"";
+    sendCommand(cmd.c_str()); 
 }
 
 /* Page 3 (Clock in/out) */
-
+void clock_out() {
+    if (selected_job_index >= 0) {
+        pending_clock_action = 2;
+        std::string cmd = "tClockStatus.txt=\"Clocked Out.\"";
+        sendCommand(cmd.c_str()); 
+    }
+}
 
 /* Page 4 (Network List) */
 
