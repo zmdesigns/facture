@@ -1,3 +1,7 @@
+#ifndef __SERVER_H__
+#define __SERVER_H__
+
+
 #include <string>
 #include <map>
 #include <WiFi101.h>
@@ -13,3 +17,5 @@ private:
     WiFiClient* client;
     std::string address;
 };
+
+#endif

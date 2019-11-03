@@ -1,4 +1,8 @@
+#ifndef __NETWORK_H__
+#define __NETWORK_H__
+
 #include <vector>
+#include "../arduino_secrets.h"
 
 char ssid[] = SECRET_SSID;
 char pass[] = SECRET_PASS;
@@ -66,3 +70,5 @@ int wifi_connect() {
 
     return status;
 }
+
+#endif

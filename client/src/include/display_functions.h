@@ -1,5 +1,11 @@
+#ifndef __DISPLAY_FUNC_H__
+#define __DISPLAY_FUNC_H__
+
 #include <string>
 #include "Nextion.h"
+#include "helpers.h"
+#include "network.h"
+#include "../job.h"
 /* Functions that modify display objects 
 
    Sorted by page that the function operates on
@@ -7,11 +13,12 @@
 
 /* data that need to be stored between pages */
 std::string numpad_txt = "";
-std::vector<std::string> job_list;
+std::vector<Job*> job_list;
 int job_list_index = 0;
-std::string selected_job = "";
+int selected_job_index = 0;
 std::string selected_network = ssid;
 bool caps = false;
+int pending_clock_action = 0;
 
 /* Page 0 (Settings) */
 
@@ -47,8 +54,8 @@ void update_numpad_text(NexText* numpad, char c,bool clear_text=false) {
 /* Page 2 (Job List) */
 
 //add a job string to job_list
-void add_job(std::string job_str) {
-    job_list.push_back(job_str);
+void add_job(int job_id, int product_id) {
+    job_list.push_back(new Job(job_id, product_id));
 }
 
 //populate job list buttons
@@ -60,7 +67,7 @@ void update_job_buttons(std::vector<NexButton*>* job_btns) {
                 job_list_index = 0;
                 i = 0;
             }
-            job_btns->at(i)->setText(job_list.at(job_list_index + i).c_str());
+            job_btns->at(i)->setText(job_list.at(job_list_index + i)->job_string().c_str());
         }
     }   
 }
@@ -86,6 +93,13 @@ std::string get_job_button_text(std::vector<NexButton*>* job_btns, int btn_index
     std::string btn_txt = buffer;
 
     return btn_txt;
+}
+
+void select_job(std::vector<NexButton*>* job_btns, int btn_index) {
+    selected_job_index = job_list_index + btn_index;
+    //workstation clock action
+    pending_clock_action = 1;
+    sendCommand("page 3");
 }
 
 /* Page 3 (Clock in/out) */
@@ -241,3 +255,5 @@ void enter_password(NexText* txt_field) {
     //go back to settings page
     sendCommand("page 0");
 }
+
+#endif

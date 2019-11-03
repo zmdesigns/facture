@@ -1,13 +1,13 @@
 #include "workstation.h"
 
 std::vector<std::string>seperate(std::string str,char s, char e); //defined in include/helpers
-void add_job(std::string); //defined in display.h
+void add_job(int job, int product); //defined in display_functions.h
 
 Workstation::Workstation(int workstation_id, std::string server_address) : p_id(workstation_id) {
     server = new JTServer(server_address);
 }
 
-bool Workstation::clock_action(int employee_id, int job_id, int action) {
+bool Workstation::clock_action(int employee_id, int job_id, int product_id, int action) {
     /* sanity checks */
     if (employee_id < 0 || employee_id > 999) {
         return false;
@@ -29,6 +29,7 @@ bool Workstation::clock_action(int employee_id, int job_id, int action) {
     args["employee_id"] = std::to_string(p_employee_id);
     args["workstation_id"] = std::to_string(p_id);
     args["job_id"] = std::to_string(job_id);
+    args["product_id"] = std::to_string(product_id);
     args["action"] = std::to_string(action);
 
     /* Connect to server and send POST request */
@@ -62,13 +63,10 @@ bool Workstation::get_job_list() {
     server->make_request(args);    
 }
 
-
-
 void Workstation::recv_data() {
     std::string data = server->recv_data();
 
     if (data.size() > 0) {
-        Serial.println("\n---------START-------------\n");
 
         std::vector<std::string> jobs = seperate(data,'{','}');
 
@@ -77,21 +75,19 @@ void Workstation::recv_data() {
                 std::string job = *it;
                 JSONVar j = JSON.parse(job.c_str());
 
-                std::string job_str = "Job:";
-                job_str += (const char*)j["job_id"];
-                job_str += " Product:";
-                job_str += (const char*)j["product_id"];
+                std::string job_id = (const char*)j["job_id"];
+                std::string product_id = (const char*)j["product_id"];
 
                 //add job to job list used by display
-                add_job(job_str);
-
-                Serial.println(job_str.c_str());
+                add_job(std::stoi(job_id), std::stoi(product_id));
             }
         }
         else {
-            Serial.write(data.c_str());
+            Serial.println(data.c_str());
         }
-
-        Serial.println("\n----------END------------\n");
     }
+}
+
+void Workstation::send_data() {
+    
 }

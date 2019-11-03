@@ -1,8 +1,10 @@
+#ifndef __DISPLAY_H__
+#define __DISPLAY_H__
+
 #include <string>
 #include <vector>
 #include "Nextion.h"
-#include "include\network.h"
-#include "include\display_functions.h"
+#include "include/display_functions.h"
 
 //component objects
 // home screen
@@ -190,10 +192,10 @@ void bNumEnterPopCallback(void *ptr) { numpad_txt = get_numpad_text(&tNumpad); s
 void jobPagePopCallback(void *ptr) { update_job_buttons(&job_buttons); }
 void bLoadJobsCallback(void *ptr) { update_job_buttons(&job_buttons); }
 void bArrowUpPopCallback(void *ptr) { move_job_index(-1); update_job_buttons(&job_buttons); }
-void bJob1PopCallback(void *ptr) { selected_job = get_job_button_text(&job_buttons, 0); sendCommand("page 3"); }
-void bJob2PopCallback(void *ptr) { selected_job = get_job_button_text(&job_buttons, 1); sendCommand("page 3"); }
-void bJob3PopCallback(void *ptr) { selected_job = get_job_button_text(&job_buttons, 2); sendCommand("page 3"); }
-void bJob4PopCallback(void *ptr) { selected_job = get_job_button_text(&job_buttons, 3); sendCommand("page 3"); }
+void bJob1PopCallback(void *ptr) { select_job(&job_buttons, 0); }
+void bJob2PopCallback(void *ptr) { select_job(&job_buttons, 1); }
+void bJob3PopCallback(void *ptr) { select_job(&job_buttons, 2); }
+void bJob4PopCallback(void *ptr) { select_job(&job_buttons, 3); }
 void bArrowDownPopCallback(void *ptr) { move_job_index(1); update_job_buttons(&job_buttons); }
 
 
@@ -363,3 +365,5 @@ NexTouch *nex_listen_list[] = {&bClockIn,
                                &bJob4,
                                &bArrowDown,
                                NULL };
+
+#endif

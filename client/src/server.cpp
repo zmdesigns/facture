@@ -1,5 +1,4 @@
 #include "server.h"
-#include "arduino_secrets.h" 
 
 JTServer::JTServer(std::string server_address) : address(server_address) {
     client = new WiFiClient();

@@ -1,3 +1,6 @@
+#ifndef __HELPERS_H__
+#define __HELPERS_H__
+
 #include <vector>
 
 //split a string into a vector where each element is the content between char s and and e
@@ -92,3 +95,5 @@ char toggle_caps(char c, bool cap) {
         return toggle_number_symbol(c);
     }
 }
+
+#endif
