@@ -8,30 +8,28 @@
 
 //component objects
 // home screen
-NexButton bClockIn = NexButton(3, 6, "bClockIn"); //page-id,component-id,component-name
-NexButton bClockOut = NexButton(3, 4, "bClockOut");
-NexButton bSettings = NexButton(3, 3, "bSettings");
+NexButton bClockIn = NexButton(3, 3, "bClockIn"); //page-id,component-id,component-name
+NexButton bClockOut = NexButton(3, 1, "bClockOut");
+NexButton bSettings = NexButton(3, 5, "bSettings");
 
 // settings screen
-NexButton bNetworks = NexButton(0, 5, "bNetworks");
-NexButton bPassword = NexButton(0, 6, "bPassword");
-NexButton bConnect = NexButton(0, 8, "bConnect");
-NexButton bDone = NexButton(0, 7, "bDone");
-NexText tStatus = NexText(0, 4, "tStatus");
+NexButton bConnect = NexButton(0, 4, "bConnect");
+NexButton bDone = NexButton(0, 3, "bDone");
+NexText tStatus = NexText(0, 2, "tStatus");
 NexPage pSettingsPage = NexPage(0, 0, "page0");
 
 // networks screen
-NexButton bScan = NexButton(4, 8, "bScan");
-NexButton bNetwork1 = NexButton(4, 2, "bNetwork1");
-NexButton bNetwork2 = NexButton(4, 3, "bNetwork2");
-NexButton bNetwork3 = NexButton(4, 5, "bNetwork3");
-NexButton bNetwork4 = NexButton(4, 6, "bNetwork4");
-NexButton bNetwork5 = NexButton(4, 9, "bNetwork5");
-NexButton bNetwork6 = NexButton(4, 10, "bNetwork6");
-NexButton bNetwork7 = NexButton(4, 11, "bNetwork7");
-NexButton bNetwork8 = NexButton(4, 12, "bNetwork8");
-NexButton bCancel = NexButton(4, 7, "bCancel");
-NexText tNetworks = NexText(4, 4, "tNetworks");
+NexButton bScan = NexButton(4, 7, "bScan");
+NexButton bNetwork1 = NexButton(4, 1, "bNetwork1");
+NexButton bNetwork2 = NexButton(4, 2, "bNetwork2");
+NexButton bNetwork3 = NexButton(4, 4, "bNetwork3");
+NexButton bNetwork4 = NexButton(5, 6, "bNetwork4");
+NexButton bNetwork5 = NexButton(4, 8, "bNetwork5");
+NexButton bNetwork6 = NexButton(4, 9, "bNetwork6");
+NexButton bNetwork7 = NexButton(4, 10, "bNetwork7");
+NexButton bNetwork8 = NexButton(4, 11, "bNetwork8");
+NexButton bCancel = NexButton(4, 6, "bCancel");
+NexText tNetworks = NexText(4, 3, "tNetworks");
 std::vector<NexButton*> network_buttons = { &bNetwork1, 
                                             &bNetwork2, 
                                             &bNetwork3, 
@@ -42,73 +40,73 @@ std::vector<NexButton*> network_buttons = { &bNetwork1,
                                             &bNetwork8 };
 
 // password screen
-NexText tField = NexText(5, 41, "t0");
-NexButton ba = NexButton(5, 2, "b0");
-NexButton bb = NexButton(5, 3, "b1");
-NexButton bc = NexButton(5, 4, "b2");
-NexButton bd = NexButton(5, 5, "b3");
-NexButton be = NexButton(5, 6, "b4");
-NexButton bf = NexButton(5, 7, "b5");
-NexButton bg = NexButton(5, 8, "b6");
-NexButton bh = NexButton(5, 9, "b7");
-NexButton bi = NexButton(5, 10, "b8");
-NexButton bj = NexButton(5, 11, "b9");
-NexButton bk = NexButton(5, 12, "b10");
-NexButton bl = NexButton(5, 13, "b11");
-NexButton bm = NexButton(5, 14, "b12");
-NexButton bn = NexButton(5, 15, "b13");
-NexButton bo = NexButton(5, 16, "b14");
-NexButton bp = NexButton(5, 17, "b15");
-NexButton bq = NexButton(5, 18, "b16");
-NexButton br = NexButton(5, 19, "b17");
-NexButton bs = NexButton(5, 20, "b18");
-NexButton bt = NexButton(5, 21, "b19");
-NexButton bu = NexButton(5, 22, "b20");
-NexButton bv = NexButton(5, 23, "b21");
-NexButton bw = NexButton(5, 24, "b22");
-NexButton bx = NexButton(5, 25, "b23");
-NexButton by = NexButton(5, 26, "b24");
-NexButton bz = NexButton(5, 27, "b25");
-NexButton b0 = NexButton(5, 28, "b26");
-NexButton b1 = NexButton(5, 29, "b27");
-NexButton b2 = NexButton(5, 30, "b28");
-NexButton b3 = NexButton(5, 31, "b29");
-NexButton b4 = NexButton(5, 32, "b30");
-NexButton b5 = NexButton(5, 33, "b31");
-NexButton b6 = NexButton(5, 34, "b32");
-NexButton b7 = NexButton(5, 35, "b33");
-NexButton b8 = NexButton(5, 36, "b34");
-NexButton b9 = NexButton(5, 37, "b35");
-NexButton bCaps = NexButton(5, 38, "b36");
-NexButton bBackspace = NexButton(5, 39, "b37");
-NexButton bEnter = NexButton(5, 40, "b39");
+NexText tField = NexText(5, 40, "t0");
+NexButton ba = NexButton(5, 1, "b0");
+NexButton bb = NexButton(5, 2, "b1");
+NexButton bc = NexButton(5, 3, "b2");
+NexButton bd = NexButton(5, 4, "b3");
+NexButton be = NexButton(5, 5, "b4");
+NexButton bf = NexButton(5, 6, "b5");
+NexButton bg = NexButton(5, 7, "b6");
+NexButton bh = NexButton(5, 8, "b7");
+NexButton bi = NexButton(5, 9, "b8");
+NexButton bj = NexButton(5, 10, "b9");
+NexButton bk = NexButton(5, 11, "b10");
+NexButton bl = NexButton(5, 12, "b11");
+NexButton bm = NexButton(5, 13, "b12");
+NexButton bn = NexButton(5, 14, "b13");
+NexButton bo = NexButton(5, 15, "b14");
+NexButton bp = NexButton(5, 16, "b15");
+NexButton bq = NexButton(5, 17, "b16");
+NexButton br = NexButton(5, 18, "b17");
+NexButton bs = NexButton(5, 19, "b18");
+NexButton bt = NexButton(5, 20, "b19");
+NexButton bu = NexButton(5, 21, "b20");
+NexButton bv = NexButton(5, 22, "b21");
+NexButton bw = NexButton(5, 23, "b22");
+NexButton bx = NexButton(5, 24, "b23");
+NexButton by = NexButton(5, 25, "b24");
+NexButton bz = NexButton(5, 26, "b25");
+NexButton b0 = NexButton(5, 27, "b26");
+NexButton b1 = NexButton(5, 28, "b27");
+NexButton b2 = NexButton(5, 29, "b28");
+NexButton b3 = NexButton(5, 30, "b29");
+NexButton b4 = NexButton(5, 31, "b30");
+NexButton b5 = NexButton(5, 32, "b31");
+NexButton b6 = NexButton(5, 33, "b32");
+NexButton b7 = NexButton(5, 34, "b33");
+NexButton b8 = NexButton(5, 35, "b34");
+NexButton b9 = NexButton(5, 36, "b35");
+NexButton bCaps = NexButton(5, 37, "b36");
+NexButton bBackspace = NexButton(5, 38, "b37");
+NexButton bEnter = NexButton(5, 39, "b39");
 //letters+numbers - used to capitalize button text when caps button pressed
 std::vector<NexButton*> letter_btns = { &ba,&bb,&bc,&bd,&be,&bf,&bg,&bh,&bi,&bj,&bk,&bl,&bm,&bn,&bo,&bp,&bq,&br,&bs,&bt,&bu,&bv,&bw,&bx,&by,&bz,
                                   &b0,&b1,&b2,&b3,&b4,&b5,&b6,&b7,&b8,&b9 };
 
 // numpad screen
-NexButton bNum1 = NexButton(1, 2, "bNum1");
-NexButton bNum2 = NexButton(1, 3, "bNum2");
-NexButton bNum3 = NexButton(1, 4, "bNum3");
-NexButton bNum4 = NexButton(1, 5, "bNum4");
-NexButton bNum5 = NexButton(1, 6, "bNum5");
-NexButton bNum6 = NexButton(1, 7, "bNum6");
-NexButton bNum7 = NexButton(1, 8, "bNum7");
-NexButton bNum8 = NexButton(1, 9, "bNum8");
-NexButton bNum9 = NexButton(1, 10, "bNum9");
-NexButton bClear = NexButton(1, 12, "bClear");
-NexButton bNumEnter = NexButton(1, 11, "bNumEnter");
-NexText tNumpad = NexText(1, 13, "tNumpad");
+NexButton bNum1 = NexButton(1, 1, "bNum1");
+NexButton bNum2 = NexButton(1, 2, "bNum2");
+NexButton bNum3 = NexButton(1, 3, "bNum3");
+NexButton bNum4 = NexButton(1, 4, "bNum4");
+NexButton bNum5 = NexButton(1, 5, "bNum5");
+NexButton bNum6 = NexButton(1, 6, "bNum6");
+NexButton bNum7 = NexButton(1, 7, "bNum7");
+NexButton bNum8 = NexButton(1, 8, "bNum8");
+NexButton bNum9 = NexButton(1, 9, "bNum9");
+NexButton bClear = NexButton(1, 11, "bClear");
+NexButton bNumEnter = NexButton(1, 10, "bNumEnter");
+NexText tNumpad = NexText(1, 12, "tNumpad");
 
 //job list screen
 NexPage jobListPage = NexPage(2, 0, "page2");
-NexButton bLoadJobs = NexButton(2, 8, "bLoadJobs");
-NexButton bArrowUp = NexButton(2, 6, "bArrowUp");
-NexButton bJob1 = NexButton(2, 2, "bJob1");
-NexButton bJob2 = NexButton(2, 3, "bJob2");
-NexButton bJob3 = NexButton(2, 4, "bJob3");
-NexButton bJob4 = NexButton(2, 5, "bJob4");
-NexButton bArrowDown = NexButton(2, 7, "bArrowDown");
+NexButton bLoadJobs = NexButton(2, 7, "bLoadJobs");
+NexButton bArrowUp = NexButton(2, 5, "bArrowUp");
+NexButton bJob1 = NexButton(2, 1, "bJob1");
+NexButton bJob2 = NexButton(2, 2, "bJob2");
+NexButton bJob3 = NexButton(2, 3, "bJob3");
+NexButton bJob4 = NexButton(2, 4, "bJob4");
+NexButton bArrowDown = NexButton(2, 6, "bArrowDown");
 std::vector<NexButton*> job_buttons = { &bJob1, &bJob2, &bJob3, &bJob4 };
 
 //component callbacks
@@ -118,8 +116,6 @@ void bClockOutPopCallback(void *ptr) { clock_out(); }
 void bSettingsPopCallback(void *ptr) { }
 
 // settings screen
-void bNetworksPopCallback(void *ptr) { }
-void bPasswordPopCallback(void *ptr) { }
 void bConnectPopCallback(void *ptr) { update_network_status(WiFi.status()); }
 void bDonePopCallback(void *ptr) { }
 void pSettingsPagePopCallback(void *ptr) { update_network_status(WiFi.status()); }
@@ -208,8 +204,6 @@ void attach_callbacks() {
     bSettings.attachPop(bSettingsPopCallback, &bSettings);
 
     //settings screen
-    bNetworks.attachPop(bNetworksPopCallback, &bNetworks);
-    bPassword.attachPop(bPasswordPopCallback, &bPassword);
     bConnect.attachPop(bConnectPopCallback, &bConnect);
     bDone.attachPop(bDonePopCallback, &bDone);
     pSettingsPage.attachPop(pSettingsPagePopCallback, &pSettingsPage);
@@ -295,8 +289,6 @@ void attach_callbacks() {
 NexTouch *nex_listen_list[] = {&bClockIn,
                                &bClockOut,
                                &bSettings,
-                               &bNetworks,
-                               &bPassword,
                                &bConnect,
                                &bDone,
                                &pSettingsPage,
