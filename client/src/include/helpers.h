@@ -96,4 +96,19 @@ char toggle_caps(char c, bool cap) {
     }
 }
 
+
+std::string format_time(unsigned long epoch_t) {
+    unsigned long hours = (epoch_t % 86400L) / 3600;
+    std::string am_pm = hours >= 12 ? "PM" : "AM";
+    hours = hours > 12 ? hours - 12 : hours;
+    std::string hours_str = std::to_string(hours);
+
+    unsigned long mins = (epoch_t % 3600) / 60;
+    std::string mins_str = mins < 10 ? "0" + std::to_string(mins) : std::to_string(mins);
+
+    std::string time_str = hours_str + ":" + mins_str + " " + am_pm;
+
+    return time_str;
+}
+
 #endif

@@ -9,10 +9,10 @@ Workstation::Workstation(int workstation_id, std::string server_address) : p_id(
 
 bool Workstation::clock_action(int employee_id, int job_id, int product_id, int action) {
     /* sanity checks */
-    if (employee_id < 0 || employee_id > 999) {
+    if (employee_id < 0) {
         return false;
     }
-    if (job_id < 0 || job_id > 999) {
+    if (job_id < 0) {
         return false;
     }
     if (action < 0 || action > 9) {

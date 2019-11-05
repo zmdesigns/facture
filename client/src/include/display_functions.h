@@ -19,7 +19,14 @@ int selected_job_index = -1;
 std::string selected_network = ssid;
 bool caps = false;
 int pending_clock_action = 0;
+unsigned long last_clock_action_time = 0;
 
+/* time variables */
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP,"pool.ntp.org",-28800,120000);
+unsigned long last_update = 0;
+unsigned long update_interval = 60000;
+void update_clock(bool force);
 /* Page 0 (Settings) */
 
 
@@ -95,21 +102,42 @@ std::string get_job_button_text(std::vector<NexButton*>* job_btns, int btn_index
     return btn_txt;
 }
 
+//clock in
 void select_job(std::vector<NexButton*>* job_btns, int btn_index) {
     selected_job_index = job_list_index + btn_index;
     //workstation clock action
     pending_clock_action = 1;
     sendCommand("page 3");
-    std::string cmd = "tClockStatus.txt=\"Clocked in. " + job_list.at(selected_job_index)->job_string() + "\"";
+    last_clock_action_time = timeClient.getEpochTime();
+    std::string cmd = "tClockStatus.txt=\"Clocked in at "+ format_time(last_clock_action_time) + " " + job_list.at(selected_job_index)->job_string() + "\"";
     sendCommand(cmd.c_str()); 
+    update_clock(true);
+    //toggle button touch enable/disable
+    sendCommand("vis 1,1");
+    sendCommand("vis 3,0");
 }
 
 /* Page 3 (Clock in/out) */
 void clock_out() {
     if (selected_job_index >= 0) {
         pending_clock_action = 2;
-        std::string cmd = "tClockStatus.txt=\"Clocked Out.\"";
-        sendCommand(cmd.c_str()); 
+        last_clock_action_time = timeClient.getEpochTime();
+        std::string cmd = "tClockStatus.txt=\"Clocked out at " + format_time(last_clock_action_time) + "\"";
+        sendCommand(cmd.c_str());
+        update_clock(true);
+        //toggle button touch enable/disable
+        sendCommand("vis 1,0");
+        sendCommand("vis 3,1");
+    }
+}
+
+void update_clock(bool force=false) {
+    if (last_update == 0 || millis() - last_update > update_interval || force == true) {
+        timeClient.update();
+        Serial.println("updating time label..");
+        std::string cmd = "tTime.txt=\"" + format_time(timeClient.getEpochTime()) + "\"";
+        sendCommand(cmd.c_str());
+        last_update = millis();
     }
 }
 
