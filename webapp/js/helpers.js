@@ -19,3 +19,22 @@ function get_job_status(start,stop) {
     }
 }
 
+/* return array of hours,mins,seconds given hours */
+function breakdown_time(hours) {
+    var hours_fl = Math.floor(hours);
+    var mins = (hours - hours_fl) * 60;
+    var mins_fl = Math.floor(mins);
+    var secs = Math.round((mins - mins_fl) * 60);
+
+    //secs is rounded, if this causes secs=60,mins=60 fix for readability
+    if (secs == 60) {
+        mins_fl++;
+        secs = 0;
+        if (mins_fl == 60) {
+            hours_fl++;
+            mins_fl = 0;
+        }
+    }
+
+    return {'hours':hours_fl, 'mins':mins_fl, 'secs':secs};
+}

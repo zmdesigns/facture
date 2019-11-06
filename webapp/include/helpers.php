@@ -33,4 +33,26 @@ function exist($table,$column,$search) {
     }
 }
 
+/* Returns name associated with id stored in database - if not found returns id passed*/
+function employee_name($employee_id) {
+    $employee = lookup(array('table'=>'Employees','column'=>'id','search'=>$employee_id));
+
+    if (is_array($employee) && !empty($employee)) {
+        return $employee[0]['name'];
+    }
+
+    return $employee_id;
+}
+
+/* Returns name associated with id stored in database - if not found returns id passed*/
+function workstation_name($workstation_id) {
+    $workstation = lookup(array('table'=>'Workstations','column'=>'station_id','search'=>$workstation_id));
+
+    if (is_array($workstation) && !empty($workstation)) {
+        return $workstation[0]['name'];
+    }
+
+    return $workstation_id;
+}
+
 ?>

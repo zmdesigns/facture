@@ -72,19 +72,8 @@
             var $clock_ul = $('<ul></ul>');
             
             $.each(log_detail, function(i, log_data) {
-                var hours_fl = Math.floor(log_data['hours']);
-                var mins = (log_data['hours'] - hours_fl) * 60;
-                var mins_fl = Math.floor(mins);
-                var secs = Math.round((mins - mins_fl) * 60);
-                if (secs == 60) {
-                    mins_fl++;
-                    secs = 0;
-                    if (mins_fl == 60) {
-                        hours_fl++;
-                        mins_fl = 0;
-                    }
-                }
-                $('<li>'+log_data['employee']+': '+hours_fl+' hours '+mins_fl+' minutes '+secs+' secounds</li>').appendTo($clock_ul);
+                var log_time = breakdown_time(log_data['hours']);
+                $('<li>'+log_data['employee']+': '+log_time['hours']+' hours '+log_time['mins']+' minutes '+log_time['secs']+' secounds</li>').appendTo($clock_ul);
             });
             
             $clock_ul.appendTo($workstation_li);

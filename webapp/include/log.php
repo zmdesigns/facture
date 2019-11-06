@@ -278,7 +278,8 @@ function job_log_sorted($args) {
 
     $data = [];
     foreach($workstations as $station) {
-        $data[$station] = [];
+        $station_name = workstation_name($station);
+        $data[$station_name] = [];
         //get an array of log entries for workstation from rows with job_id
         $station_log = lookup_from_rows($prod_rows,'workstation_id',$station);
         foreach($station_log as $log_entry) {
@@ -289,10 +290,11 @@ function job_log_sorted($args) {
                 if ($out_entry) {
                     $in = new DateTime($log_entry['date_logged']);
                     $out = new DateTime($out_entry['date_logged']);
+                    $employee_name = employee_name($log_entry['employee_id']);
                     $hours = hour_diff($in,$out);
-                    $data[$station][] = ['start'=>$log_entry['date_logged'],
+                    $data[$station_name][] = ['start'=>$log_entry['date_logged'],
                                          'end'=>$out_entry['date_logged'],
-                                         'employee'=>$log_entry['employee_id'],
+                                         'employee'=>$employee_name,
                                          'hours'=>$hours];
                 }
             }
