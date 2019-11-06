@@ -134,21 +134,19 @@
 
     function reload_table_data() {
         //clear table body rows if any
-        $('.db-table tbody').html('');
+        var table = $('.db-table').DataTable();
+        table.clear();
 
         data = fetch('include/api.php', {
             method: 'POST',
             body: JSON.stringify({'task': 20})
         }).then(response => response.json()) // parses JSON response into native Javascript objects
         .then(function(data) {
-            var row = 1; //starts at 1 because header row is 0
             data.forEach(function(el) {
-                $('.db-table tbody').append('<tr><td>'+el['product_id']+
+                table.row.add($('<tr><td>'+el['product_id']+
                                   '</td><td>'+el['name']+
-                                  '</td><td>'+el['description']+'</td></tr>');
-                row += 1;
+                                  '</td><td>'+el['description']+'</td></tr>')).draw();
             });
-            $('.db-table').DataTable();
         }).catch(function(error) {
             console.log('There has been a problem with your fetch operation: ', error.message);
         });

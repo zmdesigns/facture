@@ -135,7 +135,8 @@
 
     function reload_table_data() {
         //clear table body rows if any
-        $('.db-table tbody').html('');
+        var table = $('.db-table').DataTable();
+        table.clear();
 
         //load new content from database and fill table rows
         data = fetch('include/api.php', {
@@ -144,10 +145,10 @@
         }).then(response => response.json()) // parses JSON response into native Javascript objects
         .then(function(data) {
             $.each(data, function(index, el) {
-                $('.db-table tbody').append('<tr><td>'+el['name']+
+                table.row.add($('<tr><td>'+el['name']+
                                             '</td><td>'+el['station_id']+
                                             '</td><td>'+
-                                            '</td><td>'+el['notes']+'</td></tr>');
+                                            '</td><td>'+el['notes']+'</td></tr>')).draw();
 
                 var args = {'task': 14,
                             'workstation_id': el['station_id'],
@@ -161,7 +162,6 @@
                     $("td:contains('"+el['station_id']+"')").next().text(data);
                 });
             });
-            $('.db-table').DataTable();
         }).catch(function(error) {
             console.log('There has been a problem with your fetch operation: ', error.message);
         });

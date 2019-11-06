@@ -124,7 +124,7 @@ body {
     color: #1D1D1B;
 }
 
-.job-table {
+.job-table, .product-table {
     background-color: #E6E6E6;
     color: #1D1D1B;
 }

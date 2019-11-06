@@ -132,7 +132,8 @@
 
     function reload_table_data() {
         //clear table body rows if any
-        $('.db-table tbody').html('');
+        var table = $('.db-table').DataTable();
+        table.clear();
 
         //load new content from database and fill table rows
         data = fetch('include/api.php', {
@@ -141,11 +142,11 @@
         }).then(response => response.json()) // parses JSON response into native Javascript objects
         .then(function(data) {
             data.forEach(function(el) {
-                $('.db-table tbody').append('<tr><td>'+el['name']+
-                                            '</td><td>'+el['login']+
-                                            '</td><td>'+el['notes']+'</td></tr>');
+                table.row.add($('<tr><td>'+el['name']+
+                                '</td><td>'+el['login']+
+                                '</td><td>'+el['notes']+'</td></tr>')).draw();
             });
-            $('.db-table').DataTable();
+            
         }).catch(function(error) {
             console.log('There has been a problem with your fetch operation: ', error.message);
         });
