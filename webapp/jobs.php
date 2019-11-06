@@ -11,6 +11,21 @@
             <div class='content-header'>
                 <h2>Jobs</h2>
             </div>
+            <div class="edit-links">
+                <a class="modal-link" id="new-job-link" href="#openNewJobModal">New Job</a>
+                <div id="openNewJobModal" class="modal-dialog">
+                    <div>
+                        <a href="#close" title="Close" class="close">X</a>
+                        <h2 class="modal-header">New Job</h2>
+                        <div class="input-group"><label for="job_id-text">Job Id</label><input type="text" id="job_id-text"  size="20"></div>
+                        <div class="input-group"><label for="customer-sel">Customer</label><select id="customer-sel"></select></div>
+                        <div class="input-group"><label for="product-sel">Product</label><select id="product-sel"></select></div>
+                        <div class="input-group"><label for="qty-text">Qty</label><input type="text" id="qty-text" size="20"></div>
+                        <button type="button" id="new-job-btn">Submit</button>
+                    </div>
+                </div>
+
+            </div>
 
             <table class='job-table'>
                 <col class="job_id-col">
@@ -32,10 +47,6 @@
                 <tbody>
                 </tbody>
             </table>
-        </div>
-
-        <div class='footer'>
-            <?php include "include/footer.php"; ?>
         </div>
 
         <div id="productModal" class="modal-dialog">
@@ -60,13 +71,59 @@
                     </table>
                 </div>
             </div>
+        </div>
+        <div class='footer'>
+            <?php include "include/footer.php"; ?>
+        </div>
     </div>
+</body>
 
 <script src='js/helpers.js'></script>
 
 <script type='text/javascript'>
     $(document).ready(function() {
         reload_content();
+    });
+
+    $(document).on('click', '#new-job-link', function() {
+        //fill customer and product select boxes
+        data = fetch('include/api.php', {
+            method: 'POST',
+            body: JSON.stringify({'task': 40})
+        }).then(response => response.json()) // parses JSON response into native Javascript objects
+        .then(function(data) {
+            data.forEach(function(el) {
+                $('#customer-sel').append('<option value="'+el['customer_id']+'">'+el['name']+'</option>');
+            });
+        });
+
+        data = fetch('include/api.php', {
+            method: 'POST',
+            body: JSON.stringify({'task': 20})
+        }).then(response => response.json()) // parses JSON response into native Javascript objects
+        .then(function(data) {
+            data.forEach(function(el) {
+                $('#product-sel').append('<option value="'+el['product_id']+'">'+el['name']+'</option>');
+            });
+        });
+    });
+
+    $(document).on('click', '#new-job-btn', function() {
+        var args = {
+            'task': 31,
+            'job_id': $('#job_id-text').val(),
+            'customer_name': $('#customer-sel option:selected').text(),
+            'product_name': $('#product-sel option:selected').text(),
+            'qty': $('#qty-text').val(),
+            'notes': 'none'
+        };
+
+        api_call(args);
+        //reset text boxes
+        $('#job_id-text').text('');
+        $('#qty-text').text('');
+        //close modal
+        window.location = '#close';
     });
 
     $(document).on('click', '.job-table tbody tr', function() {
@@ -92,7 +149,7 @@
 
         //clear previous product-table data
         var table = $('.product-table').DataTable();
-        table.clear();
+        table.clear().draw();
 
         //fill product-table with log data
         $.each(log_array, function(id, log_detail) {
@@ -139,6 +196,21 @@
                             '</td><td class="tprod_hrs">'+product['hours']+
                             '</td></tr>')).draw();
         });
+    }
+
+
+    function api_call(args) {
+        data = fetch('include/api.php', {
+            method: 'POST',
+            body: JSON.stringify(args)
+        }).then(function(data) {
+            console.log(data); //todo: if page returns an error, let the user know
+            reload_content();
+        }).catch(function(error) {
+            console.log('There has been a problem with your fetch operation: ', error.message);
+            return false;
+        });
+        return true;
     }
 </script>
 
