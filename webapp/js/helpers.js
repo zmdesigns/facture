@@ -38,3 +38,11 @@ function breakdown_time(hours) {
 
     return {'hours':hours_fl, 'mins':mins_fl, 'secs':secs};
 }
+
+function format_date(date) {
+    var day = date.getDate();
+    var mon = date.getMonth()+1; //zero index so +1
+    var yr = date.getFullYear();
+
+    return mon + '-' + day + '-' + yr;
+}

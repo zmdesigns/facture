@@ -68,6 +68,14 @@
                         </thead>
                         <tbody>
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td class='total-hrs'></td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -131,6 +139,7 @@
         var product_id = $(this).find('.tprod_id').text();
         var product_name = $(this).find('.tprod_name').text();
         var qty = $(this).find('.tprod_qty').text();
+        var hrs = $(this).find('.tprod_hrs').text();
         data = fetch('include/api.php', {
             method: 'POST',
             body: JSON.stringify({'task': 15,
@@ -139,11 +148,11 @@
         }).then(response => response.json()) // parses JSON response into native Javascript objects
         .then(function(data) {
             console.log(data);
-            gen_product_modal(job_id,product_name,product_id,qty,data);
+            gen_product_modal(job_id,product_name,product_id,qty,hrs,data);
         });
     });
 
-    function gen_product_modal(job_id, product_name, product_id, qty, log_array) {
+    function gen_product_modal(job_id, product_name, product_id, qty, hrs, log_array) {
         //header
         $('#productModal .modal-header').text(job_id+': '+product_name+' - '+product_id+' ('+qty+')');
 
@@ -156,14 +165,19 @@
             
             $.each(log_detail, function(i, log_data) {
                 var log_time = breakdown_time(log_data['hours']);
+                var d = new Date(log_data['start'].split(' ')[0]);
+                var date_str = format_date(d);
                 
                 table.row.add($('<tr><td>'+id+
                               '</td><td>'+log_data['employee']+
-                              '</td><td>'+log_data['start']+
+                              '</td><td>'+date_str+
                               '</td><td>'+log_time['hours']+' hours '+log_time['mins']+' minutes '+log_time['secs']+' secounds'+
                               '</td></tr>')).draw();
             });
         });
+
+        total = breakdown_time(hrs);
+        $('.total-hrs').text('Total: '+total['hours']+' hours '+total['mins']+' minutes '+total['secs']+' secounds');
         
         window.location = '#productModal';
     }
