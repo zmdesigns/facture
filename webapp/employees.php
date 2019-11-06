@@ -1,13 +1,15 @@
 <?php include 'include/header.php'; ?>
 <link rel="stylesheet" href="css/employees.css">
 </head>
-<body>
+<body class='employees'>
 <div class='container'>
-    <div class='g-header'>
+    <div class='side-nav'>
         <?php include 'include/nav.php'; ?>
-        <h1>Employees</h1>
     </div>
-    <div class='g-table'>
+    <div class='content'>
+        <div class='content-header'>
+            <h2>Employees</h2>
+        </div>
         <div class="edit-links">
             <a class="modal-link" href="#openNewEmpModal">New Employee</a>
             <div id="openNewEmpModal" class="modal-dialog">
@@ -51,7 +53,7 @@
         </table>
         
     </div>
-    <div class='g-footer'>
+    <div class='footer'>
         <?php include 'include/footer.php'; ?>
     </div>
 </div>

@@ -6,11 +6,22 @@ h4 {
     margin: 6px;
 }
 
+body {
+    background-color: #1D1D1B;
+    color: #E6E6E6;
+    font-family: 'Raleway', sans-serif;
+    margin: 0;
+}
+
+.content-header {
+    font-style: bold;
+    font-size: 2.5em;
+    text-align: center;
+}
 
 /* Modal */
 .modal-dialog {
 	position: fixed;
-    font-family: Arial, Helvetica, sans-serif;
 	top: 0;
 	right: 0;
 	bottom: 0;
@@ -84,7 +95,7 @@ h4 {
 
 /* table */
 .db-table {
-    min-width: 60em;
+    width: 100%;
 }
 
 .db-table tr, td, th {
@@ -94,68 +105,78 @@ h4 {
 }
 
 .db-table thead tr {
-    background-color: #fefefe;
+    background-color: #E6E6E6;
+    color: #1D1D1B;
 }
 
 .db-table tbody tr:hover {
     background-color: #606061;
-    color: #fff;
+    color: #E6E6E6;
     cursor: pointer;
 }
 
 /* css grid */
-.g-header {
-    grid-area: header;
-    justify-self: center;
-    align-self: center;
-    text-align: center;
-}
-
-.g-footer {
-    grid-area: footer;
-    justify-self: center;
-    align-self: center;
-}
-
-.g-table {
-    grid-area: data;
-    justify-self: center;
-    align-self: center;
-}
-
 .container {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto;
-    grid-template-areas: 
-        "header header"
-        "data data"
-        "footer footer";
-    column-gap: 14px;
+    grid-template-columns: repeat(20,1fr);
+    grid-auto-rows: repeat(10,1fr);
+    column-gap: 1em;
+}
+
+.side-nav {
+    position: fixed;
+    height: 100%;
+    width: 15%;
+    background-color: #E6E6E6;
+    color: #1D1D1B;
+}
+
+.content {
+    grid-column: 5 / 20;
+    justify-self: center;
+    align-self: start;
+    width: 100%;
+    font-family: 'Roboto', sans-serif;
+}
+
+.content-header {
+    font-family: 'Raleway', sans-serif;
+}
+
+.footer {
+    grid-column: 5 / 20;
+    grid-row: 9 / 10;
+    justify-self: center;
+    align-self: center;
+    font-family: 'Roboto', sans-serif;
 }
 
 /* nav */
 nav {
-    background-color: #fff;
-    border: 1px solid #dedede;
-    border-radius: 4px;
-    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.055);
-    color: #888;
+    background-color: #E6E6E6;
+    color: #1D1D1B;
+    border: 0;
+    border-radius: 0;
+    box-shadow: 0;
     display: block;
-    width: 90%;
-    margin: 8px 22px 8px 22px;
-    padding: 0 22px 0 22px;
+    margin: 0;
     overflow: hidden;
+}
+
+.logo-nav {
+    margin: 1em;
 }
 
 nav ul {
     margin: 0;
     padding: 0;
+    word-spacing : -4px ; /* to remove whitespace between li's */
 }
  
 nav ul li {
-    display: inline-block;
+    display: block;
     list-style-type: none;
+    margin: 0;
 
     -webkit-transition: all 0.2s;
     -moz-transition: all 0.2s;
@@ -165,9 +186,26 @@ nav ul li {
 }
  
 nav > ul > li > a {
-    color: #aaa;
+    color: #1D1D1B;
     display: block;
     line-height: 56px;
-    padding: 0 24px;
+    padding: 0 1em;
     text-decoration: none;
+}
+
+nav > ul > li > a:hover {
+    background-color: #B3B3B3;
+    color: #1D1D1B;
+}
+
+/* style for active page link in nav */
+.index a.index,
+.customers a.customers,
+.employees a.employees,
+.jobs a.jobs,
+.logs a.logs,
+.products a.products,
+.workstations a.workstations {
+    background-color: #B3B3B3;
+    color: #1D1D1B;
 }

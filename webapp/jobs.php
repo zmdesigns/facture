@@ -1,9 +1,9 @@
 <?php include "include/header.php"; ?>
 <link rel="stylesheet" href="css/jobs.css">
 </head>
-<body>
-    <div class='container-jobs'>
-        <div class='job-header'>
+<body class='jobs'>
+    <div class='container'>
+        <div class='side-nav'>
             <?php include 'include/nav.php'; ?>
         </div>
 
@@ -19,6 +19,9 @@
                 <h2 class="modal-header"></h2>
 
             </div>
+        </div>
+        <div class='footer'>
+            <?php include "include/footer.php"; ?>
         </div>
     </div>
 
@@ -72,9 +75,11 @@
     function gen_job_detail(job) {
         var status = get_job_status(job[0]['date_started'],job[0]['date_finished']);
         var $job_detail = $('<div class="job-detail"></div>');
-        $('<h3 class="job-title">'+job[0]['job_id']+'</h3>').appendTo($job_detail);
-        $('<h3 class="job-status">'+status+'</h3>').appendTo($job_detail);
-        $('<h3 class="customer">'+job[0]['customer_name']+'</h3>').appendTo($job_detail);
+        var $job_detail_header = $('<div class="job-detail-header"></div>');
+        $('<h3 class="job-title">Job: '+job[0]['job_id']+'</h3>').appendTo($job_detail_header);
+        $('<h3 class="job-status">Status: '+status+'</h3>').appendTo($job_detail_header);
+        $('<h3 class="customer">Customer: '+job[0]['customer_name']+'</h3>').appendTo($job_detail_header);
+        $job_detail_header.appendTo($job_detail);
 
         var $col1 = $('<div class="product-detail col-1"></div>');
         $('<p class="product-header">Product</p>').appendTo($col1);
@@ -83,13 +88,13 @@
         var $col3 = $('<div class="product-detail col-3"></div>');
         $('<p class="hrs-header">Hours Worked</p>').appendTo($col3);
         $.each(job, function(i, product) {
-            $('<p class="product"><a class="prod-modal-link">'+
+            $('<p class="product col-1"><a class="prod-modal-link">'+
                 product['product_id']+'-'+product['product_name']+'</a></p>').appendTo($col1);
 
-            $('<p class="qty"><a class="prod-modal-link">'+
+            $('<p class="qty col-2"><a class="prod-modal-link">'+
                 product['qty']+'</a></p>').appendTo($col2);
 
-            $('<p class="product"><a class="prod-modal-link">'+
+            $('<p class="product col-3"><a class="prod-modal-link">'+
                 product['hours']+'</a></p>').appendTo($col3);
         });
 

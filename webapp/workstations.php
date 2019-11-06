@@ -1,12 +1,14 @@
 <?php include 'include/header.php'; ?>
 </head>
-<body>
+<body class='workstations'>
 <div class='container'>
-    <div class='g-header'>
+    <div class='side-nav'>
         <?php include 'include/nav.php'; ?>
-        <h1>Workstations</h1>
     </div>
-    <div class='g-table'>
+    <div class='content'>
+        <div class='content-header'>
+            <h2>Workstations</h2>
+        </div>
         <div class="edit-links">
             <a class="modal-link" href="#openNewWrkModal">New Workstation</a>
             <div id="openNewWrkModal" class="modal-dialog">
@@ -51,7 +53,7 @@
         </table>
         
     </div>
-    <div class='g-footer'>
+    <div class='footer'>
         <?php include 'include/footer.php'; ?>
     </div>
 </div>

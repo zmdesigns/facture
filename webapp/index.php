@@ -1,15 +1,18 @@
 <?php include "include/header.php"; ?>
 </head>
-<body>
+<body class="index">
 <div class='container'>
-    <div class='g-header'>
+    <div class='side-nav'>
         <?php include 'include/nav.php'; ?>
-
-        <h1>Dashboard</h1>
     </div>
-    <div class='g-table'></div>
-    <div class='g-footer'>
+    <div class='content'>
+        <div class='content-header'>
+            <h2>Dashboard</h2>
+        </div>
+    </div>
+    <div class='footer'>
         <?php include "include/footer.php"; ?>
     </div>
 </div>
+
 </body>

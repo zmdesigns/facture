@@ -71,7 +71,6 @@ function last_log($args) {
     else {
         return 'no log with given arguments';
     }
-
 }
 
 function new_log($args) {

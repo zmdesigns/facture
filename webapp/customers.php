@@ -1,12 +1,14 @@
 <?php include 'include/header.php'; ?>
 </head>
-<body>
+<body class='customers'>
 <div class='container'>
-    <div class='g-header'>
+    <div class='side-nav'>
         <?php include 'include/nav.php'; ?>
-        <h1>Customers</h1>
     </div>
-    <div class='g-table'>
+    <div class='content'>
+        <div class='content-header'>
+            <h2>Customers</h2>
+        </div>
         <div class="edit-links">
             <a class="modal-link" href="#openNewCustModal">New Customer</a>
             <div id="openNewCustModal" class="modal-dialog">
@@ -50,7 +52,7 @@
         </table>
         
     </div>
-    <div class='g-footer'>
+    <div class='footer'>
         <?php include 'include/footer.php'; ?>
     </div>
 </div>
