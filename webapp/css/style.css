@@ -45,12 +45,14 @@ body {
 	position: relative;
 	margin: 10% auto;
 	padding: 5px 20px 13px 20px;
-	background: #fff;
+    background: #E6E6E6;
+    color: #1D1D1B;
+    font-family: 'Roboto', sans-serif;
 }
 
 .close {
-	background: #606061;
-	color: #FFFFFF;
+	background: #1D1D1B;
+	color: #E6E6E6;
 	line-height: 25px;
 	position: absolute;
 	text-align: center;

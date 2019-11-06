@@ -23,6 +23,14 @@
         <div class='footer'>
             <?php include "include/footer.php"; ?>
         </div>
+
+        <div id="productModal" class="modal-dialog">
+                <div>
+                    <a href="#close" title="Close" class="close">X</a>
+                    <h2 class="modal-header"></h2>
+                    <ul class="workstation-list"></ul>
+                </div>
+            </div>
     </div>
 
 <script src='https://code.jquery.com/jquery-3.4.1.min.js'></script>
@@ -35,8 +43,10 @@
     });
 
     $(document).on('click', '.prod-modal-link', function() {
-        var job_id = $(this).parents('.product-detail').siblings('.job-title').text();
+        var job_id = $(this).parents('.product-detail').siblings('.job-detail-header').find('.job-title').text();
         var product_id = $(this).text().split('-')[0];
+        var product_name = $(this).text().split('-')[1];
+        var qty = $(this).parents('.product-detail').siblings('.col-2').find('.qty').text();
         data = fetch('include/api.php', {
             method: 'POST',
             body: JSON.stringify({'task': 15,
@@ -45,15 +55,43 @@
         }).then(response => response.json()) // parses JSON response into native Javascript objects
         .then(function(data) {
             console.log(data);
+            gen_product_modal(job_id,product_name,product_id,qty,data);
         });
     });
 
-    function gen_product_modal(job_id, product_name, product_id, qty) {
-        var $modal = $('<div id="'+product_id+'Modal" class="modal-dialog">');
+    function gen_product_modal(job_id, product_name, product_id, qty, log_array) {
+        //header
+        $('#productModal .modal-header').text(job_id+': '+product_name+' - '+product_id+' ('+qty+')');
 
-        var $content = $('<div></div>');
-        $('<a href="#close" title="Close" class="close">X</a>').appendTo($content);
-        $('<h2 class="modal-header">'+product_id+' - '+product_name+' ('+qty+')</h2>').appendTo($content);
+        //clear previous workstation list
+        $('#productModal .workstation-list').empty();
+
+        //workstation list
+        $.each(log_array, function(id, log_detail) {
+            var $workstation_li = $('<li>'+id+'</li>');
+            var $clock_ul = $('<ul></ul>');
+            
+            $.each(log_detail, function(i, log_data) {
+                var hours_fl = Math.floor(log_data['hours']);
+                var mins = (log_data['hours'] - hours_fl) * 60;
+                var mins_fl = Math.floor(mins);
+                var secs = Math.round((mins - mins_fl) * 60);
+                if (secs == 60) {
+                    mins_fl++;
+                    secs = 0;
+                    if (mins_fl == 60) {
+                        hours_fl++;
+                        mins_fl = 0;
+                    }
+                }
+                $('<li>'+log_data['employee']+': '+hours_fl+' hours '+mins_fl+' minutes '+secs+' secounds</li>').appendTo($clock_ul);
+            });
+            
+            $clock_ul.appendTo($workstation_li);
+            $workstation_li.appendTo($('#productModal .workstation-list'));
+        });
+
+        window.location = '#productModal';
 
     }
 
@@ -76,7 +114,7 @@
         var status = get_job_status(job[0]['date_started'],job[0]['date_finished']);
         var $job_detail = $('<div class="job-detail"></div>');
         var $job_detail_header = $('<div class="job-detail-header"></div>');
-        $('<h3 class="job-title">Job: '+job[0]['job_id']+'</h3>').appendTo($job_detail_header);
+        $('<h3 class="job-title">'+job[0]['job_id']+'</h3>').appendTo($job_detail_header);
         $('<h3 class="job-status">Status: '+status+'</h3>').appendTo($job_detail_header);
         $('<h3 class="customer">Customer: '+job[0]['customer_name']+'</h3>').appendTo($job_detail_header);
         $job_detail_header.appendTo($job_detail);

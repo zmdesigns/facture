@@ -204,6 +204,7 @@ function hour_diff($dt1, $dt2) {
     $hours = 0;
     $interval = $dt2->diff($dt1,true);
     $hours += $interval->format('%i') / 60; //format interval by minutes / 60 for more accurate tracking
+    $hours += $interval->format('%s') / 60 / 60; //format interval by seoncds / 60 / 60 for more accurate tracking
     $hours += $interval->format('%h');
 
     return $hours;
@@ -269,6 +270,8 @@ function job_log_sorted($args) {
                     'search'=>$job_id]);
 
     $prod_rows = lookup_from_rows($rows,'product_id',$product_id);
+
+    //return $prod_rows; //TEST
 
     //get a list of workstation_ids that were used to work on job_id
     $workstations = unique_values_from_rows($prod_rows,'workstation_id');

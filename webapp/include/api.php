@@ -22,7 +22,7 @@
                                  job_id
             14   Activity        employee_id,workstation_id,     string      returns a formated string of last or current activity, or no activity if none found
                                  job_id
-            15   Job Log Sort    job_id                          json        Returns JSON array of summarized log of clockins-outs 
+            15   Job Log Sort    job_id,product_id               json        Returns JSON array of summarized log of clockins-outs 
 
         Products
             20   List all        N/A                             JSON        Returns all columns as associative array
