@@ -98,6 +98,8 @@ body {
 /* table */
 .db-table {
     width: 100%;
+    background-color: #E6E6E6;
+    color: #1D1D1B;
 }
 
 .db-table tr, td, th {
@@ -115,6 +117,23 @@ body {
     background-color: #606061;
     color: #E6E6E6;
     cursor: pointer;
+}
+
+.job-table tbody tr:hover {
+    background-color: #E6E6E6;
+    cursor: pointer;
+}
+
+label {
+    color: #E6E6E6;
+}
+
+.dataTables_info {
+    color: #E6E6E6 !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled, .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover, .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:active {
+    color: #E6E6E6 !important;
 }
 
 /* css grid */

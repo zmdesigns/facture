@@ -13,13 +13,3 @@
 .tnotes-col {
     width: 66%;
 }
-
-.db-table thead tr {
-    background-color: #fefefe;
-}
-
-.db-table tbody tr:hover {
-    background-color: #606061;
-    color: #fff;
-    cursor: pointer;
-}

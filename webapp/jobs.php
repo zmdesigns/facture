@@ -11,15 +11,29 @@
             <div class='content-header'>
                 <h2>Jobs</h2>
             </div>
+
+            <table class='job-table'>
+                <col class="job_id-col">
+                <col class="customer-col">
+                <col class="product_id-col">
+                <col class="product_name-col">
+                <col class="product_qty-col">
+                <col class="product_hrs-col">
+                <thead>
+                    <tr>
+                        <th>Job</th>
+                        <th>Customer</th>
+                        <th>Product ID</th>
+                        <th>Product Name</th>
+                        <th>Product Qty</th>
+                        <th>Product Hours</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
         </div>
 
-        <div id="openProductModal" class="modal-dialog">
-            <div>
-                <a href="#close" title="Close" class="close">X</a>
-                <h2 class="modal-header"></h2>
-
-            </div>
-        </div>
         <div class='footer'>
             <?php include "include/footer.php"; ?>
         </div>
@@ -48,7 +62,6 @@
             </div>
     </div>
 
-<script src='https://code.jquery.com/jquery-3.4.1.min.js'></script>
 <script src='js/helpers.js'></script>
 
 <script type='text/javascript'>
@@ -57,11 +70,11 @@
 
     });
 
-    $(document).on('click', '.prod-modal-link', function() {
-        var job_id = $(this).parents('.product-detail').siblings('.job-detail-header').find('.job-title').text();
-        var product_id = $(this).text().split('-')[0];
-        var product_name = $(this).text().split('-')[1];
-        var qty = $(this).parents('.product-detail').siblings('.col-2').find('.qty').text();
+    $(document).on('click', '.job-table tbody tr', function() {
+        var job_id = $(this).find('.tjob_id').text();
+        var product_id = $(this).find('.tprod_id').text();
+        var product_name = $(this).find('.tprod_name').text();
+        var qty = $(this).find('.tprod_qty').text();
         data = fetch('include/api.php', {
             method: 'POST',
             body: JSON.stringify({'task': 15,
@@ -106,42 +119,23 @@
             $.each(data, function (job_id, job_array) {
                 gen_job_detail(job_array);
             });
+            $('.job-table').DataTable();
         }).catch(function(error) {
             console.log('There has been a problem with your fetch operation: ', error.message);
         });
     }
 
     function gen_job_detail(job) {
-        var status = get_job_status(job[0]['date_started'],job[0]['date_finished']);
-        var $job_detail = $('<div class="job-detail"></div>');
-        var $job_detail_header = $('<div class="job-detail-header"></div>');
-        $('<h3 class="job-title">'+job[0]['job_id']+'</h3>').appendTo($job_detail_header);
-        $('<h3 class="job-status">Status: '+status+'</h3>').appendTo($job_detail_header);
-        $('<h3 class="customer">Customer: '+job[0]['customer_name']+'</h3>').appendTo($job_detail_header);
-        $job_detail_header.appendTo($job_detail);
 
-        var $col1 = $('<div class="product-detail col-1"></div>');
-        $('<p class="product-header">Product</p>').appendTo($col1);
-        var $col2 = $('<div class="product-detail col-2"></div>');
-        $('<p class="qty-header">Quantity</p>').appendTo($col2);
-        var $col3 = $('<div class="product-detail col-3"></div>');
-        $('<p class="hrs-header">Hours Worked</p>').appendTo($col3);
         $.each(job, function(i, product) {
-            $('<p class="product col-1"><a class="prod-modal-link">'+
-                product['product_id']+'-'+product['product_name']+'</a></p>').appendTo($col1);
-
-            $('<p class="qty col-2"><a class="prod-modal-link">'+
-                product['qty']+'</a></p>').appendTo($col2);
-
-            $('<p class="product col-3"><a class="prod-modal-link">'+
-                product['hours']+'</a></p>').appendTo($col3);
+            $('.job-table tbody').append('<tr><td class="tjob_id">'+product['job_id']+
+                                         '</td><td class="tcustomer">'+product['customer_name']+
+                                         '</td><td class="tprod_id">'+product['product_id']+
+                                         '</td><td class="tprod_name">'+product['product_name']+
+                                         '</td><td class="tprod_qty">'+product['qty']+
+                                         '</td><td class="tprod_hrs">'+product['hours']+
+                                         '</td></tr>');
         });
-
-        $col1.appendTo($job_detail);
-        $col2.appendTo($job_detail);
-        $col3.appendTo($job_detail);
-
-        $('.content').append($job_detail);
     }
 </script>
 

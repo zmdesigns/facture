@@ -58,8 +58,6 @@
 </div>
 </body>
 
-<script src='https://code.jquery.com/jquery-3.4.1.min.js'></script>
-
 <script type='text/javascript'>
 	$(document).ready(function() {
         reload_table_data();
@@ -150,6 +148,7 @@
                                   '</td><td>'+el['description']+'</td></tr>');
                 row += 1;
             });
+            $('.db-table').DataTable();
         }).catch(function(error) {
             console.log('There has been a problem with your fetch operation: ', error.message);
         });
