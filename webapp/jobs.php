@@ -28,7 +28,22 @@
                 <div>
                     <a href="#close" title="Close" class="close">X</a>
                     <h2 class="modal-header"></h2>
-                    <ul class="workstation-list"></ul>
+                    <table class='product-table'>
+                        <col class="workstation-col">
+                        <col class="employee-col">
+                        <col class="date-col">
+                        <col class="time-col">
+                        <thead>
+                            <tr>
+                                <th>Workstation</th>
+                                <th>Employee</th>
+                                <th>Date</th>
+                                <th>Time Spent</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
                 </div>
             </div>
     </div>
@@ -63,25 +78,22 @@
         //header
         $('#productModal .modal-header').text(job_id+': '+product_name+' - '+product_id+' ('+qty+')');
 
-        //clear previous workstation list
-        $('#productModal .workstation-list').empty();
+        //clear previous product-table data
+        $('#productModal .product-table tbody').empty();
 
-        //workstation list
+        //fill product-table with log data
         $.each(log_array, function(id, log_detail) {
-            var $workstation_li = $('<li>'+id+'</li>');
-            var $clock_ul = $('<ul></ul>');
             
             $.each(log_detail, function(i, log_data) {
                 var log_time = breakdown_time(log_data['hours']);
-                $('<li>'+log_data['employee']+': '+log_time['hours']+' hours '+log_time['mins']+' minutes '+log_time['secs']+' secounds</li>').appendTo($clock_ul);
+                $('#productModal .product-table tbody').append('<tr><td>'+id+
+                                                               '</td><td>'+log_data['employee']+
+                                                               '</td><td>'+log_data['start']+
+                                                               '</td><td>'+log_time['hours']+' hours '+log_time['mins']+' minutes '+log_time['secs']+' secounds'+
+                                                               '</td></tr>');
             });
-            
-            $clock_ul.appendTo($workstation_li);
-            $workstation_li.appendTo($('#productModal .workstation-list'));
         });
-
         window.location = '#productModal';
-
     }
 
     function reload_content() {

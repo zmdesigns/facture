@@ -120,13 +120,6 @@ body {
     height: 2em;
 }
 
-.content .prod-modal-link {
-    text-decoration: none;
+#productModal .product-table {
+    color: #1D1D1B;
 }
-
-.content .prod-modal-link:hover {
-    background-color: #606061;
-    color: #fff;
-    cursor: pointer;
-}
-
