@@ -110,7 +110,7 @@ function edit_job($args) {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     try {
-        $sql = 'UPDATE Jobs SET job_id="'.$job_id.'", customer_id=(SELECT customer_id FROM Customers WHERE name="'.$customer_name.'"), product_id=(SELECT product_id FROM Products WHERE name="'.$product_name.'"),qty="'.$qty.'", notes="'.$notes.'" WHERE id="'.$id.'"';
+        $sql = 'UPDATE Jobs SET job_id="'.$job_id.'", customer_id=(SELECT customer_id FROM Customers WHERE name="'.$customer_name.'"), product_id=(SELECT product_id FROM Products WHERE name="'.$product_name.'"),qty="'.$qty.'", notes="'.$notes.'" WHERE job_id="'.$id.'"';
         $query = $pdo->exec($sql);
     } catch (PDOException $e) { 
         return $e->getMessage();

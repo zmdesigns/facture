@@ -8,7 +8,7 @@
     </div>
     <div class='content'>
         <div class='content-header'>
-            <h2>Employees</h2>
+            <h4>Employees</h4>
         </div>
         <div class="edit-links">
             <a class="modal-link" href="#openNewEmpModal">New Employee</a>
@@ -20,7 +20,7 @@
                     <div class="input-group"><label for="new-login-text">Login Code(4 Digits)</label><input type="text" id="new-login-text" size="2"></div>
                     <div class="input-group"><label for="new-notes-text">Notes</label><textarea id="new-notes-text" rows="3" columns="7"></textarea></div>
                     
-                    <button type="button" id="new-emp-btn">Submit</button>
+                    <button type="button" class="submit-btn" id="new-emp-btn">Submit</button>
                 </div>
             </div>
             <div id="openEditEmpModal" class="modal-dialog">
@@ -31,8 +31,8 @@
                     <div class="input-group"><label for="edit-login-text">Login Code(4 Digits)</label><input type="text" id="edit-login-text" size="2"></div>
                     <div class="input-group"><label for="edit-notes-text">Notes</label><textarea id="edit-notes-text" rows="3" columns="7"></textarea></div>
                     
-                    <button type="button" id="edit-emp-btn">Submit</button>
-                    <button type="button" id="del-emp-btn">Delete Employee</button>
+                    <button type="button" class="submit-btn" id="edit-emp-btn">Submit</button>
+                    <button type="button" class="delete-btn" id="del-emp-btn">Delete Employee</button>
                 </div>
             </div>
         </div>

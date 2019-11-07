@@ -8,7 +8,7 @@
     </div>
     <div class='content'>
         <div class='content-header'>
-            <h2>Products</h2>
+            <h4>Products</h4>
         </div>
         <div class="edit-links">
             <a class="modal-link" href="#openNewProductModal">New Product</a>
@@ -20,7 +20,7 @@
                     <div class="input-group"><label for="new-name-text">Product Name</label><input type="text" id="new-name-text" size="5"></div>
                     <div class="input-group"><label for="new-description-text">Description</label><textarea id="new-description-text" rows="3" columns="7"></textarea></div>
                     
-                    <button type="button" id="new-product-btn">Submit</button>
+                    <button type="button" class="submit-btn" id="new-product-btn">Submit</button>
                 </div>
             </div>
             <div id="openEditProductModal" class="modal-dialog">
@@ -31,8 +31,8 @@
                     <div class="input-group"><label for="edit-name-text">Product Name</label><input type="text" id="edit-name-text" size="5"></div>
                     <div class="input-group"><label for="edit-description-text">Description</label><textarea id="edit-description-text" rows="3" columns="7"></textarea></div>
                     
-                    <button type="button" id="edit-product-btn">Submit</button>
-                    <button type="button" id="del-product-btn">Delete Product</button>
+                    <button type="button" class="submit-btn" id="edit-product-btn">Submit</button>
+                    <button type="button" class="delete-btn" id="del-product-btn">Delete Product</button>
                 </div>
             </div>
         </div>

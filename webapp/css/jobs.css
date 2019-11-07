@@ -128,6 +128,22 @@ body {
     width: 75%;
 }
 
+.edit-job-div > label,
+.edit-job-div > input,
+.edit-job-div > select {
+    display: inline;
+    margin-right: 2em;
+    width: auto;
+}
+
+.edit-job-div > label {
+    margin-right: 4px;
+}
+
+.edit-job-div {
+    margin-bottom: 1.5em;
+}
+
 .job-table, .product-table {
     background-color: #E6E6E6;
     color: #1D1D1B;

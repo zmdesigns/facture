@@ -7,7 +7,7 @@
     </div>
     <div class='content'>
         <div class='content-header'>
-            <h2>Logs</h2>
+            <h4>Logs</h4>
         </div>
         <div class="edit-links">
             <a class="modal-link" href="#openNewLogModal">New Log Entry</a>
@@ -21,7 +21,7 @@
                     <div class="input-group"><label for="new-log-prod">Product Id</label><input type="text" id="new-log-prod" size="2"></div>
                     <div class="input-group"><label for="new-log-action">Action</label><input type="text" id="new-log-action" size="2"></div>
                     
-                    <button type="button" id="new-log-btn">Submit</button>
+                    <button type="button" class="submit-btn" id="new-log-btn">Submit</button>
                 </div>
             </div>
         </div>

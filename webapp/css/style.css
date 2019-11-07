@@ -13,12 +13,6 @@ body {
     margin: 0;
 }
 
-.content-header {
-    font-style: bold;
-    font-size: 2.5em;
-    text-align: center;
-}
-
 /* Modal */
 .modal-dialog {
 	position: fixed;
@@ -72,7 +66,60 @@ body {
 .modal-link {
     text-decoration: none;
     background-color: green;
-    color: #fff;
+    color: #E6E6E6;
+    padding: 10px 16px;
+    box-shadow: 1px 1px 3px #000;
+    -moz-box-shadow: 1px 1px 3px #000;
+    -webkit-box-shadow: 1px 1px 3px #000;
+    -webkit-border-radius: 12px;
+	-moz-border-radius: 12px;
+    border-radius: 2px;
+    
+}
+
+.modal-dialog button {
+    cursor: pointer;
+}
+
+/* links above table */
+.edit-links {
+    margin-bottom: 16px;
+}
+
+/* form */
+.edit-links label {
+    display: block;
+}
+
+.edit-links input, 
+.edit-links select, 
+.edit-links textarea {
+    display: block;
+    width: 100%;
+    margin-top: 2px;
+    margin-bottom: 2em;
+}
+
+input, select, textarea {
+    background-color: #1D1D1B;
+    color: #E6E6E6;
+    border: 1px solid #E6E6E6;
+    padding: 0.5em;
+}
+
+input:focus, select:focus, textarea:focus {
+    -moz-box-shadow: 0 0 4px #88D5E9;
+	-webkit-box-shadow: 0 0 4px #88D5E9;
+	box-shadow: 0 0 4px #88D5E9;
+    border-color: #88D5E9;
+}
+
+.submit-btn,
+.delete-btn {
+    background-color: green;
+    color: #E6E6E6;
+    padding: 8px 20px;
+    border: 0;
     padding: 10px 16px;
     box-shadow: 1px 1px 3px #000;
     -moz-box-shadow: 1px 1px 3px #000;
@@ -82,25 +129,8 @@ body {
     border-radius: 2px;
 }
 
-/* links above table */
-.edit-links {
-    margin-bottom: 16px;
-}
-
-/* form */
-.modal-dialog label {
-    display: block;
-}
-
-.modal-dialog input, select, textarea {
-    display: block;
-    width: 100%;
-    background-color: #1D1D1B;
-    color: #E6E6E6;
-    border: 1px solid #E6E6E6;
-    margin-top: 2px;
-    margin-bottom: 2em;
-    padding: 0.5em;
+.delete-btn {
+    background-color: #8b0000 ;
 }
 
 /* table */
@@ -108,6 +138,10 @@ body {
     width: 100%;
     background-color: #E6E6E6;
     color: #1D1D1B;
+}
+
+table tbody tr.even {
+    background-color: #E6E6E6;
 }
 
 .db-table tr, td, th {
@@ -121,14 +155,9 @@ body {
     color: #1D1D1B;
 }
 
-.db-table tbody tr:hover {
-    background-color: #606061;
+table tbody tr:hover {
+    background-color: rgb(107, 107, 107);
     color: #E6E6E6;
-    cursor: pointer;
-}
-
-.job-table tbody tr:hover {
-    background-color: #E6E6E6;
     cursor: pointer;
 }
 
@@ -170,6 +199,11 @@ label {
 
 .content-header {
     font-family: 'Raleway', sans-serif;
+    font-style: bold;
+    font-size: 2.5em;
+    text-align: center;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
 }
 
 .footer {

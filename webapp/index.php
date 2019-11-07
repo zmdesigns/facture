@@ -7,7 +7,7 @@
     </div>
     <div class='content'>
         <div class='content-header'>
-            <h2>Dashboard</h2>
+            <h4>Dashboard</h4>
         </div>
     </div>
     <div class='footer'>

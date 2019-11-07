@@ -9,7 +9,7 @@
 
         <div class="content">
             <div class='content-header'>
-                <h2>Jobs</h2>
+                <h4>Jobs</h4>
             </div>
             <div class="edit-links">
                 <a class="modal-link" id="new-job-link" href="#openNewJobModal">New Job</a>
@@ -21,7 +21,7 @@
                         <label for="customer-sel">Customer</label><select id="customer-sel"></select>
                         <label for="product-sel">Product</label><select id="product-sel"></select>
                         <label for="qty-text">Qty</label><input type="text" id="qty-text">
-                        <button type="button" id="new-job-btn">Submit</button>
+                        <button type="button" class="submit-btn" id="new-job-btn">Submit</button>
                     </div>
                 </div>
 
@@ -52,7 +52,16 @@
         <div id="productModal" class="modal-dialog">
                 <div>
                     <a href="#close" title="Close" class="close">X</a>
-                    <h2 class="modal-header"></h2>
+                    <h2 class="modal-header" id="edit-header"></h2>
+
+                    <div class="edit-job-div">
+                        <label for="job_id-text">Job Id</label><input type="text" id="e-job_id-text">
+                        <label for="customer-sel">Customer</label><select id="e-customer-sel"></select>
+                        <label for="product-sel">Product</label><select id="e-product-sel"></select>
+                        <label for="qty-text">Qty</label><input type="text" id="e-qty-text">
+                        <button type="button" class="submit-btn" id="edit-job-btn">Submit</button>
+                    </div>
+
                     <table class='product-table'>
                         <col class="workstation-col">
                         <col class="employee-col">
@@ -120,24 +129,26 @@
         reload_content();
     });
 
-    $(document).on('click', '#new-job-link', function() {
-        //fill customer and product select boxes
+    function get_list(api_task, callback) {
         data = fetch('include/api.php', {
             method: 'POST',
-            body: JSON.stringify({'task': 40})
+            body: JSON.stringify({'task': api_task})
         }).then(response => response.json()) // parses JSON response into native Javascript objects
         .then(function(data) {
-            data.forEach(function(el) {
+            callback(data);
+        });
+    }
+
+    $(document).on('click', '#new-job-link', function() {
+        //fill customer and product select boxes
+        get_list(40, function(customers) {
+            customers.forEach(function(el) {
                 $('#customer-sel').append('<option value="'+el['customer_id']+'">'+el['name']+'</option>');
             });
         });
-
-        data = fetch('include/api.php', {
-            method: 'POST',
-            body: JSON.stringify({'task': 20})
-        }).then(response => response.json()) // parses JSON response into native Javascript objects
-        .then(function(data) {
-            data.forEach(function(el) {
+        
+        get_list(20, function(products) {
+            products.forEach(function(el) {
                 $('#product-sel').append('<option value="'+el['product_id']+'">'+el['name']+'</option>');
             });
         });
@@ -161,8 +172,28 @@
         window.location = '#close';
     });
 
+    $(document).on('click', '#edit-job-btn', function() {
+        var args = {
+            'task': 32,
+            'id': $('#edit-header').text().split(':')[0],
+            'job_id': $('#e-job_id-text').val(),
+            'customer_name': $('#e-customer-sel option:selected').text(),
+            'product_name': $('#e-product-sel option:selected').text(),
+            'qty': $('#e-qty-text').val(),
+            'notes': 'none'
+        };
+
+        api_call(args);
+        //reset text boxes
+        $('#job_id-text').text('');
+        $('#qty-text').text('');
+        //close modal
+        window.location = '#close';
+    });
+
     $(document).on('click', '.job-table tbody tr', function() {
         var job_id = $(this).find('.tjob_id').text();
+        var customer = $(this).find('.tcustomer').text();
         var product_id = $(this).find('.tprod_id').text();
         var product_name = $(this).find('.tprod_name').text();
         var qty = $(this).find('.tprod_qty').text();
@@ -174,14 +205,33 @@
                                   'product_id':product_id})
         }).then(response => response.json()) // parses JSON response into native Javascript objects
         .then(function(data) {
-            console.log(data);
-            gen_product_modal(job_id,product_name,product_id,qty,hrs,data);
+            gen_product_modal(job_id,customer,product_name,product_id,qty,hrs,data);
         });
     });
 
-    function gen_product_modal(job_id, product_name, product_id, qty, hrs, log_array) {
+    function gen_product_modal(job_id, customer, product_name, product_id, qty, hrs, log_array) {
         //header
         $('#productModal .modal-header').text(job_id+': '+product_name+' - '+product_id+' ('+qty+')');
+
+        //clear previous select data
+        $('#e-customer-sel').find('option').remove();
+        $('#e-product-sel').find('option').remove();
+
+        //prefill input elements for editing
+        $('#e-job_id-text').val(job_id);
+        $('#e-qty-text').val(qty);
+        get_list(40, function(customers) {
+            customers.forEach(function(el) {
+                $('#e-customer-sel').append('<option value="'+el['customer_id']+'">'+el['name']+'</option>');
+            });
+            $('#e-customer-sel option:contains('+customer+')').attr('selected','selected');
+        });
+        get_list(20, function(products) {
+            products.forEach(function(el) {
+                $('#e-product-sel').append('<option value="'+el['product_id']+'">'+el['name']+'</option>');
+            });
+            $('#e-product-sel option:contains('+product_name+')').attr('selected','selected');
+        });
 
         //clear previous product-table data
         var table = $('.product-table').DataTable();

@@ -7,7 +7,7 @@
     </div>
     <div class='content'>
         <div class='content-header'>
-            <h2>Customers</h2>
+            <h4>Customers</h4>
         </div>
         <div class="edit-links">
             <a class="modal-link" href="#openNewCustModal">New Customer</a>
@@ -19,7 +19,7 @@
                     <div class="input-group"><label for="new-name-text">Customer Name</label><input type="text" id="new-name-text"  size="20"></div>
                     <div class="input-group"><label for="new-notes-text">Notes</label><textarea id="new-notes-text" rows="3" columns="7"></textarea></div>
                     
-                    <button type="button" id="new-cust-btn">Submit</button>
+                    <button type="button" class="submit-btn" id="new-cust-btn">Submit</button>
                 </div>
             </div>
             <div id="openEditCustModal" class="modal-dialog">
@@ -30,8 +30,8 @@
                     <div class="input-group"><label for="edit-name-text">Customer Name</label><input type="text" id="edit-name-text"  size="20"></div>
                     <div class="input-group"><label for="edit-notes-text">Notes</label><textarea id="edit-notes-text" rows="3" columns="7"></textarea></div>
                     
-                    <button type="button" id="edit-cust-btn">Submit</button>
-                    <button type="button" id="del-cust-btn">Delete Customer</button>
+                    <button type="button" class="submit-btn" id="edit-cust-btn">Submit</button>
+                    <button type="button" class="delete-btn" id="del-cust-btn">Delete Customer</button>
                 </div>
             </div>
         </div>

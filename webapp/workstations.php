@@ -7,7 +7,7 @@
     </div>
     <div class='content'>
         <div class='content-header'>
-            <h2>Workstations</h2>
+            <h4>Workstations</h4>
         </div>
         <div class="edit-links">
             <a class="modal-link" href="#openNewWrkModal">New Workstation</a>
@@ -19,7 +19,7 @@
                     <div class="input-group"><label for="new-id-text">Workstation Id</label><input type="text" id="new-id-text" size="2"></div>
                     <div class="input-group"><label for="new-notes-text">Notes</label><textarea id="new-notes-text" rows="3" columns="7"></textarea></div>
                     
-                    <button type="button" id="new-wrk-btn">Submit</button>
+                    <button type="button" class="submit-btn" id="new-wrk-btn">Submit</button>
                 </div>
             </div>
             <div id="openEditWrkModal" class="modal-dialog">
@@ -30,8 +30,8 @@
                     <div class="input-group"><label for="edit-id-text">Workstation Id</label><input type="text" id="edit-id-text" size="2"></div>
                     <div class="input-group"><label for="edit-notes-text">Notes</label><textarea id="edit-notes-text" rows="3" columns="7"></textarea></div>
                     
-                    <button type="button" id="edit-wrk-btn">Submit</button>
-                    <button type="button" id="del-wrk-btn">Delete Workstation</button>
+                    <button type="button" class="submit-btn" id="edit-wrk-btn">Submit</button>
+                    <button type="button" class="delete-btn" id="del-wrk-btn">Delete Workstation</button>
                 </div>
             </div>
         </div>
