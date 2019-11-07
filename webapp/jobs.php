@@ -34,6 +34,7 @@
                 <col class="product_name-col">
                 <col class="product_qty-col">
                 <col class="product_hrs-col">
+                <col class="finished-col">
                 <thead>
                     <tr>
                         <th>Job</th>
@@ -42,6 +43,7 @@
                         <th>Product Name</th>
                         <th>Product Qty</th>
                         <th>Product Hours</th>
+                        <th>Finished</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -55,10 +57,11 @@
                     <h2 class="modal-header" id="edit-header"></h2>
 
                     <div class="edit-job-div">
-                        <label for="job_id-text">Job Id</label><input type="text" id="e-job_id-text">
-                        <label for="customer-sel">Customer</label><select id="e-customer-sel"></select>
-                        <label for="product-sel">Product</label><select id="e-product-sel"></select>
-                        <label for="qty-text">Qty</label><input type="text" id="e-qty-text">
+                        <label for="e-job_id-text">Job Id</label><input type="text" id="e-job_id-text">
+                        <label for="e-customer-sel">Customer</label><select id="e-customer-sel"></select>
+                        <label for="e-product-sel">Product</label><select id="e-product-sel"></select>
+                        <label for="e-qty-text">Qty</label><input type="text" id="e-qty-text">
+                        <label for="e-fin-chk">Finished</label><input type="checkbox" id="e-fin-chk">
                         <button type="button" class="submit-btn" id="edit-job-btn">Submit</button>
                     </div>
 
@@ -173,6 +176,12 @@
     });
 
     $(document).on('click', '#edit-job-btn', function() {
+
+        var fin = null;
+        if ($('#e-fin-chk').is(':checked')) {
+            var fin = new Date().toISOString();
+        }
+
         var args = {
             'task': 32,
             'id': $('#edit-header').text().split(':')[0],
@@ -180,7 +189,8 @@
             'customer_name': $('#e-customer-sel option:selected').text(),
             'product_name': $('#e-product-sel option:selected').text(),
             'qty': $('#e-qty-text').val(),
-            'notes': 'none'
+            'notes': 'none',
+            'fin_date': fin
         };
 
         api_call(args);
@@ -198,6 +208,7 @@
         var product_name = $(this).find('.tprod_name').text();
         var qty = $(this).find('.tprod_qty').text();
         var hrs = $(this).find('.tprod_hrs').text();
+        var fin = $(this).find('.tfin').text();
         data = fetch('include/api.php', {
             method: 'POST',
             body: JSON.stringify({'task': 15,
@@ -205,18 +216,18 @@
                                   'product_id':product_id})
         }).then(response => response.json()) // parses JSON response into native Javascript objects
         .then(function(data) {
-            gen_product_modal(job_id,customer,product_name,product_id,qty,hrs,data);
+            gen_product_modal(job_id,customer,product_name,product_id,qty,hrs,fin,data);
         });
     });
 
-    function gen_product_modal(job_id, customer, product_name, product_id, qty, hrs, log_array) {
+    function gen_product_modal(job_id, customer, product_name, product_id, qty, hrs, fin, log_array) {
         //header
         $('#productModal .modal-header').text(job_id+': '+product_name+' - '+product_id+' ('+qty+')');
 
         //clear previous select data
         $('#e-customer-sel').find('option').remove();
         $('#e-product-sel').find('option').remove();
-
+        
         //prefill input elements for editing
         $('#e-job_id-text').val(job_id);
         $('#e-qty-text').val(qty);
@@ -232,6 +243,14 @@
             });
             $('#e-product-sel option:contains('+product_name+')').attr('selected','selected');
         });
+        //set finished checkbox if finished date is present
+        if (fin == '') {
+            $('#e-fin-chk').prop('checked', false);
+        }
+        else {
+            $('#e-fin-chk').prop('checked', true);
+        }
+        
 
         //clear previous product-table data
         var table = $('.product-table').DataTable();
@@ -248,7 +267,7 @@
                 table.row.add($('<tr><td>'+id+
                               '</td><td>'+log_data['employee']+
                               '</td><td>'+date_str+
-                              '</td><td>'+log_time['hours']+' hours '+log_time['mins']+' minutes '+
+                              '</td><td>'+log_time['hours']+' hours '+log_time['mins']+' minutes'+
                               '</td></tr>')).draw();
             });
         });
@@ -279,12 +298,20 @@
 
     function gen_job_detail(job,table) {
         $.each(job, function(i, product) {
+            var fin = product['date_finished'];
+            if (fin == null) {
+                fin = '';
+            }
+            else {
+                fin = format_date(new Date(product['date_finished']));
+            }
             table.row.add($('<tr><td class="tjob_id">'+product['job_id']+
                             '</td><td class="tcustomer">'+product['customer_name']+
                             '</td><td class="tprod_id">'+product['product_id']+
                             '</td><td class="tprod_name">'+product['product_name']+
                             '</td><td class="tprod_qty">'+product['qty']+
                             '</td><td class="tprod_hrs">'+product['hours']+
+                            '</td><td class="tfin">'+fin+
                             '</td></tr>')).draw();
         });
     }
