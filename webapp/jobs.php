@@ -17,10 +17,10 @@
                     <div>
                         <a href="#close" title="Close" class="close">X</a>
                         <h2 class="modal-header">New Job</h2>
-                        <div class="input-group"><label for="job_id-text">Job Id</label><input type="text" id="job_id-text"  size="20"></div>
-                        <div class="input-group"><label for="customer-sel">Customer</label><select id="customer-sel"></select></div>
-                        <div class="input-group"><label for="product-sel">Product</label><select id="product-sel"></select></div>
-                        <div class="input-group"><label for="qty-text">Qty</label><input type="text" id="qty-text" size="20"></div>
+                        <label for="job_id-text">Job Id</label><input type="text" id="job_id-text">
+                        <label for="customer-sel">Customer</label><select id="customer-sel"></select>
+                        <label for="product-sel">Product</label><select id="product-sel"></select>
+                        <label for="qty-text">Qty</label><input type="text" id="qty-text">
                         <button type="button" id="new-job-btn">Submit</button>
                     </div>
                 </div>
@@ -85,8 +85,6 @@
         </div>
     </div>
 </body>
-
-<script src='js/helpers.js'></script>
 
 <script type='text/javascript'>
     $(document).ready(function() {
@@ -157,7 +155,20 @@
         $('#productModal .modal-header').text(job_id+': '+product_name+' - '+product_id+' ('+qty+')');
 
         //clear previous product-table data
-        var table = $('.product-table').DataTable();
+        var table = $('.product-table').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'excel',
+                'csv',
+                {
+                    extend: 'print',
+                    customize: function(window) {
+                        $(window.document.body).css('background-color','#fff');
+                        $(window.document.body).css('color','#000');
+                    }
+                }
+            ]
+        });
         table.clear().draw();
 
         //fill product-table with log data
@@ -171,13 +182,13 @@
                 table.row.add($('<tr><td>'+id+
                               '</td><td>'+log_data['employee']+
                               '</td><td>'+date_str+
-                              '</td><td>'+log_time['hours']+' hours '+log_time['mins']+' minutes '+log_time['secs']+' secounds'+
+                              '</td><td>'+log_time['hours']+' hours '+log_time['mins']+' minutes '+
                               '</td></tr>')).draw();
             });
         });
 
         total = breakdown_time(hrs);
-        $('.total-hrs').text('Total: '+total['hours']+' hours '+total['mins']+' minutes '+total['secs']+' secounds');
+        $('.total-hrs').text('Total: '+total['hours']+' hours '+total['mins']+' minutes ');
         
         window.location = '#productModal';
     }
@@ -189,7 +200,20 @@
         }).then(response => response.json()) // parses JSON response into native Javascript objects
         .then(function(data) {
             //clear previous job-table data
-            var table = $('.job-table').DataTable();
+            var table = $('.job-table').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'excel',
+                    'csv',
+                    {
+                        extend: 'print',
+                        customize: function(window) {
+                            $(window.document.body).css('background-color','#fff');
+                            $(window.document.body).css('color','#000');
+                        }
+                    }
+                ]
+            });
             table.clear();
             //iterate job_ids
             $.each(data, function (job_id, job_array) {

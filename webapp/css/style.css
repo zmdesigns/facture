@@ -41,7 +41,8 @@ body {
 }
 
 .modal-dialog > div {
-	width: 75%;
+    width: 400px;
+    max-width: 100%;
 	position: relative;
 	margin: 10% auto;
 	padding: 5px 20px 13px 20px;
@@ -87,12 +88,19 @@ body {
 }
 
 /* form */
-.input-group {
-    margin: 14px;
+.modal-dialog label {
+    display: block;
 }
 
-.input-group label {
-    margin-right: 6px;
+.modal-dialog input, select {
+    display: block;
+    width: 100%;
+    background-color: #1D1D1B;
+    color: #E6E6E6;
+    border: 1px solid #E6E6E6;
+    margin-top: 2px;
+    margin-bottom: 2em;
+    padding: 0.5em;
 }
 
 /* table */
