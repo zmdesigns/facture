@@ -60,6 +60,20 @@
 
 <script type='text/javascript'>
 	$(document).ready(function() {
+        $('.db-table').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'excel',
+                'csv',
+                {
+                    extend: 'print',
+                    customize: function(window) {
+                        $(window.document.body).css('background-color','#fff');
+                        $(window.document.body).css('color','#000');
+                    }
+                }
+            ]
+        });
         reload_table_data();
     });
 
@@ -131,20 +145,7 @@
 
     function reload_table_data() {
         //clear table body rows if any
-        var table = $('.db-table').DataTable({
-            dom: 'Bfrtip',
-            buttons: [
-                'excel',
-                'csv',
-                {
-                    extend: 'print',
-                    customize: function(window) {
-                        $(window.document.body).css('background-color','#fff');
-                        $(window.document.body).css('color','#000');
-                    }
-                }
-            ]
-        });
+        var table = $('.db-table').DataTable();
         table.clear();
 
         //load new content from database and fill table rows

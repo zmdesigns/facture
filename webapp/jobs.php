@@ -88,6 +88,35 @@
 
 <script type='text/javascript'>
     $(document).ready(function() {
+        //init datatables
+        $('.product-table').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'excel',
+                'csv',
+                {
+                    extend: 'print',
+                    customize: function(window) {
+                        $(window.document.body).css('background-color','#fff');
+                        $(window.document.body).css('color','#000');
+                    }
+                }
+            ]
+        });
+        $('.job-table').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'excel',
+                'csv',
+                {
+                    extend: 'print',
+                    customize: function(window) {
+                        $(window.document.body).css('background-color','#fff');
+                        $(window.document.body).css('color','#000');
+                    }
+                }
+            ]
+        });
         reload_content();
     });
 
@@ -155,20 +184,7 @@
         $('#productModal .modal-header').text(job_id+': '+product_name+' - '+product_id+' ('+qty+')');
 
         //clear previous product-table data
-        var table = $('.product-table').DataTable({
-            dom: 'Bfrtip',
-            buttons: [
-                'excel',
-                'csv',
-                {
-                    extend: 'print',
-                    customize: function(window) {
-                        $(window.document.body).css('background-color','#fff');
-                        $(window.document.body).css('color','#000');
-                    }
-                }
-            ]
-        });
+        var table = $('.product-table').DataTable();
         table.clear().draw();
 
         //fill product-table with log data
@@ -200,20 +216,7 @@
         }).then(response => response.json()) // parses JSON response into native Javascript objects
         .then(function(data) {
             //clear previous job-table data
-            var table = $('.job-table').DataTable({
-                dom: 'Bfrtip',
-                buttons: [
-                    'excel',
-                    'csv',
-                    {
-                        extend: 'print',
-                        customize: function(window) {
-                            $(window.document.body).css('background-color','#fff');
-                            $(window.document.body).css('color','#000');
-                        }
-                    }
-                ]
-            });
+            var table = $('.job-table').DataTable();
             table.clear();
             //iterate job_ids
             $.each(data, function (job_id, job_array) {
