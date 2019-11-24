@@ -23,7 +23,7 @@ void setup() {
     attach_callbacks();
 
     sendCommand("thup=1"); //wake up from sleep on touch
-    sendCommand("thsp=30"); //interval in seconds for no touch=sleep
+    //sendCommand("thsp=30"); //interval in seconds for no touch=sleep
     sendCommand("dim=50"); //backlight level
 
     //connect to network

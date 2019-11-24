@@ -177,7 +177,7 @@
 
     $(document).on('click', '#edit-job-btn', function() {
 
-        var fin = null;
+        var fin = "";
         if ($('#e-fin-chk').is(':checked')) {
             var fin = new Date().toISOString();
         }
@@ -267,7 +267,7 @@
                 table.row.add($('<tr><td>'+id+
                               '</td><td>'+log_data['employee']+
                               '</td><td>'+date_str+
-                              '</td><td>'+log_time['hours']+' hours '+log_time['mins']+' minutes'+
+                              '</td><td>'+log_time['hours']+' hours '+log_time['mins']+' minutes '+log_time['secs']+' secounds'+
                               '</td></tr>')).draw();
             });
         });
@@ -299,7 +299,7 @@
     function gen_job_detail(job,table) {
         $.each(job, function(i, product) {
             var fin = product['date_finished'];
-            if (fin == null) {
+            if (fin == null || fin == '0000-00-00 00:00:00') {
                 fin = '';
             }
             else {

@@ -212,6 +212,8 @@ function hour_diff($dt1, $dt2) {
 
 function find_log_match($rows, $row) {
 
+    $match = NULL;
+
     //determine what action value is opposite
     $to_match = 0;
     if ($row['action'] == 2) {
@@ -227,11 +229,24 @@ function find_log_match($rows, $row) {
             $match_row['employee_id']    == $row['employee_id'] &&
             $match_row['workstation_id'] == $row['workstation_id'] &&
             $match_row['job_id']         == $row['job_id']) {
-                return $match_row;
+                
+                //if no match has been found yet, save it
+                if ($match == NULL) {
+                    $match = $match_row;
+                }
+                else {
+                    //if a previous match has been found:
+                    //  compare ids, if new match's id is closer to old match, save it
+                    $new_match_diff = $match_row['id'] - $row['id'];
+                    $old_match_diff = $match['id'] - $row['id'];
+                    if (abs($new_match_diff) < abs($old_match_diff)) {
+                        $match = $match_row;
+                    }
+                }
         }
     }
     //no match found
-    return NULL;
+    return $match;
 }
 
 //given employee_id, workstation_id, job_id where a blank string is wildcard,

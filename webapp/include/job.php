@@ -99,12 +99,12 @@ function edit_job($args) {
     $product_name = $args['product_name'];
     $qty = $args['qty'];
     $notes = $args['notes'];
+    $fin_date = NULL;
 
-    if (isset($args['fin_date']))
+    if (isset($args['fin_date'])) {
         $fin_date = $args['fin_date'];
-    else
-        $fin_date = null;
-    
+    }
+
     if (!exist('Customers','name',$customer_name) ||
         !exist('Products','name',$product_name)) {
 
