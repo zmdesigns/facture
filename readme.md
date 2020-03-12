@@ -1,3 +1,72 @@
+# Facture
+
+Facture is a completely wireless touchscreen device that makes it easy to track how long it takes to do something. It pairs with a web application that is used to organize and manage the information the devices collect. 
+
+[Read about the development process](https://medium.com/@zackmdesigns/59-days-of-code-1b001ca4b6ec?source=friends_link&sk=6b2015b63c3c89e2b60380bb9f1f773d)
+
+[Example website](http://www.jtrkr.zackmdesigns.com/index.php)
+
+### Client Device
+A hardware device built off the arduino/nextion platforms. The software is written in C++. The UI is made in Nextion Editor. The hardware is an Arduino MKR WiFi 1000 and a 3.2" TFT Nextion Touchscreen. It is powered by a 10,000mAh battery. The device also has a RF Transceiver for mesh communication with other Facture devices. The software on the device allows operators to login, select a job, and start/stop their time. The network connection can also be managed from the device.
+
+### Website and API
+Written in PHP/MySQL. Provides an interface to manage and view job information and an API for the devices to interact with the database. The API entry point is api.php. Below is a list of available API functions.
+
+    ID   Description     Required POST Variables         Returns     Notes
+    -----------------------------------------------------------------------------------------------------------
+Employees 
+    1   List all        N/A                             JSON        Returns all columns as associative array
+    2   New             name,login,notes                string
+    3   Edit            name,new_name,login,notes       string
+    4   Delete          name                            string
+
+Log
+    10   List all        N/A                             JSON        Returns all columns as associative array
+    11   New             employee_id,workstation_id,     string      action: 1=clock-in 2=clock-out
+                            job_id,product_id,action
+    12   Last log        employee_id,workstation_id,     JSON        Returns last row that matches passed variables,null is passed for a wildcard
+                            job_id
+    13   Hours Worked    employee_id,workstation_id,     JSON        Returns rows that match passed arguments,empty string is passed for wildcard
+                            job_id
+    14   Activity        employee_id,workstation_id,     string      returns a formated string of last or current activity, or no activity if none found
+                            job_id
+    15   Job Log Sort    job_id,product_id               json        Returns JSON array of summarized log of clockins-outs 
+
+Products
+    20   List all        N/A                             JSON        Returns all columns as associative array
+    21   New             product_id,name,description     string
+    22   Edit            product_id,new_product_id,      string
+                            name,description
+    23   Delete          product_id                      string
+
+Jobs
+    30   List all        N/A                             JSON         Returns all columns as associative array
+    31   New             job_id,customer_name,           string
+                            product_name,qty,notes            
+    32   Edit            id,job_id,customer_name,        string
+                            product_name,qty,notes
+    33   Delete          job_id                          string
+    34   List sorted     N/A                             JSON        Returns array of arrays of jobs, indexed by job_id
+
+Customer
+    40   List all        N/A                             JSON        Returns all columns as associative array
+    41   New             customer_id,name,notes          string
+    42   Edit            customer_id,new_name,           string
+                            name,notes
+    43   Delete          name                            string
+
+Workstation
+    50   List all        N/A                             JSON        Returns all columns as associative array
+    51   New             station_id,name,notes           string      
+    52   Edit            station_id,new_name,name,       string
+                            notes
+    53   Delete          name                            string
+
+General
+    90   Lookup          table,column,search             JSON        Returns all matching rows where column data = search in table
+
+
+### License
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -12,15 +81,5 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-Facture is a completely wireless touchscreen device that makes it easy to track how long it takes to do something. It pairs with a web application that is used to organize and manage the information the devices collect. 
-
-The touchscreen device is refered to as 'client'. The web application is 'webapp'.
 
 
-client - A hardware device built off the arduino/nextion platforms. The software is written in C++. The UI is made in Nextion Editor. The hardware is an Arduino MKR WiFi 1000 and a 3.2" TFT Nextion Touchscreen. It is powered by a 10,000mAh battery. The device also has a RF Transceiver for mesh communication with other Facture devices. The software on the device allows operators to login, select a job, and start/stop their time. The network connection can also be managed from the device.
-
-webapp - A web app written in PHP/MySQL. It provides users with an interface to manage and view job information and an API for the devices to store/retrieve information in the database. api.php is the entry point for all backend functions. At the top of api.php you can find a list of functions and the required parameters. The client/frontend sends a post request with the required variables to interact with the webapp.
-
-Test version of the webapp is available here: http://www.jtrkr.zackmdesigns.com/index.php
-
-So long and thanks for all the fish!
